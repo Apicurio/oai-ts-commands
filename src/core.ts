@@ -15,3 +15,33 @@
  * limitations under the License.
  */
 
+export * from "./base";
+
+export * from "./util/model.util";
+
+export * from "./models/simplified-type.model";
+
+export * from "./commands/add-definition.command";
+export * from "./commands/add-path.command";
+export * from "./commands/change-contact-info.command";
+export * from "./commands/change-description.command";
+export * from "./commands/change-license.command";
+export * from "./commands/change-parameter-type.command";
+export * from "./commands/change-path-parameters.command";
+export * from "./commands/change-property.command";
+export * from "./commands/change-property-type.command";
+export * from "./commands/change-response-type.command";
+export * from "./commands/change-security-scheme.command";
+export * from "./commands/change-title.command";
+export * from "./commands/change-version.command";
+export * from "./commands/delete.command";
+export * from "./commands/new-definition.command";
+export * from "./commands/new-operation.command";
+export * from "./commands/new-param.command";
+export * from "./commands/new-path.command";
+export * from "./commands/new-request-body.command";
+export * from "./commands/new-response.command";
+export * from "./commands/new-schema-property.command";
+export * from "./commands/new-security-scheme.command";
+export * from "./commands/new-tag.command";
+export * from "./commands/replace.command";
