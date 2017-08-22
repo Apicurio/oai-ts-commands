@@ -21,12 +21,17 @@ import {OasDocument, Oas20Document} from "oai-ts-core";
 /**
  * A command used to modify the description of a document.
  */
-export class ChangeDescriptionCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeDescriptionCommand extends AbstractCommand implements ICommand {
 
     private _newDescription: string;
+
     private _oldDescription: string;
     private _nullInfo: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} newDescription
+     */
     constructor(newDescription: string) {
         super();
         this._newDescription = newDescription;
@@ -38,15 +43,14 @@ export class ChangeDescriptionCommand extends AbstractCommand implements IComman
      */
     public execute(document: OasDocument): void {
         console.info("[ChangeDescriptionCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (doc.info === undefined || doc.info === null) {
-            doc.info = doc.createInfo();
+        if (document.info === undefined || document.info === null) {
+            document.info = document.createInfo();
             this._nullInfo = true;
             this._oldDescription = null;
         } else {
-            this._oldDescription = doc.info.description;
+            this._oldDescription = document.info.description;
         }
-        doc.info.description = this._newDescription;
+        document.info.description = this._newDescription;
     }
 
     /**
@@ -55,12 +59,27 @@ export class ChangeDescriptionCommand extends AbstractCommand implements IComman
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeDescriptionCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullInfo) {
-            doc.info = null;
+            document.info = null;
         } else {
-            doc.info.description = this._oldDescription;
+            document.info.description = this._oldDescription;
         }
     }
+
+}
+
+
+/**
+ * The OAI 2.0 impl.
+ */
+export class ChangeDescriptionCommand_20 extends AbstractChangeDescriptionCommand {
+
+}
+
+
+/**
+ * The OAI 3.0 impl.
+ */
+export class ChangeDescriptionCommand_30 extends AbstractChangeDescriptionCommand {
 
 }
