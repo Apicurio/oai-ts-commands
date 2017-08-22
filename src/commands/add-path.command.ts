@@ -16,22 +16,25 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {
-    OasDocument, Oas20Document, Oas20PathItem
-} from "oai-ts-core";
+import {OasDocument, OasPathItem} from "oai-ts-core";
 
 /**
  * A command used to add a new pathItem in a document.  Source for the new
  * pathItem must be provided.  This source will be converted to an OAS
  * pathItem object and then added to the data model.
  */
-export class AddPathItemCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractAddPathItemCommand extends AbstractCommand implements ICommand {
 
     private _pathItemExits: boolean;
     private _newPathItemName: string;
     private _newPathItemObj: any;
     private _nullPathItems: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} pathItemName
+     * @param obj
+     */
     constructor(pathItemName: string, obj: any) {
         super();
         this._newPathItemName = pathItemName;
@@ -44,19 +47,18 @@ export class AddPathItemCommand extends AbstractCommand implements ICommand {
      */
     public execute(document: OasDocument): void {
         console.info("[AddPathItemCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.paths)) {
-            doc.paths = doc.createPaths();
+        if (this.isNullOrUndefined(document.paths)) {
+            document.paths = document.createPaths();
             this._nullPathItems = true;
         }
 
-        if (doc.paths.pathItem(this._newPathItemName)) {
+        if (document.paths.pathItem(this._newPathItemName)) {
             console.info("[AddPathItemCommand] PathItem with name %s already exists.", this._newPathItemName);
             this._pathItemExits = true;
         } else {
-            let pathItem: Oas20PathItem = doc.paths.createPathItem(this._newPathItemName) as Oas20PathItem;
-            pathItem = this.oasLibrary().readNode(this._newPathItemObj, pathItem) as Oas20PathItem;
-            doc.paths.addPathItem(this._newPathItemName, pathItem);
+            let pathItem: OasPathItem = document.paths.createPathItem(this._newPathItemName);
+            pathItem = this.oasLibrary().readNode(this._newPathItemObj, pathItem) as OasPathItem;
+            document.paths.addPathItem(this._newPathItemName, pathItem);
             this._pathItemExits = false;
         }
     }
@@ -70,11 +72,23 @@ export class AddPathItemCommand extends AbstractCommand implements ICommand {
         if (this._pathItemExits) {
             return;
         }
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullPathItems) {
-            doc.paths = null;
+            document.paths = null;
         } else {
-            doc.paths.removePathItem(this._newPathItemName);
+            document.paths.removePathItem(this._newPathItemName);
         }
     }
+}
+
+/**
+ * The OAI 2.0 impl.
+ */
+export class AddPathItemCommand_20 extends AbstractAddPathItemCommand {
+}
+
+
+/**
+ * The OAI 3.0 impl.
+ */
+export class AddPathItemCommand_30 extends AbstractAddPathItemCommand {
 }
