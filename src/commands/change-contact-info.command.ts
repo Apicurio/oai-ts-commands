@@ -16,20 +16,31 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Contact, Oas20Document, OasDocument} from "oai-ts-core";
+import {OasDocument} from "oai-ts-core";
 
 /**
  * A command used to modify the contact information of a document.
  */
-export class ChangeContactCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeContactCommand extends AbstractCommand implements ICommand {
 
-    private _newContact: Oas20Contact;
-    private _oldContact: Oas20Contact;
+    private _newName: string;
+    private _newEmail: string;
+    private _newUrl: string;
+
+    private _oldContact: any;
     private _nullInfo: boolean;
 
-    constructor(contact: Oas20Contact) {
+    /**
+     * C'tor.
+     * @param {string} name
+     * @param {string} email
+     * @param {string} url
+     */
+    constructor(name: string, email: string, url: string) {
         super();
-        this._newContact = contact;
+        this._newName = name;
+        this._newEmail = email;
+        this._newUrl = url;
     }
 
     /**
@@ -41,17 +52,21 @@ export class ChangeContactCommand extends AbstractCommand implements ICommand {
         this._oldContact = null;
         this._nullInfo = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        if (doc.info === undefined || doc.info === null) {
+        if (document.info === undefined || document.info === null) {
             this._nullInfo = true;
-            doc.info = doc.createInfo();
+            document.info = document.createInfo();
             this._oldContact = null;
         } else {
-            this._oldContact = doc.info.contact;
+            this._oldContact = null;
+            if (document.info.contact) {
+                this._oldContact = this.oasLibrary().writeNode(document.info.contact);
+            }
         }
-        doc.info.contact = this._newContact;
-        doc.info.contact._parent = doc.info;
-        doc.info.contact._ownerDocument = doc;
+
+        document.info.contact = document.info.createContact();
+        document.info.contact.name = this._newName;
+        document.info.contact.url = this._newUrl;
+        document.info.contact.email = this._newEmail;
     }
 
     /**
@@ -60,14 +75,28 @@ export class ChangeContactCommand extends AbstractCommand implements ICommand {
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeContactCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullInfo) {
-            doc.info = null;
+            document.info = null;
         } else if (this._oldContact) {
-            this._oldContact._parent = doc.info;
-            this._oldContact._ownerDocument = doc;
-            doc.info.contact = this._oldContact;
+            document.info.contact = document.info.createContact();
+            this.oasLibrary().readNode(this._oldContact, document.info.contact);
         }
     }
+
+}
+
+
+/**
+ * The OAI 2.0 impl.
+ */
+export class ChangeContactCommand_20 extends AbstractChangeContactCommand {
+
+}
+
+
+/**
+ * The OAI 3.0 impl.
+ */
+export class ChangeContactCommand_30 extends AbstractChangeContactCommand {
 
 }
