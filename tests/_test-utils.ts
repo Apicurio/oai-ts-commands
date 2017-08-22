@@ -17,24 +17,41 @@
  */
 
 import {OasDocument, OasLibraryUtils} from "oai-ts-core";
+import {ICommand} from "../src/base";
 
 var library = new OasLibraryUtils();
 
-export function commandTest(beforeFile: string, afterFile: string, mutator: (document: OasDocument) => void, debug?: boolean): void {
-    let json: any = readJSON(beforeFile);
-    let document: OasDocument = library.createDocument(json);
+export function commandTest(beforeFile: string, afterFile: string, command: (document: OasDocument) => ICommand, debug?: boolean): void {
+    let before: any = readJSON(beforeFile);
+    let after: any = readJSON(afterFile);
 
-    // Create and execute the command.
-    mutator(document);
+    let document: OasDocument = library.createDocument(before);
+
+    // Create the command.
+    let cmd: ICommand = command(document);
+
+    // Execute the command
+    cmd.execute(document);
 
     // Check the result.
     let actual: any = library.writeNode(document);
-    let expected: any = readJSON(afterFile);
-
+    let expected: any = after;
     if (debug) {
-        console.info("------- ACTUAL --------\n " + JSON.stringify(actual, null, 2) + "\n-------------------");
-        console.info("------- EXPECTED --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
+        console.info("------- ACTUAL (exec) --------\n " + JSON.stringify(actual, null, 2) + "\n-------------------");
+        console.info("------- EXPECTED (exec) --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
     }
-
     expect(actual).toEqual(expected);
+
+    // Undo the command
+    cmd.undo(document);
+
+    // Check again
+    actual = library.writeNode(document);
+    expected = before;
+    if (debug) {
+        console.info("------- ACTUAL (undo) --------\n " + JSON.stringify(actual, null, 2) + "\n-------------------");
+        console.info("------- EXPECTED (undo) --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
+    }
+    expect(actual).toEqual(expected);
+
 }

@@ -80,6 +80,8 @@ export abstract class AbstractChangeContactCommand extends AbstractCommand imple
         } else if (this._oldContact) {
             document.info.contact = document.info.createContact();
             this.oasLibrary().readNode(this._oldContact, document.info.contact);
+        } else {
+            document.info.contact = null;
         }
     }
 

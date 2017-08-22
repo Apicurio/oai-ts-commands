@@ -25,7 +25,8 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
 
     private _newLicenseName: string;
     private _newLicenseUrl: string;
-    private _oldLicense: Oas20License;
+
+    private _oldLicense: any;
     private _nullInfo: boolean;
 
     constructor(name: string, url: string) {
@@ -49,7 +50,10 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
             doc.info = doc.createInfo();
             this._oldLicense = null;
         } else {
-            this._oldLicense = doc.info.license;
+            this._oldLicense = null;
+            if (doc.info.license) {
+                this._oldLicense = this.oasLibrary().writeNode(doc.info.license);
+            }
         }
         doc.info.license = doc.info.createLicense();
         doc.info.license.name = this._newLicenseName;
@@ -66,9 +70,10 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
         if (this._nullInfo) {
             doc.info = null;
         } else if (this._oldLicense) {
-            this._oldLicense._parent = doc.info;
-            this._oldLicense._ownerDocument = doc;
-            doc.info.license = this._oldLicense;
+            doc.info.license = doc.info.createLicense();
+            this.oasLibrary().readNode(this._oldLicense, doc.info.license);
+        } else {
+            doc.info.license = null;
         }
     }
 

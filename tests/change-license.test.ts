@@ -17,8 +17,6 @@
  * limitations under the License.
  */
 
-import {Oas20Document} from "oai-ts-core";
-import {ICommand} from "../src/base";
 import {ChangeLicenseCommand} from "../src/commands/change-license.command";
 import {commandTest} from "./_test-utils";
 
@@ -29,9 +27,8 @@ describe("Change License (2.0)", () => {
         commandTest(
             "tests/fixtures/change-license/2.0/add-license.before.json",
             "tests/fixtures/change-license/2.0/add-license.after.json",
-            (document: Oas20Document) => {
-                let command: ICommand = new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
-                command.execute(document);
+            () => {
+                return new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
@@ -40,9 +37,8 @@ describe("Change License (2.0)", () => {
         commandTest(
             "tests/fixtures/change-license/2.0/change-license.before.json",
             "tests/fixtures/change-license/2.0/change-license.after.json",
-            (document: Oas20Document) => {
-                let command: ICommand = new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
-                command.execute(document);
+            () => {
+                return new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });

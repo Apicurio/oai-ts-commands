@@ -17,10 +17,8 @@
  * limitations under the License.
  */
 
-import {Oas20Document, Oas30Document, OasLibraryUtils} from "oai-ts-core";
-import {ICommand} from "../src/base";
+import {OasLibraryUtils} from "oai-ts-core";
 import {commandTest} from "./_test-utils";
-import {AddDefinitionCommand_20, AddDefinitionCommand_30} from "../src/commands/add-definition.command";
 import {ChangeContactCommand_20, ChangeContactCommand_30} from "../src/commands/change-contact-info.command";
 
 
@@ -32,9 +30,8 @@ describe("Change Contact Info (2.0)", () => {
         commandTest(
             "tests/fixtures/change-contact-info/2.0/add-contact-info.before.json",
             "tests/fixtures/change-contact-info/2.0/add-contact-info.after.json",
-            (document: Oas20Document) => {
-                let command: ICommand = new ChangeContactCommand_20("New Contact", "new.contact@example.com", "urn:example.org/newContact");
-                command.execute(document);
+            () => {
+                return new ChangeContactCommand_20("New Contact", "new.contact@example.com", "urn:example.org/newContact");
             }
         );
     });
@@ -43,9 +40,8 @@ describe("Change Contact Info (2.0)", () => {
         commandTest(
             "tests/fixtures/change-contact-info/2.0/update-contact-info.before.json",
             "tests/fixtures/change-contact-info/2.0/update-contact-info.after.json",
-            (document: Oas20Document) => {
-                let command: ICommand = new ChangeContactCommand_20("Updated Contact", "updated.contact@example.com", "urn:example.org/updatedContact");
-                command.execute(document);
+            () => {
+                return new ChangeContactCommand_20("Updated Contact", "updated.contact@example.com", "urn:example.org/updatedContact");
             }
         );
     });
@@ -61,9 +57,8 @@ describe("Change Contact Info (3.0)", () => {
         commandTest(
             "tests/fixtures/change-contact-info/3.0/add-contact-info.before.json",
             "tests/fixtures/change-contact-info/3.0/add-contact-info.after.json",
-            (document: Oas30Document) => {
-                let command: ICommand = new ChangeContactCommand_30("New Contact", "new.contact@example.com", "urn:example.org/newContact");
-                command.execute(document);
+            () => {
+                return new ChangeContactCommand_30("New Contact", "new.contact@example.com", "urn:example.org/newContact");
             }
         );
     });
@@ -72,9 +67,8 @@ describe("Change Contact Info (3.0)", () => {
         commandTest(
             "tests/fixtures/change-contact-info/3.0/update-contact-info.before.json",
             "tests/fixtures/change-contact-info/3.0/update-contact-info.after.json",
-            (document: Oas30Document) => {
-                let command: ICommand = new ChangeContactCommand_30("Updated Contact", "updated.contact@example.com", "urn:example.org/updatedContact");
-                command.execute(document);
+            () => {
+                return new ChangeContactCommand_30("Updated Contact", "updated.contact@example.com", "urn:example.org/updatedContact");
             }
         );
     });

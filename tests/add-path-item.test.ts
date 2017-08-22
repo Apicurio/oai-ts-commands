@@ -18,7 +18,6 @@
  */
 
 import {Oas20Document, Oas30Document, OasLibraryUtils} from "oai-ts-core";
-import {ICommand} from "../src/base";
 import {commandTest} from "./_test-utils";
 import {AddPathItemCommand_20, AddPathItemCommand_30} from "../src/commands/add-path.command";
 
@@ -33,8 +32,7 @@ describe("Add Path Item (2.0)", () => {
             "tests/fixtures/add-path-item/2.0/clone-path-item.after.json",
             (document: Oas20Document) => {
                 let pathItemObj: any = library.writeNode(document.paths.pathItem("/pets"));
-                let command: ICommand = new AddPathItemCommand_20("/clonedPets", pathItemObj);
-                command.execute(document);
+                return new AddPathItemCommand_20("/clonedPets", pathItemObj);
             }
         );
     });
@@ -43,9 +41,8 @@ describe("Add Path Item (2.0)", () => {
         commandTest(
             "tests/fixtures/add-path-item/2.0/add-path-item.before.json",
             "tests/fixtures/add-path-item/2.0/add-path-item.after.json",
-            (document: Oas20Document) => {
-                let command: ICommand = new AddPathItemCommand_20("/newPath", {});
-                command.execute(document);
+            () => {
+                return new AddPathItemCommand_20("/newPath", {});
             }
         );
     });
@@ -63,8 +60,7 @@ describe("Add Path Item (3.0)", () => {
             "tests/fixtures/add-path-item/3.0/clone-path-item.after.json",
             (document: Oas30Document) => {
                 let defObj: any = library.writeNode(document.paths.pathItem("/foo"));
-                let command: ICommand = new AddPathItemCommand_30("/clonedFoo", defObj);
-                command.execute(document);
+                return new AddPathItemCommand_30("/clonedFoo", defObj);
             }
         );
     });
@@ -73,9 +69,8 @@ describe("Add Path Item (3.0)", () => {
         commandTest(
             "tests/fixtures/add-path-item/3.0/add-path-item.before.json",
             "tests/fixtures/add-path-item/3.0/add-path-item.after.json",
-            (document: Oas30Document) => {
-                let command: ICommand = new AddPathItemCommand_30("/newPath", {});
-                command.execute(document);
+            () => {
+                return new AddPathItemCommand_30("/newPath", {});
             }
         );
     });
