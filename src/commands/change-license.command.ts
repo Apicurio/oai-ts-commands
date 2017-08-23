@@ -21,7 +21,7 @@ import {OasDocument, Oas20Document, Oas20License} from "oai-ts-core";
 /**
  * A command used to modify the license information of a document.
  */
-export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeLicenseCommand extends AbstractCommand implements ICommand {
 
     private _newLicenseName: string;
     private _newLicenseUrl: string;
@@ -29,6 +29,11 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
     private _oldLicense: any;
     private _nullInfo: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} name
+     * @param {string} url
+     */
     constructor(name: string, url: string) {
         super();
         this._newLicenseName = name;
@@ -44,20 +49,19 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
         this._oldLicense = null;
         this._nullInfo = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        if (doc.info === undefined || doc.info === null) {
+        if (this.isNullOrUndefined(document.info)) {
             this._nullInfo = true;
-            doc.info = doc.createInfo();
+            document.info = document.createInfo();
             this._oldLicense = null;
         } else {
             this._oldLicense = null;
-            if (doc.info.license) {
-                this._oldLicense = this.oasLibrary().writeNode(doc.info.license);
+            if (!this.isNullOrUndefined(document.info.license)) {
+                this._oldLicense = this.oasLibrary().writeNode(document.info.license);
             }
         }
-        doc.info.license = doc.info.createLicense();
-        doc.info.license.name = this._newLicenseName;
-        doc.info.license.url = this._newLicenseUrl;
+        document.info.license = document.info.createLicense();
+        document.info.license.name = this._newLicenseName;
+        document.info.license.url = this._newLicenseUrl;
     }
 
     /**
@@ -66,15 +70,30 @@ export class ChangeLicenseCommand extends AbstractCommand implements ICommand {
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeLicenseCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullInfo) {
-            doc.info = null;
+            document.info = null;
         } else if (this._oldLicense) {
-            doc.info.license = doc.info.createLicense();
-            this.oasLibrary().readNode(this._oldLicense, doc.info.license);
+            document.info.license = document.info.createLicense();
+            this.oasLibrary().readNode(this._oldLicense, document.info.license);
         } else {
-            doc.info.license = null;
+            document.info.license = null;
         }
     }
+
+}
+
+
+/**
+ * The OAI 2.0 impl.
+ */
+export class ChangeLicenseCommand_20 extends AbstractChangeLicenseCommand {
+
+}
+
+
+/**
+ * The OAI 3.0 impl.
+ */
+export class ChangeLicenseCommand_30 extends AbstractChangeLicenseCommand {
 
 }

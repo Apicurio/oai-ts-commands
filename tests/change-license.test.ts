@@ -17,8 +17,8 @@
  * limitations under the License.
  */
 
-import {ChangeLicenseCommand} from "../src/commands/change-license.command";
 import {commandTest} from "./_test-utils";
+import {ChangeLicenseCommand_20, ChangeLicenseCommand_30} from "../src/commands/change-license.command";
 
 
 describe("Change License (2.0)", () => {
@@ -28,7 +28,7 @@ describe("Change License (2.0)", () => {
             "tests/fixtures/change-license/2.0/add-license.before.json",
             "tests/fixtures/change-license/2.0/add-license.after.json",
             () => {
-                return new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+                return new ChangeLicenseCommand_20("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
@@ -38,7 +38,32 @@ describe("Change License (2.0)", () => {
             "tests/fixtures/change-license/2.0/change-license.before.json",
             "tests/fixtures/change-license/2.0/change-license.after.json",
             () => {
-                return new ChangeLicenseCommand("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+                return new ChangeLicenseCommand_20("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            }
+        );
+    });
+
+});
+
+
+describe("Change License (3.0)", () => {
+
+    it("Add License", () => {
+        commandTest(
+            "tests/fixtures/change-license/3.0/add-license.before.json",
+            "tests/fixtures/change-license/3.0/add-license.after.json",
+            () => {
+                return new ChangeLicenseCommand_30("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            }
+        );
+    });
+
+    it("Change License", () => {
+        commandTest(
+            "tests/fixtures/change-license/3.0/change-license.before.json",
+            "tests/fixtures/change-license/3.0/change-license.after.json",
+            () => {
+                return new ChangeLicenseCommand_30("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
