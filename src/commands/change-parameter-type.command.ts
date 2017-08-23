@@ -16,22 +16,33 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20Items, Oas20Parameter, Oas20Schema, OasDocument, OasNodePath} from "oai-ts-core";
+import {
+    IOasParameterParent, Oas20Document,
+    Oas20Parameter, Oas20ParameterDefinition, Oas30Document,
+    Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition, Oas30Schema,
+    OasDocument,
+    OasNodePath,
+    OasParameterBase
+} from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
  * A command used to modify the type of a parameter of an operation.
  */
-export class ChangeParameterTypeCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeParameterTypeCommand extends AbstractCommand implements ICommand {
 
-    private _paramPath: OasNodePath;
-    private _newType: SimplifiedType;
-    private _oldType: string;
-    private _oldFormat: string;
-    private _oldItems: Oas20Items;
-    private _oldSchema: Oas20Schema;
+    protected _paramPath: OasNodePath;
+    protected _newType: SimplifiedType;
 
-    constructor(parameter: Oas20Parameter, newType: SimplifiedType) {
+    protected _oldParameter: any;
+
+    /**
+     * C'tor.
+     * @param {Oas20Parameter | Oas30Parameter | Oas20ParameterDefinition | Oas30ParameterDefinition} parameter
+     * @param {SimplifiedType} newType
+     */
+    constructor(parameter: Oas20Parameter | Oas30Parameter | Oas20ParameterDefinition | Oas30ParameterDefinition,
+                newType: SimplifiedType) {
         super();
         this._paramPath = this.oasLibrary().createNodePath(parameter);
         this._newType = newType;
@@ -43,19 +54,57 @@ export class ChangeParameterTypeCommand extends AbstractCommand implements IComm
      */
     public execute(document: OasDocument): void {
         console.info("[ChangeParameterTypeCommand] Executing: ");
-        let doc: Oas20Document = <Oas20Document> document;
-        let param: Oas20Parameter = <Oas20Parameter>this._paramPath.resolve(doc);
+        let param: OasParameterBase = this._paramPath.resolve(document) as OasParameterBase;
         if (!param) {
             return;
         }
 
         // Save the old info (for later undo operation)
-        this._oldType = param.type;
-        this._oldFormat = param.format;
-        this._oldItems = param.items;
-        this._oldSchema = param.schema as Oas20Schema;
+        this._oldParameter = this.oasLibrary().writeNode(param);
 
         // If it's a body param, change the schema child.  Otherwise change the param itself.
+        this.doChangeParameter(document, param);
+    }
+
+    /**
+     * Resets the param type back to its previous state.
+     * @param document
+     */
+    public undo(document: OasDocument): void {
+        console.info("[ChangeParameterTypeCommand] Reverting.");
+        let param: OasParameterBase = this._paramPath.resolve(document) as OasParameterBase;
+        if (!param) {
+            return;
+        }
+
+        let parent: IOasParameterParent = param.parent() as any;
+
+        let oldParam: OasParameterBase = parent.createParameter();
+        this.oasLibrary().readNode(this._oldParameter, oldParam);
+        let pindex: number = parent.parameters.indexOf(param);
+        parent.parameters.splice(pindex, 1, oldParam);
+    }
+
+    /**
+     * Changes the parameter.
+     * @param {OasDocument} document
+     * @param {OasParameterBase} parameter
+     */
+    protected abstract doChangeParameter(document: OasDocument, parameter: OasParameterBase): void;
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class ChangeParameterTypeCommand_20 extends AbstractChangeParameterTypeCommand {
+
+    /**
+     * Changes the parameter.
+     * @param {OasDocument} document
+     * @param {Oas20Parameter} param
+     */
+    protected doChangeParameter(document: OasDocument, param: Oas20Parameter): void {
         if (param.in === "body") {
             param.schema = param.createSchema();
 
@@ -97,30 +146,116 @@ export class ChangeParameterTypeCommand extends AbstractCommand implements IComm
         }
     }
 
+}
+
+
+/**
+ * OAI 2.0 impl specialized for changing parameter definitions.  Differs primarily in
+ * the undo logic.
+ */
+export class ChangeParameterDefinitionTypeCommand_20 extends ChangeParameterTypeCommand_20 {
+
+    /**
+     * C'tor.
+     * @param {Oas20ParameterDefinition} parameter
+     * @param {SimplifiedType} newType
+     */
+    constructor(parameter: Oas20ParameterDefinition, newType: SimplifiedType) {
+        super(parameter, newType);
+    }
+
     /**
      * Resets the param type back to its previous state.
      * @param document
      */
-    public undo(document: OasDocument): void {
-        console.info("[ChangeParameterTypeCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
-        let param: Oas20Parameter = <Oas20Parameter>this._paramPath.resolve(doc);
+    public undo(document: Oas20Document): void {
+        console.info("[ChangeParameterDefinitionType] Reverting.");
+        let param: Oas20ParameterDefinition = this._paramPath.resolve(document) as Oas20ParameterDefinition;
         if (!param) {
             return;
         }
 
-        param.type = this._oldType;
-        param.format = this._oldFormat;
-        param.items = this._oldItems;
-        if (param.items) {
-            param.items._parent = param;
-            param.items._ownerDocument = param.ownerDocument();
+        // Remove the old/updated parameter.
+        document.parameters.removeParameter(param.parameterName());
+
+        // Restore the parameter from before the command executed.
+        let oldParam: Oas20ParameterDefinition = document.parameters.createParameter(param.parameterName());
+        this.oasLibrary().readNode(this._oldParameter, oldParam);
+        document.parameters.addParameter(param.parameterName(), oldParam);
+    }
+
+}
+
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class ChangeParameterTypeCommand_30 extends AbstractChangeParameterTypeCommand {
+
+    /**
+     * Changes the parameter.
+     * @param {OasDocument} document
+     * @param {Oas30ParameterBase} parameter
+     */
+    protected doChangeParameter(document: OasDocument, parameter: Oas30ParameterBase): void {
+        let schema: Oas30Schema = parameter.createSchema();
+
+        if (this._newType.isRef()) {
+            schema.$ref = this._newType.type;
         }
-        param.schema = this._oldSchema;
-        if (param.schema) {
-            param.schema._parent = param;
-            param.schema._ownerDocument = param.ownerDocument();
+        if (this._newType.isSimpleType()) {
+            schema.type = this._newType.type;
+            schema.format = this._newType.as;
         }
+        if (this._newType.isArray()) {
+            schema.type = "array";
+            schema.items = schema.createItemsSchema();
+            if (this._newType.of) {
+                schema.items.type = this._newType.of.type;
+                schema.items.format = this._newType.of.as;
+            }
+        }
+
+        parameter.schema = schema;
+    }
+
+}
+
+
+/**
+ * OAI 3.0 impl specialized for changing parameter definitions.  Differs primarily in
+ * the undo logic.
+ */
+export class ChangeParameterDefinitionTypeCommand_30 extends ChangeParameterTypeCommand_30 {
+
+    /**
+     * C'tor.
+     * @param {Oas30ParameterDefinition} parameter
+     * @param {SimplifiedType} newType
+     */
+    constructor(parameter: Oas30ParameterDefinition, newType: SimplifiedType) {
+        super(parameter, newType);
+    }
+
+    /**
+     * Resets the param type back to its previous state.
+     * @param document
+     */
+    public undo(document: Oas30Document): void {
+        console.info("[ChangeParameterDefinitionType] Reverting.");
+        let param: Oas30ParameterDefinition = this._paramPath.resolve(document) as Oas30ParameterDefinition;
+        if (!param) {
+            return;
+        }
+
+        // Remove the old/updated parameter.
+        document.components.removeParameterDefinition(param.parameterName());
+
+        // Restore the parameter from before the command executed.
+        let oldParam: Oas30ParameterDefinition = document.components.createParameterDefinition(param.parameterName());
+        this.oasLibrary().readNode(this._oldParameter, oldParam);
+        document.components.addParameterDefinition(param.parameterName(), oldParam);
     }
 
 }

@@ -25,6 +25,11 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     let before: any = readJSON(beforeFile);
     let after: any = readJSON(afterFile);
 
+    expect(before === undefined).toBeFalsy();
+    expect(after === undefined).toBeFalsy();
+    expect(before === null).toBeFalsy();
+    expect(after === null).toBeFalsy();
+
     let document: OasDocument = library.createDocument(before);
 
     // Create the command.

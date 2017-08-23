@@ -16,7 +16,7 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document, Oas20License} from "oai-ts-core";
+import {OasDocument} from "oai-ts-core";
 
 /**
  * A command used to modify the license information of a document.
