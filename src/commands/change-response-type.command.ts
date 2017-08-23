@@ -16,19 +16,28 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20Response, Oas20Schema, OasDocument, OasNodePath} from "oai-ts-core";
+import {
+    Oas20Document, Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition, Oas20Schema, Oas30Response, OasDocument,
+    OasNodePath
+} from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
  * A command used to modify the type of a response.
  */
-export class ChangeResponseTypeCommand extends AbstractCommand implements ICommand {
+export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICommand {
 
     private _responsePath: OasNodePath;
     private _newType: SimplifiedType;
-    private _oldType: Oas20Schema;
 
-    constructor(response: Oas20Response, newType: SimplifiedType) {
+    private _oldSchema: any;
+
+    /**
+     * C'tor.
+     * @param {Oas20Response | Oas20ResponseDefinition} response
+     * @param {SimplifiedType} newType
+     */
+    constructor(response: Oas20Response | Oas20ResponseDefinition, newType: SimplifiedType) {
         super();
         this._responsePath = this.oasLibrary().createNodePath(response);
         this._newType = newType;
@@ -40,15 +49,14 @@ export class ChangeResponseTypeCommand extends AbstractCommand implements IComma
      */
     public execute(document: OasDocument): void {
         console.info("[ChangeResponseTypeCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        let response: Oas20Response = <Oas20Response>this._responsePath.resolve(doc);
+        let response: Oas20ResponseBase = this._responsePath.resolve(document) as Oas20ResponseBase;
         if (!response) {
             return;
         }
 
-        this._oldType = null;
+        this._oldSchema = null;
         if (response.schema) {
-            this._oldType = response.schema;
+            this._oldSchema = this.oasLibrary().writeNode(response.schema);
         }
 
         response.schema = response.createSchema();
@@ -74,17 +82,34 @@ export class ChangeResponseTypeCommand extends AbstractCommand implements IComma
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeResponseTypeCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
-        let response: Oas20Response = <Oas20Response>this._responsePath.resolve(doc);
+        let response: Oas20ResponseBase = this._responsePath.resolve(document) as Oas20ResponseBase;
         if (!response) {
             return;
         }
 
-        response.schema = this._oldType;
-        if (response.schema) {
-            response.schema._parent = response;
-            response.schema._ownerDocument = response.ownerDocument();
+        if (this._oldSchema) {
+            response.schema = response.createSchema();
+            this.oasLibrary().readNode(this._oldSchema, response.schema);
+        } else {
+            response.schema = null;
         }
+    }
+
+}
+
+
+/**
+ * Changes the type of a response definition.
+ */
+export class ChangeResponseDefinitionTypeCommand_20 extends ChangeResponseTypeCommand_20 {
+
+    /**
+     * C'tor.
+     * @param {Oas20Response | Oas20ResponseDefinition} response
+     * @param {SimplifiedType} newType
+     */
+    constructor(response: Oas20ResponseDefinition, newType: SimplifiedType) {
+        super(response, newType);
     }
 
 }
