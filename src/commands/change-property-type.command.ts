@@ -20,7 +20,7 @@ import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
- * A command used to modify the type of a property of an operation.
+ * A command used to modify the type of a property of a schema.
  */
 export class ChangePropertyTypeCommand extends AbstractCommand implements ICommand {
 
@@ -32,6 +32,11 @@ export class ChangePropertyTypeCommand extends AbstractCommand implements IComma
     private _oldFormat: string;
     private _oldItems: Oas20ItemsSchema | Oas20ItemsSchema[];
 
+    /**
+     * C'tor.
+     * @param {Oas20PropertySchema} property
+     * @param {SimplifiedType} newType
+     */
     constructor(property: Oas20PropertySchema, newType: SimplifiedType) {
         super();
         this._propPath = this.oasLibrary().createNodePath(property);

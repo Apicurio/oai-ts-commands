@@ -27,7 +27,6 @@ export * from "./commands/change-contact-info.command";
 export * from "./commands/change-description.command";
 export * from "./commands/change-license.command";
 export * from "./commands/change-parameter-type.command";
-export * from "./commands/change-path-parameters.command";
 export * from "./commands/change-property.command";
 export * from "./commands/change-property-type.command";
 export * from "./commands/change-response-type.command";
