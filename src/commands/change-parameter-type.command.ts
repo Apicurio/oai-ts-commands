@@ -62,7 +62,7 @@ export abstract class AbstractChangeParameterTypeCommand extends AbstractCommand
         // Save the old info (for later undo operation)
         this._oldParameter = this.oasLibrary().writeNode(param);
 
-        // If it's a body param, change the schema child.  Otherwise change the param itself.
+        // Change the parameter type
         this.doChangeParameter(document, param);
     }
 
@@ -105,6 +105,7 @@ export class ChangeParameterTypeCommand_20 extends AbstractChangeParameterTypeCo
      * @param {Oas20Parameter} param
      */
     protected doChangeParameter(document: OasDocument, param: Oas20Parameter): void {
+        // If it's a body param, change the schema child.  Otherwise change the param itself.
         if (param.in === "body") {
             param.schema = param.createSchema();
 

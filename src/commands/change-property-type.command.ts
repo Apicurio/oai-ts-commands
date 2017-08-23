@@ -15,30 +15,29 @@
  * limitations under the License.
  */
 
-import {Oas20Document, Oas20ItemsSchema, Oas20PropertySchema, OasDocument, OasNodePath} from "oai-ts-core";
+import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
  * A command used to modify the type of a property of a schema.
  */
-export class ChangePropertyTypeCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangePropertyTypeCommand extends AbstractCommand implements ICommand {
 
     private _propPath: OasNodePath;
+    private _propName: string;
     private _newType: SimplifiedType;
 
-    private _oldRef: string;
-    private _oldType: string;
-    private _oldFormat: string;
-    private _oldItems: Oas20ItemsSchema | Oas20ItemsSchema[];
+    protected _oldProperty: any;
 
     /**
      * C'tor.
-     * @param {Oas20PropertySchema} property
+     * @param {Oas20PropertySchema | Oas30PropertySchema} property
      * @param {SimplifiedType} newType
      */
-    constructor(property: Oas20PropertySchema, newType: SimplifiedType) {
+    constructor(property: Oas20PropertySchema | Oas30PropertySchema, newType: SimplifiedType) {
         super();
+        this._propName = property.propertyName();
         this._propPath = this.oasLibrary().createNodePath(property);
         this._newType = newType;
     }
@@ -49,22 +48,15 @@ export class ChangePropertyTypeCommand extends AbstractCommand implements IComma
      */
     public execute(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Executing: " + this._newType);
-        let doc: Oas20Document = <Oas20Document> document;
-        let prop: Oas20PropertySchema = <Oas20PropertySchema>this._propPath.resolve(doc);
+        let prop: OasSchema = this._propPath.resolve(document) as OasSchema;
         if (!prop) {
             return;
         }
 
         // Save the old info (for later undo operation)
-        this._oldRef = prop.$ref;
-        this._oldType = prop.type;
-        this._oldFormat = prop.format;
-        if (Array.isArray(prop.items)) {
-            this._oldItems = prop.items as Oas20ItemsSchema[];
-        } else if (prop.items) {
-            this._oldItems = prop.items as Oas20ItemsSchema;
-        }
+        this._oldProperty = this.oasLibrary().writeNode(prop);
 
+        // Update the schema's type
         if (this._newType.isSimpleType()) {
             prop.$ref = null;
             prop.type = this._newType.type;
@@ -99,25 +91,32 @@ export class ChangePropertyTypeCommand extends AbstractCommand implements IComma
      */
     public undo(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
-        let prop: Oas20PropertySchema = <Oas20PropertySchema>this._propPath.resolve(doc);
+        let prop: OasSchema = this._propPath.resolve(document) as OasSchema;
         if (!prop) {
             return;
         }
 
-        prop.$ref = this._oldRef;
-        prop.type = this._oldType;
-        prop.format = this._oldFormat;
-        prop.items = this._oldItems;
-        if (prop.items && Array.isArray(prop.items)) {
-            (<Oas20ItemsSchema[]>prop.items).forEach( schema => {
-                schema._parent = prop;
-                schema._ownerDocument = prop.ownerDocument();
-            });
-        } else if (prop.items) {
-            (<Oas20ItemsSchema>prop.items)._parent = prop;
-            (<Oas20ItemsSchema>prop.items)._ownerDocument = prop.ownerDocument();
-        }
+        let parentSchema: OasSchema = prop.parent() as OasSchema;
+        let oldProp: OasSchema = parentSchema.createPropertySchema(this._propName);
+        this.oasLibrary().readNode(this._oldProperty, oldProp);
+        parentSchema.removeProperty(this._propName);
+        parentSchema.addProperty(this._propName, oldProp);
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class ChangePropertyTypeCommand_20 extends AbstractChangePropertyTypeCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class ChangePropertyTypeCommand_30 extends AbstractChangePropertyTypeCommand {
 
 }
