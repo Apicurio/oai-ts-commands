@@ -21,12 +21,17 @@ import {OasDocument, Oas20Document} from "oai-ts-core";
 /**
  * A command used to modify the version of a document.
  */
-export class ChangeVersionCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeVersionCommand extends AbstractCommand implements ICommand {
 
     private _newVersion: string;
+
     private _oldVersion: string;
     private _nullInfo: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} newVersion
+     */
     constructor(newVersion: string) {
         super();
         this._newVersion = newVersion;
@@ -38,15 +43,14 @@ export class ChangeVersionCommand extends AbstractCommand implements ICommand {
      */
     public execute(document: OasDocument): void {
         console.info("[ChangeVersionCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (doc.info === undefined || doc.info === null) {
-            doc.info = doc.createInfo();
+        if (document.info === undefined || document.info === null) {
+            document.info = document.createInfo();
             this._nullInfo = true;
             this._oldVersion = null;
         } else {
-            this._oldVersion = doc.info.version;
+            this._oldVersion = document.info.version;
         }
-        doc.info.version = this._newVersion;
+        document.info.version = this._newVersion;
     }
 
     /**
@@ -55,12 +59,27 @@ export class ChangeVersionCommand extends AbstractCommand implements ICommand {
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeVersionCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullInfo) {
-            doc.info = null;
+            document.info = null;
         } else {
-            doc.info.version = this._oldVersion;
+            document.info.version = this._oldVersion;
         }
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class ChangeVersionCommand_20 extends AbstractChangeVersionCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class ChangeVersionCommand_30 extends AbstractChangeVersionCommand {
 
 }
