@@ -16,18 +16,22 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document, Oas20SecurityScheme} from "oai-ts-core";
+import {OasDocument, Oas20Document, Oas20SecurityScheme, Oas30SecurityScheme, Oas30Document} from "oai-ts-core";
 
 /**
- * A command used to modify the license information of a document.
+ * A command used to modify a security scheme.
  */
-export class ChangeSecuritySchemeCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeSecuritySchemeCommand extends AbstractCommand implements ICommand {
 
-    private _scheme: Oas20SecurityScheme;
+    protected _scheme: Oas20SecurityScheme | Oas30SecurityScheme;
 
-    private _oldScheme: Oas20SecurityScheme;
+    private _oldScheme: any;
 
-    constructor(scheme: Oas20SecurityScheme) {
+    /**
+     * C'tor.
+     * @param {Oas20SecurityScheme} scheme
+     */
+    constructor(scheme: Oas20SecurityScheme | Oas30SecurityScheme) {
         super();
         this._scheme = scheme;
     }
@@ -40,40 +44,16 @@ export class ChangeSecuritySchemeCommand extends AbstractCommand implements ICom
         console.info("[ChangeSecuritySchemeCommand] Executing.");
         this._oldScheme  = null;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.securityDefinitions)) {
-            return;
-        }
-
-        let scheme: Oas20SecurityScheme = doc.securityDefinitions.securityScheme(this._scheme.schemeName());
+        let scheme: Oas20SecurityScheme | Oas30SecurityScheme = this.getSchemeFromDocument(document);
         if (this.isNullOrUndefined(scheme)) {
             return;
         }
+
         // Back up the old scheme info (for undo)
-        this._oldScheme = doc.securityDefinitions.createSecurityScheme(this._scheme.schemeName());
-        this._oldScheme.description = scheme.description;
-        this._oldScheme.type = scheme.type;
-        this._oldScheme.name = scheme.name;
-        this._oldScheme.tokenUrl = scheme.tokenUrl;
-        this._oldScheme.authorizationUrl = scheme.authorizationUrl;
-        this._oldScheme.flow = scheme.flow;
-        this._oldScheme.in = scheme.in;
-        this._oldScheme.scopes = scheme.scopes;
+        this._oldScheme = this.oasLibrary().writeNode(scheme);
 
         // Replace with new scheme info
-        scheme.description = this._scheme.description;
-        scheme.type = this._scheme.type;
-        scheme.name = this._scheme.name;
-        scheme.tokenUrl = this._scheme.tokenUrl;
-        scheme.authorizationUrl = this._scheme.authorizationUrl;
-        scheme.flow = this._scheme.flow;
-        scheme.in = this._scheme.in;
-        scheme.scopes = scheme.createScopes();
-        if (this._scheme.scopes) {
-            this._scheme.scopes.scopes().forEach( name => {
-                scheme.scopes.addScope(name, this._scheme.scopes.getScopeDescription(name));
-            });
-        }
+        this.replaceSchemeWith(scheme, this._scheme);
     }
 
     /**
@@ -82,29 +62,110 @@ export class ChangeSecuritySchemeCommand extends AbstractCommand implements ICom
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeSecuritySchemeCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this.isNullOrUndefined(this._oldScheme)) {
             return;
         }
 
-        let scheme: Oas20SecurityScheme = doc.securityDefinitions.securityScheme(this._scheme.schemeName());
+        let scheme: Oas20SecurityScheme | Oas30SecurityScheme = this.getSchemeFromDocument(document);
         if (this.isNullOrUndefined(scheme)) {
             return;
         }
 
-        scheme.description = this._oldScheme.description;
-        scheme.type = this._oldScheme.type;
-        scheme.name = this._oldScheme.name;
-        scheme.tokenUrl = this._oldScheme.tokenUrl;
-        scheme.authorizationUrl = this._oldScheme.authorizationUrl;
-        scheme.flow = this._oldScheme.flow;
-        scheme.in = this._oldScheme.in;
-        scheme.scopes = scheme.createScopes();
-        if (this._oldScheme.scopes) {
-            this._oldScheme.scopes.scopes().forEach( name => {
-                scheme.scopes.addScope(name, this._oldScheme.scopes.getScopeDescription(name));
-            });
+        this.nullScheme(scheme);
+        this.oasLibrary().readNode(this._oldScheme, scheme);
+    }
+
+    /**
+     * Gets the scheme from the document.
+     * @param {OasDocument} document
+     * @return {Oas20SecurityScheme | Oas30SecurityScheme}
+     */
+    protected abstract getSchemeFromDocument(document: OasDocument): Oas20SecurityScheme | Oas30SecurityScheme;
+
+    /**
+     * Replaces the content of a scheme with the content from another scheme.
+     * @param {Oas20SecurityScheme | Oas30SecurityScheme} toScheme
+     * @param {Oas20SecurityScheme | Oas30SecurityScheme} fromScheme
+     */
+    protected replaceSchemeWith(toScheme: Oas20SecurityScheme | Oas30SecurityScheme, fromScheme: Oas20SecurityScheme | Oas30SecurityScheme): void {
+        let from: any = this.oasLibrary().writeNode(fromScheme);
+        this.nullScheme(toScheme);
+        this.oasLibrary().readNode(from, toScheme);
+    }
+
+    /**
+     * Null out all values in the given scheme.
+     * @param {Oas20SecurityScheme | Oas30SecurityScheme} scheme
+     */
+    protected nullScheme(scheme: Oas20SecurityScheme | Oas30SecurityScheme): void {
+        scheme.description = null;
+        scheme.type = null;
+        scheme.name = null;
+        scheme.in = null;
+    }
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class ChangeSecuritySchemeCommand_20 extends AbstractChangeSecuritySchemeCommand {
+
+    /**
+     * Return the scheme.
+     * @param {Oas20Document} document
+     * @return {Oas20SecurityScheme}
+     */
+    protected getSchemeFromDocument(document: Oas20Document): Oas20SecurityScheme {
+        if (this.isNullOrUndefined(document.securityDefinitions)) {
+            return;
         }
+        return document.securityDefinitions.securityScheme(this._scheme.schemeName());
+    }
+
+    /**
+     * Null out the scheme.
+     * @param {Oas20SecurityScheme} scheme
+     */
+    protected nullScheme(scheme: Oas20SecurityScheme): void {
+        super.nullScheme(scheme);
+        scheme.tokenUrl = null;
+        scheme.authorizationUrl = null;
+        scheme.flow = null;
+        scheme.scopes = null;
+    }
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class ChangeSecuritySchemeCommand_30 extends AbstractChangeSecuritySchemeCommand {
+
+    /**
+     * Return the scheme.
+     * @param {Oas30Document} document
+     * @return {Oas20SecurityScheme}
+     */
+    protected getSchemeFromDocument(document: Oas30Document): Oas30SecurityScheme {
+        if (this.isNullOrUndefined(document.components)) {
+            return;
+        }
+        return document.components.getSecurityScheme(this._scheme.schemeName());
+    }
+
+    /**
+     * Null out the scheme.
+     * @param {Oas30SecurityScheme} scheme
+     */
+    protected nullScheme(scheme: Oas30SecurityScheme): void {
+        super.nullScheme(scheme);
+        scheme.$ref = null;
+        scheme.scheme = null;
+        scheme.bearerFormat = null;
+        scheme.flows = null;
+        scheme.openIdConnectUrl = null;
     }
 
 }
