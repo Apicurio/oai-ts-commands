@@ -21,12 +21,17 @@ import {OasDocument, Oas20Document} from "oai-ts-core";
 /**
  * A command used to modify the title of a document.
  */
-export class ChangeTitleCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractChangeTitleCommand extends AbstractCommand implements ICommand {
 
     private _newTitle: string;
+
     private _oldTitle: string;
     private _nullInfo: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} newTitle
+     */
     constructor(newTitle: string) {
         super();
         this._newTitle = newTitle;
@@ -38,15 +43,14 @@ export class ChangeTitleCommand extends AbstractCommand implements ICommand {
      */
     public execute(document: OasDocument): void {
         console.info("[ChangeTitleCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (doc.info === undefined || doc.info === null) {
-            doc.info = doc.createInfo();
+        if (document.info === undefined || document.info === null) {
+            document.info = document.createInfo();
             this._nullInfo = true;
             this._oldTitle = null;
         } else {
-            this._oldTitle = doc.info.title;
+            this._oldTitle = document.info.title;
         }
-        doc.info.title = this._newTitle;
+        document.info.title = this._newTitle;
     }
 
     /**
@@ -55,12 +59,28 @@ export class ChangeTitleCommand extends AbstractCommand implements ICommand {
      */
     public undo(document: OasDocument): void {
         console.info("[ChangeTitleCommand] Reverting.");
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullInfo) {
-            doc.info = null;
+            document.info = null;
         } else {
-            doc.info.title = this._oldTitle;
+            document.info.title = this._oldTitle;
         }
     }
 
 }
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class ChangeTitleCommand_20 extends AbstractChangeTitleCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class ChangeTitleCommand_30 extends AbstractChangeTitleCommand {
+
+}
+
