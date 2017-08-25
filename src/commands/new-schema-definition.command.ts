@@ -23,7 +23,7 @@ import {
 /**
  * A command used to create a new definition in a document.
  */
-export class NewDefinitionCommand extends AbstractCommand implements ICommand {
+export class NewSchemaDefinitionCommand extends AbstractCommand implements ICommand {
 
     private _defExisted: boolean;
     private _newDefinitionName: string;

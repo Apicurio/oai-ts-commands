@@ -22,6 +22,9 @@ import {ICommand} from "../src/base";
 var library = new OasLibraryUtils();
 
 export function commandTest(beforeFile: string, afterFile: string, command: (document: OasDocument) => ICommand, debug?: boolean): void {
+    if (debug) {
+        console.info("======================    START   =============================")
+    }
     let before: any = readJSON(beforeFile);
     let after: any = readJSON(afterFile);
 
@@ -58,5 +61,9 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
         console.info("------- EXPECTED (undo) --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
     }
     expect(actual).toEqual(expected);
+
+    if (debug) {
+        console.info("======================    END   =============================")
+    }
 
 }
