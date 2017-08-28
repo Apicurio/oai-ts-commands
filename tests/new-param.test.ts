@@ -18,19 +18,18 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {DeleteAllParametersCommand_20, DeleteAllParametersCommand_30} from "../src/commands/delete-all-parameters.command";
+import {NewParamCommand_20, NewParamCommand_30} from "../src/commands/new-param.command";
 import {Oas20Document, Oas20Operation, Oas30Document, Oas30Operation} from "oai-ts-core";
 
 
-describe("Delete All Parameters (2.0)", () => {
+describe("New Parameter (2.0)", () => {
 
-    it("Delete All Parameters", () => {
+    it("New Parameter", () => {
         commandTest(
-            "tests/fixtures/delete-all-parameters/2.0/delete-all-parameters.before.json",
-            "tests/fixtures/delete-all-parameters/2.0/delete-all-parameters.after.json",
+            "tests/fixtures/new-param/2.0/new-param.before.json",
+            "tests/fixtures/new-param/2.0/new-param.after.json",
             (document: Oas20Document) => {
-                let operation: Oas20Operation = document.paths.pathItem("/pet/{petId}").post as Oas20Operation;
-                return new DeleteAllParametersCommand_20(operation, "formData");
+                return new NewParamCommand_20(document.paths.pathItem("/pets").get as Oas20Operation, "newParameter", "query");
             }
         );
     });
@@ -38,15 +37,14 @@ describe("Delete All Parameters (2.0)", () => {
 });
 
 
-describe("Delete All Parameters (3.0)", () => {
+describe("New Parameter (3.0)", () => {
 
-    it("Delete All Parameters", () => {
+    it("New Parameter", () => {
         commandTest(
-            "tests/fixtures/delete-all-parameters/3.0/delete-all-parameters.before.json",
-            "tests/fixtures/delete-all-parameters/3.0/delete-all-parameters.after.json",
+            "tests/fixtures/new-param/3.0/new-param.before.json",
+            "tests/fixtures/new-param/3.0/new-param.after.json",
             (document: Oas30Document) => {
-                let operation: Oas30Operation = document.paths.pathItem("/foo").get as Oas30Operation;
-                return new DeleteAllParametersCommand_30(operation, "query");
+                return new NewParamCommand_30(document.paths.pathItem("/foo").get as Oas30Operation, "newParameter", "query");
             }
         );
     });

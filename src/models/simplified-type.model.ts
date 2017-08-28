@@ -16,6 +16,7 @@
  */
 
 import {Oas20Items, Oas20ItemsSchema, OasSchema} from "oai-ts-core";
+import {ModelUtils} from "../util/model.util";
 
 
 /**
@@ -84,11 +85,7 @@ export class SimplifiedType {
     }
 
     public isRef(): boolean {
-        return !this.isNullOrUndefined(this.type) && this.type.indexOf("#/") === 0;
-    }
-
-    protected isNullOrUndefined(object: any): boolean {
-        return object === undefined || object === null;
+        return !ModelUtils.isNullOrUndefined(this.type) && this.type.indexOf("#/") === 0;
     }
 
 }

@@ -17,6 +17,7 @@
 
 
 import {OasDocument, OasLibraryUtils} from "oai-ts-core";
+import {ModelUtils} from "./util/model.util";
 
 /**
  * A base class for all command implementations.
@@ -30,7 +31,7 @@ export abstract class AbstractCommand {
      * @param object
      */
     protected isNullOrUndefined(object: any): boolean {
-        return object === undefined || object === null;
+        return ModelUtils.isNullOrUndefined(object);
     }
 
     /**

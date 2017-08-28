@@ -17,23 +17,25 @@
 
 import {
     IOasParameterParent,
-    Oas20Document,
     Oas20Operation,
-    Oas20Parameter,
     Oas20PathItem,
+    Oas30Operation,
+    Oas30PathItem,
     OasDocument,
-    OasNodePath
+    OasNodePath,
+    OasParameterBase
 } from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 
 /**
  * A command used to create a new parameter.
  */
-export class NewParamCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewParamCommand extends AbstractCommand implements ICommand {
 
     private _paramName: string;
     private _paramType: string;
     private _parentPath: OasNodePath;
+
     private _created: boolean;
 
     /**
@@ -42,7 +44,7 @@ export class NewParamCommand extends AbstractCommand implements ICommand {
      * @param paramName
      * @param paramType
      */
-    constructor(operation: Oas20Operation|Oas20PathItem, paramName: string, paramType: string) {
+    constructor(operation: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, paramName: string, paramType: string) {
         super();
         this._parentPath = this.oasLibrary().createNodePath(operation);
         this._paramName = paramName;
@@ -58,11 +60,10 @@ export class NewParamCommand extends AbstractCommand implements ICommand {
 
         this._created = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        let parent: IOasParameterParent = <any>this._parentPath.resolve(doc) as IOasParameterParent;
+        let parent: IOasParameterParent = <any>this._parentPath.resolve(document) as IOasParameterParent;
 
         if (this.isNullOrUndefined(parent)) {
-            console.info("[NewParamCommand] Operation is null.");
+            console.info("[NewParamCommand] Parent node (operation or path item) is null.");
             return;
         }
 
@@ -75,7 +76,7 @@ export class NewParamCommand extends AbstractCommand implements ICommand {
             parent.parameters = [];
         }
 
-        let param: Oas20Parameter = parent.createParameter() as Oas20Parameter;
+        let param: OasParameterBase = parent.createParameter() as OasParameterBase;
         param.in = this._paramType;
         param.name = this._paramName;
         if (param.in === "path") {
@@ -97,17 +98,15 @@ export class NewParamCommand extends AbstractCommand implements ICommand {
             return;
         }
 
-        let doc: Oas20Document = <Oas20Document> document;
-        let parent: IOasParameterParent = <any>this._parentPath.resolve(doc) as IOasParameterParent;
-
+        let parent: IOasParameterParent = <any>this._parentPath.resolve(document) as IOasParameterParent;
         if (this.isNullOrUndefined(parent)) {
             return;
         }
 
-        let theParam: Oas20Parameter = null;
+        let theParam: OasParameterBase = null;
         for (let param of parent.parameters) {
             if (param.in === this._paramType && param.name === this._paramName) {
-                theParam = param as Oas20Parameter;
+                theParam = param as OasParameterBase;
                 break;
             }
         }
@@ -134,5 +133,21 @@ export class NewParamCommand extends AbstractCommand implements ICommand {
             return value.in === paramType && value.name === paramName;
         }).length > 0;
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewParamCommand_20 extends AbstractNewParamCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewParamCommand_30 extends AbstractNewParamCommand {
 
 }

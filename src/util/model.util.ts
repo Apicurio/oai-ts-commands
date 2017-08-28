@@ -15,55 +15,13 @@
  * limitations under the License.
  */
 
-import {Oas20Parameter, Oas20PathItem, OasOperation} from "oai-ts-core";
-
 export class ModelUtils {
 
     /**
-     * Detects the appropriate path parameter names from a path.  For example, if the
-     * string "/resources/{fooId}/subresources/{barId}" is passed in, the following
-     * string array will be returned:  [ "fooId", "barId" ]
-     * @param path
-     * @return {string[]}
+     * Returns true if the given object is null or undefined.
+     * @param object
+     * @return {boolean}
      */
-    public static detectPathParamNames(path: string): string[] {
-        let segments: string[] = path.split('/');
-        let pnames: string[] = segments.filter(segment => {
-            return (segment.indexOf('{') === 0) && (segment.charAt(segment.length - 1) === '}');
-        }).map(segment => {
-            return segment.substring(1, segment.length - 1);
-        });
-        return pnames;
-    }
-
-    /**
-     * Goes through all of the operations defined on the given path item, then returns an array
-     * of the named path param (if it exists) for each operation.  This is useful when changing
-     * the description and/or type simultaneously for all path parameters with the same name
-     * for a given path.
-     * @param path
-     * @param paramName
-     * @return {Oas20Parameter[]}
-     */
-    public static getAllPathParams(path: Oas20PathItem, paramName: string): Oas20Parameter[] {
-        let operations: OasOperation[] = [
-            path.get, path.put, path.post, path.delete, path.options, path.head, path.patch
-        ];
-        let params: Oas20Parameter[] = [];
-        operations.filter(operation => {
-            return !ModelUtils.isNullOrUndefined(operation);
-        }).forEach( operation => {
-            if (operation.parameters) {
-                operation.parameters.forEach( parameter => {
-                    if (parameter.name === paramName && parameter.in === "path") {
-                        params.push(parameter as Oas20Parameter);
-                    }
-                });
-            }
-        });
-        return params;
-    }
-
     public static isNullOrUndefined(object: any): boolean {
         return object === undefined || object === null;
     }

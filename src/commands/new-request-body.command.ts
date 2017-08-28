@@ -16,17 +16,22 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Operation, OasNodePath, Oas20Parameter} from "oai-ts-core";
+import {Oas20Operation, Oas20Parameter, Oas30Operation, OasDocument, OasNodePath, OasOperation} from "oai-ts-core";
 
 /**
  * A command used to create a new request body (parameter of an operation).
  */
-export class NewRequestBodyCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewRequestBodyCommand extends AbstractCommand implements ICommand {
 
     private _operationPath: OasNodePath;
+    
     private _created: boolean;
 
-    constructor(operation: Oas20Operation) {
+    /**
+     * C'tor.
+     * @param {Oas20Operation} operation
+     */
+    constructor(operation: Oas20Operation | Oas30Operation) {
         super();
         this._operationPath = this.oasLibrary().createNodePath(operation);
     }
@@ -40,25 +45,15 @@ export class NewRequestBodyCommand extends AbstractCommand implements ICommand {
 
         this._created = false;
 
-        let operation: Oas20Operation = <Oas20Operation>this._operationPath.resolve(document);
-
+        let operation: OasOperation = this._operationPath.resolve(document) as OasOperation;
         if (this.isNullOrUndefined(operation)) {
             return;
         }
-
-        if (this.hasBodyParameter(operation)) {
+        if (this.hasRequestBody(operation)) {
             return;
         }
 
-        if (this.isNullOrUndefined(operation.parameters)) {
-            operation.parameters = [];
-        }
-
-        let param: Oas20Parameter = operation.createParameter();
-        param.in = "body";
-        param.name = "body";
-        operation.addParameter(param);
-
+        this.doCreateRequestBody(operation);
         this._created = true;
     }
 
@@ -72,12 +67,69 @@ export class NewRequestBodyCommand extends AbstractCommand implements ICommand {
             return;
         }
 
-        let operation: Oas20Operation = <Oas20Operation>this._operationPath.resolve(document);
-
+        let operation: OasOperation = this._operationPath.resolve(document) as OasOperation;
         if (this.isNullOrUndefined(operation)) {
             return;
         }
 
+        this.doRemoveRequestBody(operation);
+    }
+
+    /**
+     * Returns true if the given operation already has a body parameter.
+     * @param {OasOperation} operation
+     * @return {boolean}
+     */
+    protected abstract hasRequestBody(operation: OasOperation): boolean;
+
+    /**
+     * Creates an empty request body for the given operation.
+     * @param {OasOperation} operation
+     */
+    protected abstract doCreateRequestBody(operation: OasOperation): void;
+
+    /**
+     * Removes the request body.
+     */
+    protected abstract doRemoveRequestBody(operation: OasOperation): void;
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewRequestBodyCommand_20 extends AbstractNewRequestBodyCommand {
+
+    /**
+     * Returns true if the given operation has a body param.
+     * @param {Oas20Operation} operation
+     * @return {boolean}
+     */
+    protected hasRequestBody(operation: Oas20Operation): boolean {
+        return operation.parameters && operation.parameters.filter((value) => {
+            return value.in === "body";
+        }).length > 0;
+    }
+
+    /**
+     * Creates a body parameter for the given operation.
+     * @param {OasOperation} operation
+     */
+    protected doCreateRequestBody(operation: Oas20Operation): void {
+        if (this.isNullOrUndefined(operation.parameters)) {
+            operation.parameters = [];
+        }
+        let param: Oas20Parameter = operation.createParameter();
+        param.in = "body";
+        param.name = "body";
+        operation.addParameter(param);
+    }
+
+    /**
+     * Removes the body parameter.
+     * @param {Oas20Operation} operation
+     */
+    protected doRemoveRequestBody(operation: Oas20Operation): void {
         let bodyParam: Oas20Parameter = null;
         for (let param of operation.parameters) {
             if (param.in === "body") {
@@ -96,15 +148,37 @@ export class NewRequestBodyCommand extends AbstractCommand implements ICommand {
         }
     }
 
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewRequestBodyCommand_30 extends AbstractNewRequestBodyCommand {
+
     /**
-     * Returns true if the given operation already has a body parameter.
-     * @param operation
+     * Returns true if the given operation already has a request body.
+     * @param {OasOperation} operation
      * @return {boolean}
      */
-    private hasBodyParameter(operation: Oas20Operation): boolean {
-        return operation.parameters && operation.parameters.filter((value) => {
-            return value.in === "body";
-        }).length > 0;
+    protected hasRequestBody(operation: Oas30Operation): boolean {
+        return !this.isNullOrUndefined(operation.requestBody);
+    }
+
+    /**
+     * Creates a new, empty request body.
+     * @param {OasOperation} operation
+     */
+    protected doCreateRequestBody(operation: Oas30Operation): void {
+        operation.requestBody = operation.createRequestBody();
+    }
+
+    /**
+     * Removes the request body.
+     * @param {OasOperation} operation
+     */
+    protected doRemoveRequestBody(operation: Oas30Operation): void {
+        operation.requestBody = null;
     }
 
 }

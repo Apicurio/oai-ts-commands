@@ -16,17 +16,22 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20PathItem, OasDocument} from "oai-ts-core";
+import {OasDocument, OasPathItem} from "oai-ts-core";
 
 /**
  * A command used to create a new path item in a document.
  */
-export class NewPathCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewPathCommand extends AbstractCommand implements ICommand {
+
+    private _newPath: string;
 
     private _pathExisted: boolean;
-    private _newPath: string;
     private _nullPaths: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} newPath
+     */
     constructor(newPath: string) {
         super();
         this._newPath = newPath;
@@ -38,15 +43,14 @@ export class NewPathCommand extends AbstractCommand implements ICommand {
      */
     public execute(document: OasDocument): void {
         console.info("[NewPathCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.paths)) {
-            doc.paths = doc.createPaths();
+        if (this.isNullOrUndefined(document.paths)) {
+            document.paths = document.createPaths();
             this._nullPaths = true;
         }
 
-        if (this.isNullOrUndefined(doc.paths.pathItem(this._newPath))) {
-            let pathItem: Oas20PathItem = doc.paths.createPathItem(this._newPath) as Oas20PathItem;
-            doc.paths.addPathItem(this._newPath, pathItem);
+        if (this.isNullOrUndefined(document.paths.pathItem(this._newPath))) {
+            let pathItem: OasPathItem = document.paths.createPathItem(this._newPath) as OasPathItem;
+            document.paths.addPathItem(this._newPath, pathItem);
             this._pathExisted = false;
         } else {
             this._pathExisted = true;
@@ -64,14 +68,29 @@ export class NewPathCommand extends AbstractCommand implements ICommand {
             console.info("[NewPathCommand] path already existed, nothing done so no rollback necessary.");
             return;
         }
-        let doc: Oas20Document = <Oas20Document> document;
         if (this._nullPaths) {
             console.info("[NewPathCommand] Paths was null, deleting it.");
-            doc.paths = null;
+            document.paths = null;
         } else {
             console.info("[NewPathCommand] Removing a path item: %s", this._newPath);
-            doc.paths.removePathItem(this._newPath);
+            document.paths.removePathItem(this._newPath);
         }
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewPathCommand_20 extends AbstractNewPathCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewPathCommand_30 extends AbstractNewPathCommand {
 
 }

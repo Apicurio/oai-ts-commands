@@ -17,45 +17,67 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    OasDocument, Oas20Document, Oas20SchemaDefinition, Oas20SchemaFactory
+    Oas20Document,
+    Oas20SchemaDefinition,
+    Oas20SchemaFactory,
+    Oas30Document,
+    Oas30SchemaDefinition,
+    OasDocument
 } from "oai-ts-core";
 
 /**
  * A command used to create a new definition in a document.
  */
-export class NewSchemaDefinitionCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewSchemaDefinitionCommand extends AbstractCommand implements ICommand {
 
-    private _defExisted: boolean;
-    private _newDefinitionName: string;
-    private _newDefinitionExample: string;
-    private _nullDefinitions: boolean;
+    protected _newDefinitionName: string;
+    protected _newDefinitionExample: string | any;
 
-    constructor(definitionName: string, example: string) {
+    protected _defExisted: boolean;
+
+    /**
+     * C'tor.
+     * @param {string} definitionName
+     * @param {string} example
+     */
+    constructor(definitionName: string, example?: string | any) {
         super();
         this._newDefinitionName = definitionName;
         this._newDefinitionExample = example;
     }
 
+    public abstract execute(document: OasDocument): void;
+
+    public abstract undo(document: OasDocument): void;
+
+}
+
+        /**
+ * OAI 2.0 impl.
+ */
+export class NewSchemaDefinitionCommand_20 extends AbstractNewSchemaDefinitionCommand {
+
+    protected _nullDefinitions: boolean;
+
     /**
      * Adds the new definition to the document.
      * @param document
      */
-    public execute(document: OasDocument): void {
+    public execute(document: Oas20Document): void {
         console.info("[NewDefinitionCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.definitions)) {
-            doc.definitions = doc.createDefinitions();
+        if (this.isNullOrUndefined(document.definitions)) {
+            document.definitions = document.createDefinitions();
             this._nullDefinitions = true;
         }
 
-        if (this.isNullOrUndefined(doc.definitions.definition(this._newDefinitionName))) {
+        if (this.isNullOrUndefined(document.definitions.definition(this._newDefinitionName))) {
             let definition: Oas20SchemaDefinition;
-            if (this._newDefinitionExample) {
-                definition = new Oas20SchemaFactory().createSchemaDefinitionFromExample(doc, this._newDefinitionName, this._newDefinitionExample) as Oas20SchemaDefinition;
+            if (!this.isNullOrUndefined(this._newDefinitionExample)) {
+                definition = new Oas20SchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas20SchemaDefinition;
             } else {
-                definition = doc.definitions.createSchemaDefinition(this._newDefinitionName);
+                definition = document.definitions.createSchemaDefinition(this._newDefinitionName);
             }
-            doc.definitions.addDefinition(this._newDefinitionName, definition);
+            document.definitions.addDefinition(this._newDefinitionName, definition);
 
             this._defExisted = false;
         } else {
@@ -67,16 +89,70 @@ export class NewSchemaDefinitionCommand extends AbstractCommand implements IComm
      * Removes the definition.
      * @param document
      */
-    public undo(document: OasDocument): void {
+    public undo(document: Oas20Document): void {
         console.info("[NewDefinitionCommand] Reverting.");
+        if (this._nullDefinitions) {
+            document.definitions = null;
+        }
+
         if (this._defExisted) {
             return;
         }
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this._nullDefinitions) {
-            doc.definitions = null;
+        document.definitions.removeDefinition(this._newDefinitionName);
+    }
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewSchemaDefinitionCommand_30 extends AbstractNewSchemaDefinitionCommand {
+
+    protected _nullComponents: boolean;
+
+    /**
+     * Adds the new definition to the document.
+     * @param document
+     */
+    public execute(document: Oas30Document): void {
+        console.info("[NewDefinitionCommand] Executing.");
+
+        if (this.isNullOrUndefined(document.components)) {
+            document.components = document.createComponents();
+            this._nullComponents = true;
+        }
+        this._nullComponents = false;
+
+        if (this.isNullOrUndefined(document.components.getSchemaDefinition(this._newDefinitionName))) {
+            let definition: Oas30SchemaDefinition;
+            if (!this.isNullOrUndefined(this._newDefinitionExample)) {
+                definition = new Oas20SchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas30SchemaDefinition;
+            } else {
+                definition = document.components.createSchemaDefinition(this._newDefinitionName);
+            }
+            document.components.addSchemaDefinition(this._newDefinitionName, definition);
+
+            this._defExisted = false;
         } else {
-            doc.definitions.removeDefinition(this._newDefinitionName);
+            this._defExisted = true;
         }
     }
+
+    /**
+     * Removes the definition.
+     * @param document
+     */
+    public undo(document: Oas30Document): void {
+        console.info("[NewDefinitionCommand] Reverting.");
+        if (this._nullComponents) {
+            document.components = null;
+        }
+        if (this._defExisted) {
+            return;
+        }
+
+        document.components.removeSchemaDefinition(this._newDefinitionName);
+    }
+
 }

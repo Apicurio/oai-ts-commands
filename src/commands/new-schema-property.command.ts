@@ -16,15 +16,16 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20Schema, OasDocument, OasNodePath} from "oai-ts-core";
+import {Oas20Schema, Oas30Schema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 
 /**
  * A command used to create a new schema property.
  */
-export class NewSchemaPropertyCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewSchemaPropertyCommand extends AbstractCommand implements ICommand {
 
     private _propertyName: string;
     private _schemaPath: OasNodePath;
+
     private _created: boolean;
 
     /**
@@ -32,7 +33,7 @@ export class NewSchemaPropertyCommand extends AbstractCommand implements IComman
      * @param schema
      * @param propertyName
      */
-    constructor(schema: Oas20Schema, propertyName: string) {
+    constructor(schema: Oas20Schema | Oas30Schema, propertyName: string) {
         super();
         this._schemaPath = this.oasLibrary().createNodePath(schema);
         this._propertyName = propertyName;
@@ -47,9 +48,7 @@ export class NewSchemaPropertyCommand extends AbstractCommand implements IComman
 
         this._created = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        let schema: Oas20Schema = <Oas20Schema>this._schemaPath.resolve(doc);
-
+        let schema: OasSchema = this._schemaPath.resolve(document) as OasSchema;
         if (this.isNullOrUndefined(schema)) {
             console.info("[NewSchemaPropertyCommand] Schema is null.");
             return;
@@ -76,9 +75,7 @@ export class NewSchemaPropertyCommand extends AbstractCommand implements IComman
             return;
         }
 
-        let doc: Oas20Document = <Oas20Document> document;
-        let schema: Oas20Schema = <Oas20Schema>this._schemaPath.resolve(doc);
-
+        let schema: OasSchema = this._schemaPath.resolve(document) as OasSchema;
         if (this.isNullOrUndefined(schema)) {
             return;
         }
@@ -91,3 +88,20 @@ export class NewSchemaPropertyCommand extends AbstractCommand implements IComman
     }
 
 }
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewSchemaPropertyCommand_20 extends AbstractNewSchemaPropertyCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewSchemaPropertyCommand_30 extends AbstractNewSchemaPropertyCommand {
+
+}
+

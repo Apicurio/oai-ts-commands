@@ -16,17 +16,23 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document, Oas20PathItem, Oas20Operation} from "oai-ts-core";
+import {OasDocument, OasOperation, OasPathItem} from "oai-ts-core";
 
 /**
  * A command used to create a new operation in a path.
  */
-export class NewOperationCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewOperationCommand extends AbstractCommand implements ICommand {
 
     private _path: string;
     private _method: string;
+
     private _created: boolean;
 
+    /**
+     * C'tor.
+     * @param {string} path
+     * @param {string} method
+     */
     constructor(path: string, method: string) {
         super();
         this._path = path;
@@ -42,17 +48,16 @@ export class NewOperationCommand extends AbstractCommand implements ICommand {
 
         this._created = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.paths)) {
+        if (this.isNullOrUndefined(document.paths)) {
             return;
         }
 
-        let path: Oas20PathItem = doc.paths.pathItem(this._path) as Oas20PathItem;
+        let path: OasPathItem = document.paths.pathItem(this._path) as OasPathItem;
         if (this.isNullOrUndefined(path)) {
             return;
         }
 
-        let operation: Oas20Operation = path.createOperation(this._method);
+        let operation: OasOperation = path.createOperation(this._method);
         path[this._method] = operation;
 
         this._created = true;
@@ -68,12 +73,11 @@ export class NewOperationCommand extends AbstractCommand implements ICommand {
             return;
         }
 
-        let doc: Oas20Document = <Oas20Document> document;
-        if (this.isNullOrUndefined(doc.paths)) {
+        if (this.isNullOrUndefined(document.paths)) {
             return;
         }
 
-        let path: Oas20PathItem = doc.paths.pathItem(this._path) as Oas20PathItem;
+        let path: OasPathItem = document.paths.pathItem(this._path) as OasPathItem;
         if (this.isNullOrUndefined(path)) {
             return;
         }
@@ -82,3 +86,20 @@ export class NewOperationCommand extends AbstractCommand implements ICommand {
     }
 
 }
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewOperationCommand_20 extends AbstractNewOperationCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewOperationCommand_30 extends AbstractNewOperationCommand {
+
+}
+

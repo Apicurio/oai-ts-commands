@@ -16,18 +16,25 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, OasNodePath, Oas20Operation, Oas20Response} from "oai-ts-core";
+import {Oas20Operation, Oas30Operation, OasDocument, OasNodePath, OasOperation, OasResponse} from "oai-ts-core";
 
 /**
  * A command used to create a new response in an operation.
  */
-export class NewResponseCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewResponseCommand extends AbstractCommand implements ICommand {
 
     private _operationPath: OasNodePath;
     private _statusCode: string;
-    private _created: boolean;
 
-    constructor(operation: Oas20Operation, statusCode: string) {
+    private _created: boolean;
+    private _nullResponses: boolean;
+
+    /**
+     * C'tor.
+     * @param {Oas20Operation | Oas30Operation} operation
+     * @param {string} statusCode
+     */
+    constructor(operation: Oas20Operation | Oas30Operation, statusCode: string) {
         super();
         this._operationPath = this.oasLibrary().createNodePath(operation);
         this._statusCode = statusCode;
@@ -41,20 +48,21 @@ export class NewResponseCommand extends AbstractCommand implements ICommand {
         console.info("[NewResponseCommand] Executing.  Status Code=%s", this._statusCode);
 
         this._created = false;
+        this._nullResponses = false;
 
-        let operation: Oas20Operation = <Oas20Operation>this._operationPath.resolve(document);
+        let operation: OasOperation = this._operationPath.resolve(document) as OasOperation;
         if (this.isNullOrUndefined(operation)) {
             return;
         }
 
         if (this.isNullOrUndefined(operation.responses)) {
             operation.responses = operation.createResponses();
-            operation.responses
+            this._nullResponses = true;
         }
 
-        let response: Oas20Response = operation.responses.response(this._statusCode) as Oas20Response;
+        let response: OasResponse = operation.responses.response(this._statusCode) as OasResponse;
         if (this.isNullOrUndefined(response)) {
-            response = operation.responses.createResponse(this._statusCode) as Oas20Response;
+            response = operation.responses.createResponse(this._statusCode) as OasResponse;
             operation.responses.addResponse(this._statusCode, response);
             this._created = true;
         }
@@ -66,16 +74,38 @@ export class NewResponseCommand extends AbstractCommand implements ICommand {
      */
     public undo(document: OasDocument): void {
         console.info("[NewResponseCommand] Reverting.");
-        if (!this._created) {
+
+        let operation: OasOperation = this._operationPath.resolve(document) as OasOperation;
+        if (this.isNullOrUndefined(operation)) {
             return;
         }
 
-        let operation: Oas20Operation = <Oas20Operation>this._operationPath.resolve(document);
-        if (this.isNullOrUndefined(operation)) {
+        if (this._nullResponses) {
+            operation.responses = null;
+            return;
+        }
+
+        if (!this._created) {
             return;
         }
 
         operation.responses.removeResponse(this._statusCode);
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewResponseCommand_20 extends AbstractNewResponseCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewResponseCommand_30 extends AbstractNewResponseCommand {
 
 }

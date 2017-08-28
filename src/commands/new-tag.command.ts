@@ -16,19 +16,22 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20Tag, OasDocument} from "oai-ts-core";
+import {Oas20Document, Oas20Tag, OasDocument, OasTag} from "oai-ts-core";
 
 /**
  * A command used to create a new tag.
  */
-export class NewTagCommand extends AbstractCommand implements ICommand {
+export abstract class AbstractNewTagCommand extends AbstractCommand implements ICommand {
 
     private _tagName: string;
     private _tagDescription: string;
+
     private _created: boolean;
 
     /**
      * Constructor.
+     * @param {string} name
+     * @param {string} description
      */
     constructor(name: string, description?: string) {
         super();
@@ -38,29 +41,27 @@ export class NewTagCommand extends AbstractCommand implements ICommand {
 
     /**
      * Creates a request body parameter for the operation.
-     * @param document
+     * @param {OasDocument} document
      */
     public execute(document: OasDocument): void {
         console.info("[NewTagCommand] Executing.");
 
         this._created = false;
 
-        let doc: Oas20Document = <Oas20Document> document;
-
-        if (this.isNullOrUndefined(doc.tags)) {
-            doc.tags = [];
+        if (this.isNullOrUndefined(document.tags)) {
+            document.tags = [];
         }
 
-        let tag: Oas20Tag = this.findTag(doc, this._tagName);
+        let tag: OasTag = this.findTag(document, this._tagName);
         if (this.isNullOrUndefined(tag)) {
-            doc.addTag(this._tagName, this._tagDescription);
+            document.addTag(this._tagName, this._tagDescription);
             this._created = true;
         }
     }
 
     /**
      * Removes the previously created query param.
-     * @param document
+     * @param {OasDocument} document
      */
     public undo(document: OasDocument): void {
         console.info("[NewTagCommand] Reverting.");
@@ -68,22 +69,21 @@ export class NewTagCommand extends AbstractCommand implements ICommand {
             return;
         }
 
-        let doc: Oas20Document = <Oas20Document> document;
-        let tag: Oas20Tag = this.findTag(doc, this._tagName);
+        let tag: OasTag = this.findTag(document, this._tagName);
         if (this.isNullOrUndefined(tag)) {
             return;
         }
-        doc.tags.splice(doc.tags.indexOf(tag), 1);
+        document.tags.splice(document.tags.indexOf(tag), 1);
     }
 
     /**
      * Finds a single tag by its name.  No way to do this but iterate through the
      * tags array.
-     * @param doc
-     * @param tagName
-     * @return {any}
+     * @param {OasDocument} doc
+     * @param {string} tagName
+     * @return {OasTag}
      */
-    private findTag(doc: Oas20Document, tagName: string): Oas20Tag {
+    private findTag(doc: OasDocument, tagName: string): OasTag {
         for (let dt of doc.tags) {
             if (dt.name === tagName) {
                 return dt;
@@ -91,5 +91,21 @@ export class NewTagCommand extends AbstractCommand implements ICommand {
         }
         return null;
     }
+
+}
+
+
+/**
+ * OAI 2.0 impl.
+ */
+export class NewTagCommand_20 extends AbstractNewTagCommand {
+
+}
+
+
+/**
+ * OAI 3.0 impl.
+ */
+export class NewTagCommand_30 extends AbstractNewTagCommand {
 
 }
