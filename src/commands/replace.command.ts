@@ -16,26 +16,24 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {
-    Oas20Definitions,
-    Oas20Document,
-    Oas20Operation,
-    Oas20PathItem,
-    Oas20Paths,
-    Oas20SchemaDefinition,
-    OasDocument,
-    OasNode
-} from "oai-ts-core";
+import {Oas20Document, OasDocument, OasNode} from "oai-ts-core";
 
 
 /**
  * A command used to replace a path item with a newer version.
+ *
+ * TODO should serialize/deserialize the node instead of just keeping a reference to it (both for the old node and the replacement
  */
 export abstract class AbstractReplaceNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
 
     private _newNode: T;
     private _oldNode: T;
 
+    /**
+     * C'tor.
+     * @param {T} old
+     * @param {T} replacement
+     */
     constructor(old: T, replacement: T) {
         super();
         this._oldNode = old;
@@ -48,10 +46,9 @@ export abstract class AbstractReplaceNodeCommand<T extends OasNode> extends Abst
      */
     public execute(document: OasDocument): void {
         console.info("[AbstractReplaceNodeCommand] Executing.");
-        let doc: Oas20Document = <Oas20Document>document;
 
-        this.removeNode(doc, this._oldNode);
-        this.addNode(doc, this._newNode);
+        this.removeNode(document, this._oldNode);
+        this.addNode(document, this._newNode);
     }
 
     /**
@@ -72,91 +69,17 @@ export abstract class AbstractReplaceNodeCommand<T extends OasNode> extends Abst
         this.addNode(doc, this._oldNode);
     }
 
-    protected abstract removeNode(doc: Oas20Document, node: T): void;
-
-    protected abstract addNode(doc: Oas20Document, node: T): void;
-}
-
-
-/**
- * A command used to replace a definition schema with a newer version.
- */
-export class ReplaceDefinitionSchemaCommand extends AbstractReplaceNodeCommand<Oas20SchemaDefinition> implements ICommand {
+    /**
+     * Removes the given node from the data model.
+     * @param {OasDocument} doc
+     * @param {T} node
+     */
+    protected abstract removeNode(doc: OasDocument, node: T): void;
 
     /**
-     * Remove the given node.
-     * @param doc
-     * @param node
+     * Adds the given node to the data model.
+     * @param {OasDocument} doc
+     * @param {T} node
      */
-    protected removeNode(doc: Oas20Document, node: Oas20SchemaDefinition): void {
-        let definitions: Oas20Definitions = doc.definitions;
-        definitions.removeDefinition(node.definitionName());
-    }
-
-    /**
-     * Adds the node to the document.
-     * @param doc
-     * @param node
-     */
-    protected addNode(doc: Oas20Document, node: Oas20SchemaDefinition): void {
-        let definitions: Oas20Definitions = doc.definitions;
-        definitions.addDefinition(node.definitionName(), node);
-    }
-
-}
-
-
-/**
- * A command used to replace a path item with a newer version.
- */
-export class ReplacePathItemCommand extends AbstractReplaceNodeCommand<Oas20PathItem> implements ICommand {
-
-    /**
-     * Remove the given node.
-     * @param doc
-     * @param node
-     */
-    protected removeNode(doc: Oas20Document, node: Oas20PathItem): void {
-        let paths: Oas20Paths = <Oas20Paths>node.parent();
-        paths.removePathItem(node.path());
-    }
-
-    /**
-     * Adds the node to the document.
-     * @param doc
-     * @param node
-     */
-    protected addNode(doc: Oas20Document, node: Oas20PathItem): void {
-        let paths: Oas20Paths = doc.paths as Oas20Paths;
-        paths.addPathItem(node.path(), node);
-    }
-
-}
-
-
-/**
- * A command used to replace an operation with a newer version.
- */
-export class ReplaceOperationCommand extends AbstractReplaceNodeCommand<Oas20Operation> implements ICommand {
-
-    /**
-     * Remove the given node.
-     * @param doc
-     * @param node
-     */
-    protected removeNode(doc: Oas20Document, node: Oas20Operation): void {
-        let path: Oas20PathItem = <Oas20PathItem>node.parent();
-        path[node.method()] = null;
-    }
-
-    /**
-     * Adds the node to the document.
-     * @param doc
-     * @param node
-     */
-    protected addNode(doc: Oas20Document, node: Oas20Operation): void {
-        let path: Oas20PathItem = <Oas20PathItem>node.parent();
-        path[node.method()] = node;
-    }
-
+    protected abstract addNode(doc: OasDocument, node: T): void;
 }
