@@ -16,14 +16,34 @@
  */
 
 import {ICommand} from "../base";
-import {Oas20Document, Oas20Operation, Oas20PathItem, Oas30Document, Oas30Operation, Oas30PathItem} from "oai-ts-core";
-import {AbstractReplaceNodeCommand} from "./replace.command";
+import {
+    Oas20Document,
+    Oas20Operation,
+    Oas20PathItem,
+    Oas30Document,
+    Oas30Operation,
+    Oas30PathItem,
+    OasDocument
+} from "oai-ts-core";
+import {ReplaceNodeCommand} from "./replace.command";
 
+/**
+ * Factory function.
+ */
+export function createReplaceOperationCommand(document: OasDocument,
+                                              old: Oas20Operation | Oas30Operation,
+                                              replacement: Oas20Operation | Oas30Operation): ReplaceNodeCommand<Oas20Operation> | ReplaceNodeCommand<Oas30Operation> {
+    if (document.getSpecVersion() === "2.0") {
+        return new ReplaceOperationCommand_20(old as Oas20Operation, replacement as Oas20Operation);
+    } else {
+        return new ReplaceOperationCommand_30(old as Oas30Operation, replacement as Oas30Operation);
+    }
+}
 
 /**
  * A command used to replace an operation with a newer version.
  */
-export class ReplaceOperationCommand_20 extends AbstractReplaceNodeCommand<Oas20Operation> implements ICommand {
+export class ReplaceOperationCommand_20 extends ReplaceNodeCommand<Oas20Operation> implements ICommand {
 
     /**
      * Remove the given node.
@@ -51,7 +71,7 @@ export class ReplaceOperationCommand_20 extends AbstractReplaceNodeCommand<Oas20
 /**
  * A command used to replace an operation with a newer version.
  */
-export class ReplaceOperationCommand_30 extends AbstractReplaceNodeCommand<Oas30Operation> implements ICommand {
+export class ReplaceOperationCommand_30 extends ReplaceNodeCommand<Oas30Operation> implements ICommand {
 
     /**
      * Remove the given node.

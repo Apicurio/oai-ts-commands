@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewTagCommand_20, NewTagCommand_30} from "../src/commands/new-tag.command";
+import {createNewTagCommand} from "../src/commands/new-tag.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
 
 
 describe("New Tag (2.0)", () => {
@@ -27,8 +28,8 @@ describe("New Tag (2.0)", () => {
         commandTest(
             "tests/fixtures/new-tag/2.0/new-tag.before.json",
             "tests/fixtures/new-tag/2.0/new-tag.after.json",
-            () => {
-                return new NewTagCommand_20("tag3", "Tag 3 description");
+            (document: Oas20Document) => {
+                return createNewTagCommand(document, "tag3", "Tag 3 description");
             }
         );
     });
@@ -42,8 +43,8 @@ describe("New Tag (3.0)", () => {
         commandTest(
             "tests/fixtures/new-tag/3.0/new-tag.before.json",
             "tests/fixtures/new-tag/3.0/new-tag.after.json",
-            () => {
-                return new NewTagCommand_30("tag3", "Tag 3 description");
+            (document: Oas30Document) => {
+                return createNewTagCommand(document, "tag3", "Tag 3 description");
             }
         );
     });

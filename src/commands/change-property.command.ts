@@ -19,11 +19,22 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNode, OasNodePath} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createChangePropertyCommand<T>(document: OasDocument, node: OasNode, property: string, newValue: T): ChangePropertyCommand<T> {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangePropertyCommand_20<T>(node, property, newValue);
+    } else {
+        return new ChangePropertyCommand_30<T>(node, property, newValue);
+    }
+}
+
+/**
  * A command used to modify the simple property of a node.  Should not be used
  * to modify complex (object) properties, only simple property types like
  * string, boolean, number, etc.
  */
-export abstract class AbstractChangePropertyCommand<T> extends AbstractCommand implements ICommand {
+export abstract class ChangePropertyCommand<T> extends AbstractCommand implements ICommand {
 
     private _nodePath: OasNodePath;
     private _property: string;
@@ -81,12 +92,12 @@ export abstract class AbstractChangePropertyCommand<T> extends AbstractCommand i
 /**
  * OAI 2.0 impl.
  */
-export class ChangePropertyCommand_20<T> extends AbstractChangePropertyCommand<T> {
+export class ChangePropertyCommand_20<T> extends ChangePropertyCommand<T> {
 }
 
 
 /**
  * OAI 3.0 impl.
  */
-export class ChangePropertyCommand_30<T> extends AbstractChangePropertyCommand<T> {
+export class ChangePropertyCommand_30<T> extends ChangePropertyCommand<T> {
 }

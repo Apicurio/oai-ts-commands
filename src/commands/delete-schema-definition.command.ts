@@ -26,9 +26,20 @@ import {
 } from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createDeleteSchemaDefinitionCommand(document: OasDocument, definitionName: string): DeleteSchemaDefinitionCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteSchemaDefinitionCommand_20(definitionName);
+    } else {
+        return new DeleteSchemaDefinitionCommand_30(definitionName);
+    }
+}
+
+/**
  * A command used to delete a schema definition.
  */
-export abstract class AbstractDeleteSchemaDefinitionCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteSchemaDefinitionCommand extends AbstractCommand implements ICommand {
 
     protected _definitionName: string;
 
@@ -84,7 +95,7 @@ export abstract class AbstractDeleteSchemaDefinitionCommand extends AbstractComm
 /**
  * OAI 2.0 impl.
  */
-export class DeleteSchemaDefinitionCommand_20 extends AbstractDeleteSchemaDefinitionCommand {
+export class DeleteSchemaDefinitionCommand_20 extends DeleteSchemaDefinitionCommand {
 
     /**
      * Deletes the schema definition.
@@ -122,7 +133,7 @@ export class DeleteSchemaDefinitionCommand_20 extends AbstractDeleteSchemaDefini
 /**
  * OAI 3.0 impl.
  */
-export class DeleteSchemaDefinitionCommand_30 extends AbstractDeleteSchemaDefinitionCommand {
+export class DeleteSchemaDefinitionCommand_30 extends DeleteSchemaDefinitionCommand {
 
     /**
      * Deletes the schema definition.

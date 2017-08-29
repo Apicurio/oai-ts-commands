@@ -18,10 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    NewSchemaDefinitionCommand_20,
-    NewSchemaDefinitionCommand_30
-} from "../src/commands/new-schema-definition.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createNewSchemaDefinitionCommand} from "../src/commands/new-schema-definition.command";
 
 
 describe("New Schema Definition (2.0)", () => {
@@ -30,8 +28,8 @@ describe("New Schema Definition (2.0)", () => {
         commandTest(
             "tests/fixtures/new-schema-definition/2.0/new-schema-definition.before.json",
             "tests/fixtures/new-schema-definition/2.0/new-schema-definition.after.json",
-            () => {
-                return new NewSchemaDefinitionCommand_20("NewType");
+            (document: Oas20Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType");
             }
         );
     });
@@ -40,8 +38,8 @@ describe("New Schema Definition (2.0)", () => {
         commandTest(
             "tests/fixtures/new-schema-definition/2.0/new-schema-definition-with-example.before.json",
             "tests/fixtures/new-schema-definition/2.0/new-schema-definition-with-example.after.json",
-            () => {
-                return new NewSchemaDefinitionCommand_20("NewType", {
+            (document: Oas20Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType", {
                     "name": "Jason Bourne",
                     "age": 46,
                     "email": "jbourne@example.com",
@@ -59,8 +57,8 @@ describe("New Schema Definition (3.0)", () => {
         commandTest(
             "tests/fixtures/new-schema-definition/3.0/new-schema-definition.before.json",
             "tests/fixtures/new-schema-definition/3.0/new-schema-definition.after.json",
-            () => {
-                return new NewSchemaDefinitionCommand_30("NewType");
+            (document: Oas30Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType");
             }
         );
     });
@@ -69,8 +67,8 @@ describe("New Schema Definition (3.0)", () => {
         commandTest(
             "tests/fixtures/new-schema-definition/3.0/new-schema-definition-with-example.before.json",
             "tests/fixtures/new-schema-definition/3.0/new-schema-definition-with-example.after.json",
-            () => {
-                return new NewSchemaDefinitionCommand_30("NewType", {
+            (document: Oas30Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType", {
                     "name": "Jason Bourne",
                     "age": 46,
                     "email": "jbourne@example.com",

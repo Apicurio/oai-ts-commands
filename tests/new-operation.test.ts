@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewOperationCommand_20, NewOperationCommand_30} from "../src/commands/new-operation.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createNewOperationCommand} from "../src/commands/new-operation.command";
 
 
 describe("New Operation (2.0)", () => {
@@ -27,8 +28,8 @@ describe("New Operation (2.0)", () => {
         commandTest(
             "tests/fixtures/new-operation/2.0/new-operation.before.json",
             "tests/fixtures/new-operation/2.0/new-operation.after.json",
-            () => {
-                return new NewOperationCommand_20("/pets", "put");
+            (document: Oas20Document) => {
+                return createNewOperationCommand(document, "/pets", "put");
             }
         );
     });
@@ -42,8 +43,8 @@ describe("New Operation (3.0)", () => {
         commandTest(
             "tests/fixtures/new-operation/3.0/new-operation.before.json",
             "tests/fixtures/new-operation/3.0/new-operation.after.json",
-            () => {
-                return new NewOperationCommand_30("/foo", "put");
+            (document: Oas30Document) => {
+                return createNewOperationCommand(document, "/foo", "put");
             }
         );
     });

@@ -19,7 +19,7 @@
 
 import {commandTest} from "./_test-utils";
 import {Oas20Document, Oas20PropertySchema, Oas30Document, Oas30PropertySchema} from "oai-ts-core";
-import {DeletePropertyCommand_20, DeletePropertyCommand_30} from "../src/commands/delete-property.command";
+import {createDeletePropertyCommand} from "../src/commands/delete-property.command";
 
 
 describe("Delete Property (2.0)", () => {
@@ -30,7 +30,7 @@ describe("Delete Property (2.0)", () => {
             "tests/fixtures/delete-property/2.0/delete-property.after.json",
             (document: Oas20Document) => {
                 let schema: Oas20PropertySchema = document.definitions.definition("Order").property("petId") as Oas20PropertySchema;
-                return new DeletePropertyCommand_20(schema);
+                return createDeletePropertyCommand(document, schema);
             }
         );
     });
@@ -46,7 +46,7 @@ describe("Delete Property (3.0)", () => {
             "tests/fixtures/delete-property/3.0/delete-property.after.json",
             (document: Oas30Document) => {
                 let schema: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("address") as Oas30PropertySchema;
-                return new DeletePropertyCommand_30(schema);
+                return createDeletePropertyCommand(document, schema);
             }
         );
     });

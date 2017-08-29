@@ -19,11 +19,22 @@ import {Oas20Document, Oas20SchemaDefinition, Oas30Document, Oas30SchemaDefiniti
 import {AbstractCommand, ICommand} from "../base";
 
 /**
+ * Factory function.
+ */
+export function createAddDefinitionCommand(document: OasDocument, definitionName: string, obj: any): AddDefinitionCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new AddDefinitionCommand_20(definitionName, obj);
+    } else {
+        return new AddDefinitionCommand_30(definitionName, obj);
+    }
+}
+
+/**
  * A command used to add a new definition in a document.  Source for the new
  * definition must be provided.  This source will be converted to an OAS
  * definition object and then added to the data model.
  */
-export abstract class AbstractAddDefinitionCommand extends AbstractCommand implements ICommand {
+export abstract class AddDefinitionCommand extends AbstractCommand implements ICommand {
 
     protected _defExisted: boolean;
     protected _newDefinitionName: string;
@@ -34,7 +45,7 @@ export abstract class AbstractAddDefinitionCommand extends AbstractCommand imple
      * @param {string} definitionName
      * @param obj
      */
-    constructor(definitionName: string, obj: any) {
+    constructor(definitionName: string, obj?: any) {
         super();
         this._newDefinitionName = definitionName;
         this._newDefinitionObj = obj;
@@ -88,7 +99,7 @@ export abstract class AbstractAddDefinitionCommand extends AbstractCommand imple
 /**
  * OAI version 2.0 impl.
  */
-export class AddDefinitionCommand_20 extends AbstractAddDefinitionCommand {
+export class AddDefinitionCommand_20 extends AddDefinitionCommand {
 
     private _nullDefinitions: boolean;
 
@@ -130,7 +141,7 @@ export class AddDefinitionCommand_20 extends AbstractAddDefinitionCommand {
 /**
  * OAI version 3.0.x impl.
  */
-export class AddDefinitionCommand_30 extends AbstractAddDefinitionCommand {
+export class AddDefinitionCommand_30 extends AddDefinitionCommand {
 
     private _nullComponents: boolean;
 

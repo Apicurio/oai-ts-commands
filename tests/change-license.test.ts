@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ChangeLicenseCommand_20, ChangeLicenseCommand_30} from "../src/commands/change-license.command";
+import {createChangeLicenseCommand} from "../src/commands/change-license.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
 
 
 describe("Change License (2.0)", () => {
@@ -27,8 +28,8 @@ describe("Change License (2.0)", () => {
         commandTest(
             "tests/fixtures/change-license/2.0/add-license.before.json",
             "tests/fixtures/change-license/2.0/add-license.after.json",
-            () => {
-                return new ChangeLicenseCommand_20("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            (document: Oas20Document) => {
+                return createChangeLicenseCommand(document, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
@@ -37,8 +38,8 @@ describe("Change License (2.0)", () => {
         commandTest(
             "tests/fixtures/change-license/2.0/change-license.before.json",
             "tests/fixtures/change-license/2.0/change-license.after.json",
-            () => {
-                return new ChangeLicenseCommand_20("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            (document: Oas20Document) => {
+                return createChangeLicenseCommand(document, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
@@ -52,8 +53,8 @@ describe("Change License (3.0)", () => {
         commandTest(
             "tests/fixtures/change-license/3.0/add-license.before.json",
             "tests/fixtures/change-license/3.0/add-license.after.json",
-            () => {
-                return new ChangeLicenseCommand_30("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            (document: Oas30Document) => {
+                return createChangeLicenseCommand(document, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });
@@ -62,8 +63,8 @@ describe("Change License (3.0)", () => {
         commandTest(
             "tests/fixtures/change-license/3.0/change-license.before.json",
             "tests/fixtures/change-license/3.0/change-license.after.json",
-            () => {
-                return new ChangeLicenseCommand_30("Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
+            (document: Oas30Document) => {
+                return createChangeLicenseCommand(document, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html");
             }
         );
     });

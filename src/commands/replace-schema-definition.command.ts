@@ -21,15 +21,29 @@ import {
     Oas20Document,
     Oas20SchemaDefinition,
     Oas30Document,
-    Oas30SchemaDefinition
+    Oas30SchemaDefinition,
+    OasDocument
 } from "oai-ts-core";
-import {AbstractReplaceNodeCommand} from "./replace.command";
+import {ReplaceNodeCommand} from "./replace.command";
 
+
+/**
+ * Factory function.
+ */
+export function createReplaceSchemaDefinitionCommand(document: OasDocument,
+                                              old: Oas20SchemaDefinition | Oas30SchemaDefinition,
+                                              replacement: Oas20SchemaDefinition | Oas30SchemaDefinition): ReplaceNodeCommand<Oas20SchemaDefinition> | ReplaceNodeCommand<Oas30SchemaDefinition> {
+    if (document.getSpecVersion() === "2.0") {
+        return new ReplaceSchemaDefinitionCommand_20(old as Oas20SchemaDefinition, replacement as Oas20SchemaDefinition);
+    } else {
+        return new ReplaceSchemaDefinitionCommand_30(old as Oas30SchemaDefinition, replacement as Oas30SchemaDefinition);
+    }
+}
 
 /**
  * A command used to replace a definition schema with a newer version.
  */
-export class ReplaceSchemaDefinitionCommand_20 extends AbstractReplaceNodeCommand<Oas20SchemaDefinition> implements ICommand {
+export class ReplaceSchemaDefinitionCommand_20 extends ReplaceNodeCommand<Oas20SchemaDefinition> implements ICommand {
 
     /**
      * Remove the given node.
@@ -57,7 +71,7 @@ export class ReplaceSchemaDefinitionCommand_20 extends AbstractReplaceNodeComman
 /**
  * A command used to replace a definition schema with a newer version.
  */
-export class ReplaceSchemaDefinitionCommand_30 extends AbstractReplaceNodeCommand<Oas30SchemaDefinition> implements ICommand {
+export class ReplaceSchemaDefinitionCommand_30 extends ReplaceNodeCommand<Oas30SchemaDefinition> implements ICommand {
 
     /**
      * Remove the given node.

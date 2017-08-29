@@ -17,15 +17,30 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    Oas20Document, Oas20SecurityDefinitions, Oas20SecurityScheme, Oas30Document, Oas30SecurityScheme,
+    Oas20Document,
+    Oas20SecurityDefinitions,
+    Oas20SecurityScheme,
+    Oas30Document,
+    Oas30SecurityScheme,
     OasDocument
 } from "oai-ts-core";
 
 
 /**
+ * Factory function.
+ */
+export function createDeleteSecuritySchemeCommand(document: OasDocument, schemeName: string): DeleteSecuritySchemeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteSecuritySchemeCommand_20(schemeName);
+    } else {
+        return new DeleteSecuritySchemeCommand_30(schemeName);
+    }
+}
+
+/**
  * A command used to delete a security scheme.
  */
-export abstract class AbstractDeleteSecuritySchemeCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteSecuritySchemeCommand extends AbstractCommand implements ICommand {
 
     protected _schemeName: string;
 
@@ -78,7 +93,7 @@ export abstract class AbstractDeleteSecuritySchemeCommand extends AbstractComman
 /**
  * OAI 2.0 impl.
  */
-export class DeleteSecuritySchemeCommand_20 extends AbstractDeleteSecuritySchemeCommand {
+export class DeleteSecuritySchemeCommand_20 extends DeleteSecuritySchemeCommand {
 
     /**
      * Delete the scheme.
@@ -116,7 +131,7 @@ export class DeleteSecuritySchemeCommand_20 extends AbstractDeleteSecurityScheme
 /**
  * OAI 3.0 impl.
  */
-export class DeleteSecuritySchemeCommand_30 extends AbstractDeleteSecuritySchemeCommand {
+export class DeleteSecuritySchemeCommand_30 extends DeleteSecuritySchemeCommand {
 
     /**
      * Deletes the scheme.

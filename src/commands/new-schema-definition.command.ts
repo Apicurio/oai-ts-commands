@@ -25,10 +25,22 @@ import {
     OasSchemaFactory
 } from "oai-ts-core";
 
+
+/**
+ * Factory function.
+ */
+export function createNewSchemaDefinitionCommand(document: OasDocument, definitionName: string, example?: string | any): NewSchemaDefinitionCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewSchemaDefinitionCommand_20(definitionName, example);
+    } else {
+        return new NewSchemaDefinitionCommand_30(definitionName, example);
+    }
+}
+
 /**
  * A command used to create a new definition in a document.
  */
-export abstract class AbstractNewSchemaDefinitionCommand extends AbstractCommand implements ICommand {
+export abstract class NewSchemaDefinitionCommand extends AbstractCommand implements ICommand {
 
     protected _newDefinitionName: string;
     protected _newDefinitionExample: string | any;
@@ -55,7 +67,7 @@ export abstract class AbstractNewSchemaDefinitionCommand extends AbstractCommand
         /**
  * OAI 2.0 impl.
  */
-export class NewSchemaDefinitionCommand_20 extends AbstractNewSchemaDefinitionCommand {
+export class NewSchemaDefinitionCommand_20 extends NewSchemaDefinitionCommand {
 
     protected _nullDefinitions: boolean;
 
@@ -107,7 +119,7 @@ export class NewSchemaDefinitionCommand_20 extends AbstractNewSchemaDefinitionCo
 /**
  * OAI 3.0 impl.
  */
-export class NewSchemaDefinitionCommand_30 extends AbstractNewSchemaDefinitionCommand {
+export class NewSchemaDefinitionCommand_30 extends NewSchemaDefinitionCommand {
 
     protected _nullComponents: boolean;
 

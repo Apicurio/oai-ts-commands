@@ -16,13 +16,25 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document, Oas20SecurityScheme, Oas30SecurityScheme, Oas30Document} from "oai-ts-core";
+import {Oas20Document, Oas20SecurityScheme, Oas30Document, Oas30SecurityScheme, OasDocument} from "oai-ts-core";
+
+/**
+ * Factory function.
+ */
+export function createChangeSecuritySchemeCommand(document: OasDocument, scheme: Oas20SecurityScheme | Oas30SecurityScheme): ChangeSecuritySchemeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeSecuritySchemeCommand_20(scheme);
+    } else {
+        return new ChangeSecuritySchemeCommand_30(scheme);
+    }
+}
 
 /**
  * A command used to modify a security scheme.
  */
-export abstract class AbstractChangeSecuritySchemeCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implements ICommand {
 
+    // TODO should serialize the incoming data instead of just keeping a ref to the data model object
     protected _scheme: Oas20SecurityScheme | Oas30SecurityScheme;
 
     private _oldScheme: any;
@@ -109,7 +121,7 @@ export abstract class AbstractChangeSecuritySchemeCommand extends AbstractComman
 /**
  * OAI 2.0 impl.
  */
-export class ChangeSecuritySchemeCommand_20 extends AbstractChangeSecuritySchemeCommand {
+export class ChangeSecuritySchemeCommand_20 extends ChangeSecuritySchemeCommand {
 
     /**
      * Return the scheme.
@@ -141,7 +153,7 @@ export class ChangeSecuritySchemeCommand_20 extends AbstractChangeSecurityScheme
 /**
  * OAI 3.0 impl.
  */
-export class ChangeSecuritySchemeCommand_30 extends AbstractChangeSecuritySchemeCommand {
+export class ChangeSecuritySchemeCommand_30 extends ChangeSecuritySchemeCommand {
 
     /**
      * Return the scheme.

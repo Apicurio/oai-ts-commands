@@ -17,9 +17,15 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    IOasParameterParent, Oas20Document,
-    Oas20Parameter, Oas20ParameterDefinition, Oas30Document,
-    Oas30Parameter, Oas30ParameterBase, Oas30ParameterDefinition, Oas30Schema,
+    IOasParameterParent,
+    Oas20Document,
+    Oas20Parameter,
+    Oas20ParameterDefinition,
+    Oas30Document,
+    Oas30Parameter,
+    Oas30ParameterBase,
+    Oas30ParameterDefinition,
+    Oas30Schema,
     OasDocument,
     OasNodePath,
     OasParameterBase
@@ -27,9 +33,35 @@ import {
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
+ * Factory function.
+ */
+export function createChangeParameterTypeCommand(document: OasDocument,
+                                                 parameter: Oas20Parameter | Oas30Parameter,
+                                                 newType: SimplifiedType): ChangeParameterTypeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeParameterTypeCommand_20(parameter, newType);
+    } else {
+        return new ChangeParameterTypeCommand_30(parameter, newType);
+    }
+}
+
+/**
+ * Factory function.
+ */
+export function createChangeParameterDefinitionTypeCommand(document: OasDocument,
+                                                 parameter: Oas20ParameterDefinition | Oas30ParameterDefinition,
+                                                 newType: SimplifiedType): ChangeParameterTypeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeParameterDefinitionTypeCommand_20(parameter as Oas20ParameterDefinition, newType);
+    } else {
+        return new ChangeParameterDefinitionTypeCommand_30(parameter as Oas30ParameterDefinition, newType);
+    }
+}
+
+/**
  * A command used to modify the type of a parameter of an operation.
  */
-export abstract class AbstractChangeParameterTypeCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeParameterTypeCommand extends AbstractCommand implements ICommand {
 
     protected _paramPath: OasNodePath;
     protected _newType: SimplifiedType;
@@ -97,7 +129,7 @@ export abstract class AbstractChangeParameterTypeCommand extends AbstractCommand
 /**
  * OAI 2.0 impl.
  */
-export class ChangeParameterTypeCommand_20 extends AbstractChangeParameterTypeCommand {
+export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
 
     /**
      * Changes the parameter.
@@ -192,7 +224,7 @@ export class ChangeParameterDefinitionTypeCommand_20 extends ChangeParameterType
 /**
  * OAI 3.0 impl.
  */
-export class ChangeParameterTypeCommand_30 extends AbstractChangeParameterTypeCommand {
+export class ChangeParameterTypeCommand_30 extends ChangeParameterTypeCommand {
 
     /**
      * Changes the parameter.

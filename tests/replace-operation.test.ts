@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ReplaceOperationCommand_20, ReplaceOperationCommand_30} from "../src/commands/replace-operation.command";
 import {Oas20Document, Oas20Operation, Oas20PathItem, Oas30Document, Oas30Operation, Oas30PathItem} from "oai-ts-core";
+import {createReplaceOperationCommand} from "../src/commands/replace-operation.command";
 
 
 describe("Replace Operation (2.0)", () => {
@@ -35,7 +35,7 @@ describe("Replace Operation (2.0)", () => {
                 newOperation.description = "Totally does a thing";
                 newOperation.operationId = "doAThing";
                 newOperation.produces = [ "application/json" ];
-                return new ReplaceOperationCommand_20(pathItem.get as Oas20Operation, newOperation);
+                return createReplaceOperationCommand(document, pathItem.get as Oas20Operation, newOperation);
             }
         );
     });
@@ -56,7 +56,7 @@ describe("Replace Operation (3.0)", () => {
                 newOperation.description = "Totally does a thing";
                 newOperation.operationId = "doAThing";
                 newOperation.deprecated = true;
-                return new ReplaceOperationCommand_30(pathItem.get as Oas30Operation, newOperation);
+                return createReplaceOperationCommand(document, pathItem.get as Oas30Operation, newOperation);
             }
         );
     });

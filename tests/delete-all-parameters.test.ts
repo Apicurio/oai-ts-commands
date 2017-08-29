@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {DeleteAllParametersCommand_20, DeleteAllParametersCommand_30} from "../src/commands/delete-all-parameters.command";
 import {Oas20Document, Oas20Operation, Oas30Document, Oas30Operation} from "oai-ts-core";
+import {createDeleteAllParametersCommand} from "../src/commands/delete-all-parameters.command";
 
 
 describe("Delete All Parameters (2.0)", () => {
@@ -30,7 +30,7 @@ describe("Delete All Parameters (2.0)", () => {
             "tests/fixtures/delete-all-parameters/2.0/delete-all-parameters.after.json",
             (document: Oas20Document) => {
                 let operation: Oas20Operation = document.paths.pathItem("/pet/{petId}").post as Oas20Operation;
-                return new DeleteAllParametersCommand_20(operation, "formData");
+                return createDeleteAllParametersCommand(document, operation, "formData");
             }
         );
     });
@@ -46,7 +46,7 @@ describe("Delete All Parameters (3.0)", () => {
             "tests/fixtures/delete-all-parameters/3.0/delete-all-parameters.after.json",
             (document: Oas30Document) => {
                 let operation: Oas30Operation = document.paths.pathItem("/foo").get as Oas30Operation;
-                return new DeleteAllParametersCommand_30(operation, "query");
+                return createDeleteAllParametersCommand(document, operation, "query");
             }
         );
     });

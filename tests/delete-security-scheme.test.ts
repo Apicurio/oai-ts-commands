@@ -18,10 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    DeleteSecuritySchemeCommand_20,
-    DeleteSecuritySchemeCommand_30
-} from "../src/commands/delete-security-scheme.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createDeleteSecuritySchemeCommand} from "../src/commands/delete-security-scheme.command";
 
 
 describe("Delete Security Scheme (2.0)", () => {
@@ -30,8 +28,8 @@ describe("Delete Security Scheme (2.0)", () => {
         commandTest(
             "tests/fixtures/delete-security-scheme/2.0/delete-security-scheme.before.json",
             "tests/fixtures/delete-security-scheme/2.0/delete-security-scheme.after.json",
-            () => {
-                return new DeleteSecuritySchemeCommand_20("petstore_auth");
+            (document: Oas20Document) => {
+                return createDeleteSecuritySchemeCommand(document, "petstore_auth");
             }
         );
     });
@@ -45,8 +43,8 @@ describe("Delete Security Scheme (3.0)", () => {
         commandTest(
             "tests/fixtures/delete-security-scheme/3.0/delete-security-scheme.before.json",
             "tests/fixtures/delete-security-scheme/3.0/delete-security-scheme.after.json",
-            () => {
-                return new DeleteSecuritySchemeCommand_30("JWT");
+            (document: Oas30Document) => {
+                return createDeleteSecuritySchemeCommand(document, "JWT");
             }
         );
     });

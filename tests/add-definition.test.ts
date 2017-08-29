@@ -19,7 +19,7 @@
 
 import {Oas20Document, Oas30Document, OasLibraryUtils} from "oai-ts-core";
 import {commandTest} from "./_test-utils";
-import {AddDefinitionCommand_20, AddDefinitionCommand_30} from "../src/commands/add-definition.command";
+import {createAddDefinitionCommand} from "../src/commands/add-definition.command";
 
 
 describe("Add Definition (2.0)", () => {
@@ -32,7 +32,7 @@ describe("Add Definition (2.0)", () => {
             "tests/fixtures/add-definition/2.0/clone-definition.after.json",
             (document: Oas20Document) => {
                 let defObj: any = library.writeNode(document.definitions.definition("Category"));
-                return new AddDefinitionCommand_20("CategoryClone", defObj);
+                return createAddDefinitionCommand(document, "CategoryClone", defObj);
             }
         );
     });
@@ -41,8 +41,8 @@ describe("Add Definition (2.0)", () => {
         commandTest(
             "tests/fixtures/add-definition/2.0/add-definition.before.json",
             "tests/fixtures/add-definition/2.0/add-definition.after.json",
-            () => {
-                return new AddDefinitionCommand_20("Empty", {});
+            (document: Oas20Document) => {
+                return createAddDefinitionCommand(document,"Empty", {});
             }
         );
     });
@@ -60,7 +60,7 @@ describe("Add Schema Definition (3.0)", () => {
             "tests/fixtures/add-definition/3.0/clone-definition.after.json",
             (document: Oas30Document) => {
                 let defObj: any = library.writeNode(document.components.getSchemaDefinition("MySchema1"));
-                return new AddDefinitionCommand_30("ClonedSchema", defObj);
+                return createAddDefinitionCommand(document,"ClonedSchema", defObj);
             }
         );
     });
@@ -69,8 +69,8 @@ describe("Add Schema Definition (3.0)", () => {
         commandTest(
             "tests/fixtures/add-definition/3.0/add-definition.before.json",
             "tests/fixtures/add-definition/3.0/add-definition.after.json",
-            () => {
-                return new AddDefinitionCommand_30("EmptySchema", {});
+            (document: Oas30Document) => {
+                return createAddDefinitionCommand(document,"EmptySchema", {});
             }
         );
     });

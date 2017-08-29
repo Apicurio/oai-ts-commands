@@ -19,7 +19,7 @@
 
 import {commandTest} from "./_test-utils";
 import {Oas20Document, Oas30Document} from "oai-ts-core";
-import {DeleteTagCommand_20, DeleteTagCommand_30} from "../src/commands/delete-tag.command";
+import {createDeleteTagCommand} from "../src/commands/delete-tag.command";
 
 
 describe("Delete Tag (2.0)", () => {
@@ -29,7 +29,7 @@ describe("Delete Tag (2.0)", () => {
             "tests/fixtures/delete-tag/2.0/delete-tag.before.json",
             "tests/fixtures/delete-tag/2.0/delete-tag.after.json",
             (document: Oas20Document) => {
-                return new DeleteTagCommand_20("store");
+                return createDeleteTagCommand(document, "store");
             }
         );
     });
@@ -44,7 +44,7 @@ describe("Delete Tag (3.0)", () => {
             "tests/fixtures/delete-tag/3.0/delete-tag.before.json",
             "tests/fixtures/delete-tag/3.0/delete-tag.after.json",
             (document: Oas30Document) => {
-                return new DeleteTagCommand_30("tag2");
+                return createDeleteTagCommand(document, "tag2");
             }
         );
     });

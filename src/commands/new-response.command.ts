@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Operation, Oas30Operation, OasDocument, OasNodePath, OasOperation, OasResponse} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createNewResponseCommand(document: OasDocument, operation: Oas20Operation | Oas30Operation, statusCode: string): NewResponseCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewResponseCommand_20(operation, statusCode);
+    } else {
+        return new NewResponseCommand_30(operation, statusCode);
+    }
+}
+
+/**
  * A command used to create a new response in an operation.
  */
-export abstract class AbstractNewResponseCommand extends AbstractCommand implements ICommand {
+export abstract class NewResponseCommand extends AbstractCommand implements ICommand {
 
     private _operationPath: OasNodePath;
     private _statusCode: string;
@@ -98,7 +109,7 @@ export abstract class AbstractNewResponseCommand extends AbstractCommand impleme
 /**
  * OAI 2.0 impl.
  */
-export class NewResponseCommand_20 extends AbstractNewResponseCommand {
+export class NewResponseCommand_20 extends NewResponseCommand {
 
 }
 
@@ -106,6 +117,6 @@ export class NewResponseCommand_20 extends AbstractNewResponseCommand {
 /**
  * OAI 3.0 impl.
  */
-export class NewResponseCommand_30 extends AbstractNewResponseCommand {
+export class NewResponseCommand_30 extends NewResponseCommand {
 
 }

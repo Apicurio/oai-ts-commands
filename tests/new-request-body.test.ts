@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewRequestBodyCommand_20, NewRequestBodyCommand_30} from "../src/commands/new-request-body.command";
 import {Oas20Document, Oas20Operation, Oas30Document, Oas30Operation} from "oai-ts-core";
+import {createNewRequestBodyCommand} from "../src/commands/new-request-body.command";
 
 
 describe("New Request Body (2.0)", () => {
@@ -29,7 +29,7 @@ describe("New Request Body (2.0)", () => {
             "tests/fixtures/new-request-body/2.0/new-request-body.before.json",
             "tests/fixtures/new-request-body/2.0/new-request-body.after.json",
             (document: Oas20Document) => {
-                return new NewRequestBodyCommand_20(document.paths.pathItem("/pets").get as Oas20Operation);
+                return createNewRequestBodyCommand(document, document.paths.pathItem("/pets").get as Oas20Operation);
             }
         );
     });
@@ -44,7 +44,7 @@ describe("New Request Body (3.0)", () => {
             "tests/fixtures/new-request-body/3.0/new-request-body.before.json",
             "tests/fixtures/new-request-body/3.0/new-request-body.after.json",
             (document: Oas30Document) => {
-                return new NewRequestBodyCommand_30(document.paths.pathItem("/foo").get as Oas30Operation);
+                return createNewRequestBodyCommand(document, document.paths.pathItem("/foo").get as Oas30Operation);
             }
         );
     });

@@ -24,7 +24,7 @@ import {Oas20Document, OasDocument, OasNode} from "oai-ts-core";
  *
  * TODO should serialize/deserialize the node instead of just keeping a reference to it (both for the old node and the replacement)
  */
-export abstract class AbstractReplaceNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
+export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
 
     private _newNode: T;
     private _oldNode: T;

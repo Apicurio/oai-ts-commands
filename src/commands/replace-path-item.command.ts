@@ -16,14 +16,36 @@
  */
 
 import {ICommand} from "../base";
-import {Oas20Document, Oas20PathItem, Oas20Paths, Oas30Document, Oas30PathItem, Oas30Paths} from "oai-ts-core";
-import {AbstractReplaceNodeCommand} from "./replace.command";
+import {
+    Oas20Document,
+    Oas20PathItem,
+    Oas20Paths,
+    Oas30Document,
+    Oas30PathItem,
+    Oas30Paths,
+    OasDocument
+} from "oai-ts-core";
+import {ReplaceNodeCommand} from "./replace.command";
+
+
+/**
+ * Factory function.
+ */
+export function createReplacePathItemCommand(document: OasDocument,
+                                              old: Oas20PathItem | Oas30PathItem,
+                                              replacement: Oas20PathItem | Oas30PathItem): ReplaceNodeCommand<Oas20PathItem> | ReplaceNodeCommand<Oas30PathItem> {
+    if (document.getSpecVersion() === "2.0") {
+        return new ReplacePathItemCommand_20(old as Oas20PathItem, replacement as Oas20PathItem);
+    } else {
+        return new ReplacePathItemCommand_30(old as Oas30PathItem, replacement as Oas30PathItem);
+    }
+}
 
 
 /**
  * A command used to replace a path item with a newer version.
  */
-export class ReplacePathItemCommand_20 extends AbstractReplaceNodeCommand<Oas20PathItem> implements ICommand {
+export class ReplacePathItemCommand_20 extends ReplaceNodeCommand<Oas20PathItem> implements ICommand {
 
     /**
      * Remove the given node.
@@ -52,7 +74,7 @@ export class ReplacePathItemCommand_20 extends AbstractReplaceNodeCommand<Oas20P
 /**
  * A command used to replace a path item with a newer version.
  */
-export class ReplacePathItemCommand_30 extends AbstractReplaceNodeCommand<Oas30PathItem> implements ICommand {
+export class ReplacePathItemCommand_30 extends ReplaceNodeCommand<Oas30PathItem> implements ICommand {
 
     /**
      * Remove the given node.

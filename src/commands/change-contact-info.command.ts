@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createChangeContactCommand(document: OasDocument, name: string, email: string, url: string): ChangeContactCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeContactCommand_20(name, email, url);
+    } else {
+        return new ChangeContactCommand_30(name, email, url);
+    }
+}
+
+/**
  * A command used to modify the contact information of a document.
  */
-export abstract class AbstractChangeContactCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeContactCommand extends AbstractCommand implements ICommand {
 
     private _newName: string;
     private _newEmail: string;
@@ -91,7 +102,7 @@ export abstract class AbstractChangeContactCommand extends AbstractCommand imple
 /**
  * The OAI 2.0 impl.
  */
-export class ChangeContactCommand_20 extends AbstractChangeContactCommand {
+export class ChangeContactCommand_20 extends ChangeContactCommand {
 
 }
 
@@ -99,6 +110,6 @@ export class ChangeContactCommand_20 extends AbstractChangeContactCommand {
 /**
  * The OAI 3.0 impl.
  */
-export class ChangeContactCommand_30 extends AbstractChangeContactCommand {
+export class ChangeContactCommand_30 extends ChangeContactCommand {
 
 }

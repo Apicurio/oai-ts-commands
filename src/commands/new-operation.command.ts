@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasOperation, OasPathItem} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createNewOperationCommand(document: OasDocument, path: string, method: string): NewOperationCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewOperationCommand_20(path, method);
+    } else {
+        return new NewOperationCommand_30(path, method);
+    }
+}
+
+/**
  * A command used to create a new operation in a path.
  */
-export abstract class AbstractNewOperationCommand extends AbstractCommand implements ICommand {
+export abstract class NewOperationCommand extends AbstractCommand implements ICommand {
 
     private _path: string;
     private _method: string;
@@ -91,7 +102,7 @@ export abstract class AbstractNewOperationCommand extends AbstractCommand implem
 /**
  * OAI 2.0 impl.
  */
-export class NewOperationCommand_20 extends AbstractNewOperationCommand {
+export class NewOperationCommand_20 extends NewOperationCommand {
 
 }
 
@@ -99,7 +110,7 @@ export class NewOperationCommand_20 extends AbstractNewOperationCommand {
 /**
  * OAI 3.0 impl.
  */
-export class NewOperationCommand_30 extends AbstractNewOperationCommand {
+export class NewOperationCommand_30 extends NewOperationCommand {
 
 }
 

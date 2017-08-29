@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Schema, Oas30Schema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createNewSchemaPropertyCommand(document: OasDocument, schema: Oas20Schema | Oas30Schema, propertyName: string): NewSchemaPropertyCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewSchemaPropertyCommand_20(schema, propertyName);
+    } else {
+        return new NewSchemaPropertyCommand_30(schema, propertyName);
+    }
+}
+
+/**
  * A command used to create a new schema property.
  */
-export abstract class AbstractNewSchemaPropertyCommand extends AbstractCommand implements ICommand {
+export abstract class NewSchemaPropertyCommand extends AbstractCommand implements ICommand {
 
     private _propertyName: string;
     private _schemaPath: OasNodePath;
@@ -93,7 +104,7 @@ export abstract class AbstractNewSchemaPropertyCommand extends AbstractCommand i
 /**
  * OAI 2.0 impl.
  */
-export class NewSchemaPropertyCommand_20 extends AbstractNewSchemaPropertyCommand {
+export class NewSchemaPropertyCommand_20 extends NewSchemaPropertyCommand {
 
 }
 
@@ -101,7 +112,7 @@ export class NewSchemaPropertyCommand_20 extends AbstractNewSchemaPropertyComman
 /**
  * OAI 3.0 impl.
  */
-export class NewSchemaPropertyCommand_30 extends AbstractNewSchemaPropertyCommand {
+export class NewSchemaPropertyCommand_30 extends NewSchemaPropertyCommand {
 
 }
 

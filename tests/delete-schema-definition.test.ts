@@ -18,10 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    DeleteSchemaDefinitionCommand_20,
-    DeleteSchemaDefinitionCommand_30
-} from "../src/commands/delete-schema-definition.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createDeleteSchemaDefinitionCommand} from "../src/commands/delete-schema-definition.command";
 
 
 describe("Delete Schema Definition (2.0)", () => {
@@ -30,8 +28,8 @@ describe("Delete Schema Definition (2.0)", () => {
         commandTest(
             "tests/fixtures/delete-schema-definition/2.0/delete-schema-definition.before.json",
             "tests/fixtures/delete-schema-definition/2.0/delete-schema-definition.after.json",
-            () => {
-                return new DeleteSchemaDefinitionCommand_20("Order");
+            (document: Oas20Document) => {
+                return createDeleteSchemaDefinitionCommand(document, "Order");
             }
         );
     });
@@ -45,8 +43,8 @@ describe("Delete Schema Definition (3.0)", () => {
         commandTest(
             "tests/fixtures/delete-schema-definition/3.0/delete-schema-definition.before.json",
             "tests/fixtures/delete-schema-definition/3.0/delete-schema-definition.after.json",
-            () => {
-                return new DeleteSchemaDefinitionCommand_30("MySchema2");
+            (document: Oas30Document) => {
+                return createDeleteSchemaDefinitionCommand(document, "MySchema2");
             }
         );
     });

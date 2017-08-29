@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Document, Oas20SecurityScheme, Oas30Document, Oas30SecurityScheme, OasDocument} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createNewSecuritySchemeCommand(document: OasDocument, scheme: Oas20SecurityScheme | Oas30SecurityScheme): NewSecuritySchemeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewSecuritySchemeCommand_20(scheme);
+    } else {
+        return new NewSecuritySchemeCommand_30(scheme);
+    }
+}
+
+/**
  * A command used to create a new definition in a document.
  */
-export abstract class AbstractNewSecuritySchemeCommand extends AbstractCommand implements ICommand {
+export abstract class NewSecuritySchemeCommand extends AbstractCommand implements ICommand {
 
     protected _scheme: any;
     protected _schemeName: string;
@@ -55,7 +66,7 @@ export abstract class AbstractNewSecuritySchemeCommand extends AbstractCommand i
 /**
  * OAI 2.0 impl.
  */
-export class NewSecuritySchemeCommand_20 extends AbstractNewSecuritySchemeCommand {
+export class NewSecuritySchemeCommand_20 extends NewSecuritySchemeCommand {
 
     private _nullSecurityDefinitions: boolean;
 
@@ -104,7 +115,7 @@ export class NewSecuritySchemeCommand_20 extends AbstractNewSecuritySchemeComman
 /**
  * OAI 3.0 impl.
  */
-export class NewSecuritySchemeCommand_30 extends AbstractNewSecuritySchemeCommand {
+export class NewSecuritySchemeCommand_30 extends NewSecuritySchemeCommand {
 
     protected _nullComponents: boolean;
 

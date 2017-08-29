@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewPathCommand_20, NewPathCommand_30} from "../src/commands/new-path.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createNewPathCommand} from "../src/commands/new-path.command";
 
 
 describe("New Path (2.0)", () => {
@@ -27,8 +28,8 @@ describe("New Path (2.0)", () => {
         commandTest(
             "tests/fixtures/new-path/2.0/new-path.before.json",
             "tests/fixtures/new-path/2.0/new-path.after.json",
-            () => {
-                return new NewPathCommand_20("/newPath");
+            (document: Oas20Document) => {
+                return createNewPathCommand(document, "/newPath");
             }
         );
     });
@@ -42,8 +43,8 @@ describe("New Path (3.0)", () => {
         commandTest(
             "tests/fixtures/new-path/3.0/new-path.before.json",
             "tests/fixtures/new-path/3.0/new-path.after.json",
-            () => {
-                return new NewPathCommand_30("/newPath");
+            (document: Oas30Document) => {
+                return createNewPathCommand(document, "/newPath");
             }
         );
     });

@@ -18,15 +18,9 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    ChangePropertyTypeCommand_20,
-    ChangePropertyTypeCommand_30
-} from "../src/commands/change-property-type.command";
+import {createChangePropertyTypeCommand} from "../src/commands/change-property-type.command";
 import {SimplifiedType} from "../src/models/simplified-type.model";
-import {
-    Oas20Document, Oas20PropertySchema,
-    Oas30Document, Oas30PropertySchema,
-} from "oai-ts-core";
+import {Oas20Document, Oas20PropertySchema, Oas30Document, Oas30PropertySchema,} from "oai-ts-core";
 
 
 describe("Change Property Type (2.0)", () => {
@@ -40,7 +34,7 @@ describe("Change Property Type (2.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
                 type.as = "date-time";
-                return new ChangePropertyTypeCommand_20(property, type);
+                return createChangePropertyTypeCommand(document, property, type);
             }
         );
     });
@@ -59,7 +53,7 @@ describe("Change Property Type (3.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "integer";
                 type.as = "int32";
-                return new ChangePropertyTypeCommand_30(property, type);
+                return createChangePropertyTypeCommand(document, property, type);
             }
         );
     });

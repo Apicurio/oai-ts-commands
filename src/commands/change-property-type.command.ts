@@ -20,9 +20,22 @@ import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
 
 /**
+ * Factory function.
+ */
+export function createChangePropertyTypeCommand(document: OasDocument,
+                                                property: Oas20PropertySchema | Oas30PropertySchema,
+                                                newType: SimplifiedType): ChangePropertyTypeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangePropertyTypeCommand_20(property, newType);
+    } else {
+        return new ChangePropertyTypeCommand_30(property, newType);
+    }
+}
+
+/**
  * A command used to modify the type of a property of a schema.
  */
-export abstract class AbstractChangePropertyTypeCommand extends AbstractCommand implements ICommand {
+export abstract class ChangePropertyTypeCommand extends AbstractCommand implements ICommand {
 
     private _propPath: OasNodePath;
     private _propName: string;
@@ -109,7 +122,7 @@ export abstract class AbstractChangePropertyTypeCommand extends AbstractCommand 
 /**
  * OAI 2.0 impl.
  */
-export class ChangePropertyTypeCommand_20 extends AbstractChangePropertyTypeCommand {
+export class ChangePropertyTypeCommand_20 extends ChangePropertyTypeCommand {
 
 }
 
@@ -117,6 +130,6 @@ export class ChangePropertyTypeCommand_20 extends AbstractChangePropertyTypeComm
 /**
  * OAI 3.0 impl.
  */
-export class ChangePropertyTypeCommand_30 extends AbstractChangePropertyTypeCommand {
+export class ChangePropertyTypeCommand_30 extends ChangePropertyTypeCommand {
 
 }

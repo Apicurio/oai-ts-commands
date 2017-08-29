@@ -19,10 +19,7 @@
 
 import {commandTest} from "./_test-utils";
 import {Oas20Document, Oas20SchemaDefinition, Oas30Document, Oas30SchemaDefinition} from "oai-ts-core";
-import {
-    ReplaceSchemaDefinitionCommand_20,
-    ReplaceSchemaDefinitionCommand_30
-} from "../src/commands/replace-schema-definition.command";
+import {createReplaceSchemaDefinitionCommand} from "../src/commands/replace-schema-definition.command";
 
 
 describe("Replace Schema Definition (2.0)", () => {
@@ -41,7 +38,7 @@ describe("Replace Schema Definition (2.0)", () => {
                 newSchemaDef.property("name").type = "string";
                 newSchemaDef.property("petType").type = "string";
                 newSchemaDef.required = [ "name", "petType" ];
-                return new ReplaceSchemaDefinitionCommand_20(schemaDef, newSchemaDef);
+                return createReplaceSchemaDefinitionCommand(document, schemaDef, newSchemaDef);
             }
         );
     });
@@ -65,7 +62,7 @@ describe("Replace Schema Definition (3.0)", () => {
                 newSchemaDef.property("dob").type = "integer";
                 newSchemaDef.property("dob").format = "int32";
                 newSchemaDef.required = [ "name" ];
-                return new ReplaceSchemaDefinitionCommand_30(schemaDef, newSchemaDef);
+                return createReplaceSchemaDefinitionCommand(document, schemaDef, newSchemaDef);
             }
         );
     });

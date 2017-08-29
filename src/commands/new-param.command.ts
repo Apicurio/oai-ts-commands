@@ -28,9 +28,22 @@ import {
 import {AbstractCommand, ICommand} from "../base";
 
 /**
+ * Factory function.
+ */
+export function createNewParamCommand(document: OasDocument,
+                                      operation: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem,
+                                      paramName: string, paramType: string): NewParamCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewParamCommand_20(operation, paramName, paramType);
+    } else {
+        return new NewParamCommand_30(operation, paramName, paramType);
+    }
+}
+
+/**
  * A command used to create a new parameter.
  */
-export abstract class AbstractNewParamCommand extends AbstractCommand implements ICommand {
+export abstract class NewParamCommand extends AbstractCommand implements ICommand {
 
     private _paramName: string;
     private _paramType: string;
@@ -140,7 +153,7 @@ export abstract class AbstractNewParamCommand extends AbstractCommand implements
 /**
  * OAI 2.0 impl.
  */
-export class NewParamCommand_20 extends AbstractNewParamCommand {
+export class NewParamCommand_20 extends NewParamCommand {
 
 }
 
@@ -148,6 +161,6 @@ export class NewParamCommand_20 extends AbstractNewParamCommand {
 /**
  * OAI 3.0 impl.
  */
-export class NewParamCommand_30 extends AbstractNewParamCommand {
+export class NewParamCommand_30 extends NewParamCommand {
 
 }

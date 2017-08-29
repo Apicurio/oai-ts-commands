@@ -16,12 +16,23 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, Oas20Tag, OasDocument, OasTag} from "oai-ts-core";
+import {OasDocument, OasTag} from "oai-ts-core";
+
+/**
+ * Factory function.
+ */
+export function createNewTagCommand(document: OasDocument, name: string, description?: string): NewTagCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewTagCommand_20(name, description);
+    } else {
+        return new NewTagCommand_30(name, description);
+    }
+}
 
 /**
  * A command used to create a new tag.
  */
-export abstract class AbstractNewTagCommand extends AbstractCommand implements ICommand {
+export abstract class NewTagCommand extends AbstractCommand implements ICommand {
 
     private _tagName: string;
     private _tagDescription: string;
@@ -98,7 +109,7 @@ export abstract class AbstractNewTagCommand extends AbstractCommand implements I
 /**
  * OAI 2.0 impl.
  */
-export class NewTagCommand_20 extends AbstractNewTagCommand {
+export class NewTagCommand_20 extends NewTagCommand {
 
 }
 
@@ -106,6 +117,6 @@ export class NewTagCommand_20 extends AbstractNewTagCommand {
 /**
  * OAI 3.0 impl.
  */
-export class NewTagCommand_30 extends AbstractNewTagCommand {
+export class NewTagCommand_30 extends NewTagCommand {
 
 }

@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createDeletePropertyCommand(document: OasDocument, property: Oas20PropertySchema | Oas30PropertySchema): DeletePropertyCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeletePropertyCommand_20(property);
+    } else {
+        return new DeletePropertyCommand_30(property);
+    }
+}
+
+/**
  * A command used to delete a single property from a schema.
  */
-export abstract class AbstractDeletePropertyCommand extends AbstractCommand implements ICommand {
+export abstract class DeletePropertyCommand extends AbstractCommand implements ICommand {
 
     private _propertyName: string;
     private _propertyPath: OasNodePath;
@@ -83,7 +94,7 @@ export abstract class AbstractDeletePropertyCommand extends AbstractCommand impl
 /**
  * OAI 2.0 impl.
  */
-export class DeletePropertyCommand_20 extends AbstractDeletePropertyCommand {
+export class DeletePropertyCommand_20 extends DeletePropertyCommand {
 
 }
 
@@ -91,6 +102,6 @@ export class DeletePropertyCommand_20 extends AbstractDeletePropertyCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeletePropertyCommand_30 extends AbstractDeletePropertyCommand {
+export class DeletePropertyCommand_30 extends DeletePropertyCommand {
 
 }

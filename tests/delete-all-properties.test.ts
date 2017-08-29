@@ -18,11 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    DeleteAllPropertiesCommand_20,
-    DeleteAllPropertiesCommand_30
-} from "../src/commands/delete-all-properties.command";
 import {Oas20Document, Oas20SchemaDefinition, Oas30Document, Oas30SchemaDefinition} from "oai-ts-core";
+import {createDeleteAllPropertiesCommand} from "../src/commands/delete-all-properties.command";
 
 
 describe("Delete All Properties (2.0)", () => {
@@ -33,7 +30,7 @@ describe("Delete All Properties (2.0)", () => {
             "tests/fixtures/delete-all-properties/2.0/delete-all-properties.after.json",
             (document: Oas20Document) => {
                 let schema: Oas20SchemaDefinition = document.definitions.definition("Order");
-                return new DeleteAllPropertiesCommand_20(schema);
+                return createDeleteAllPropertiesCommand(document, schema);
             }
         );
     });
@@ -49,7 +46,7 @@ describe("Delete All Properties (3.0)", () => {
             "tests/fixtures/delete-all-properties/3.0/delete-all-properties.after.json",
             (document: Oas30Document) => {
                 let schema: Oas30SchemaDefinition = document.components.getSchemaDefinition("MySchema1");
-                return new DeleteAllPropertiesCommand_30(schema);
+                return createDeleteAllPropertiesCommand(document, schema);
             }
         );
     });

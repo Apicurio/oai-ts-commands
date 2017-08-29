@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Response, Oas30Response, OasDocument, OasNodePath, OasResponse, OasResponses} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createDeleteResponseCommand(document: OasDocument, response: Oas20Response | Oas30Response): DeleteResponseCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteResponseCommand_20(response);
+    } else {
+        return new DeleteResponseCommand_30(response);
+    }
+}
+
+/**
  * A command used to delete a single response from an operation.
  */
-export abstract class AbstractDeleteResponseCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteResponseCommand extends AbstractCommand implements ICommand {
 
     private _responseCode: string;
     private _responsePath: OasNodePath;
@@ -92,7 +103,7 @@ export abstract class AbstractDeleteResponseCommand extends AbstractCommand impl
 /**
  * OAI 2.0 impl.
  */
-export class DeleteResponseCommand_20 extends AbstractDeleteResponseCommand {
+export class DeleteResponseCommand_20 extends DeleteResponseCommand {
 
 }
 
@@ -100,6 +111,6 @@ export class DeleteResponseCommand_20 extends AbstractDeleteResponseCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeleteResponseCommand_30 extends AbstractDeleteResponseCommand {
+export class DeleteResponseCommand_30 extends DeleteResponseCommand {
 
 }

@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ChangeVersionCommand_20, ChangeVersionCommand_30} from "../src/commands/change-version.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createChangeVersionCommand} from "../src/commands/change-version.command";
 
 
 describe("Change Version (2.0)", () => {
@@ -27,8 +28,8 @@ describe("Change Version (2.0)", () => {
         commandTest(
             "tests/fixtures/change-version/2.0/add-version.before.json",
             "tests/fixtures/change-version/2.0/add-version.after.json",
-            () => {
-                return new ChangeVersionCommand_20("1.0.1");
+            (document: Oas20Document) => {
+                return createChangeVersionCommand(document, "1.0.1");
             }
         );
     });
@@ -37,8 +38,8 @@ describe("Change Version (2.0)", () => {
         commandTest(
             "tests/fixtures/change-version/2.0/change-version.before.json",
             "tests/fixtures/change-version/2.0/change-version.after.json",
-            () => {
-                return new ChangeVersionCommand_20("2.3.7");
+            (document: Oas20Document) => {
+                return createChangeVersionCommand(document, "2.3.7");
             }
         );
     });
@@ -53,8 +54,8 @@ describe("Change Version (3.0)", () => {
         commandTest(
             "tests/fixtures/change-version/3.0/add-version.before.json",
             "tests/fixtures/change-version/3.0/add-version.after.json",
-            () => {
-                return new ChangeVersionCommand_30("1.0.1");
+            (document: Oas30Document) => {
+                return createChangeVersionCommand(document, "1.0.1");
             }
         );
     });
@@ -63,8 +64,8 @@ describe("Change Version (3.0)", () => {
         commandTest(
             "tests/fixtures/change-version/3.0/change-version.before.json",
             "tests/fixtures/change-version/3.0/change-version.after.json",
-            () => {
-                return new ChangeVersionCommand_30("2.3.7");
+            (document: Oas30Document) => {
+                return createChangeVersionCommand(document, "2.3.7");
             }
         );
     });

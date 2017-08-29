@@ -17,7 +17,12 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    Oas20Schema, Oas20SchemaDefinition, Oas30Schema, Oas30SchemaDefinition, OasDocument, OasNodePath,
+    Oas20Schema,
+    Oas20SchemaDefinition,
+    Oas30Schema,
+    Oas30SchemaDefinition,
+    OasDocument,
+    OasNodePath,
     OasSchema
 } from "oai-ts-core";
 
@@ -27,9 +32,21 @@ export class OldPropertySchema {
 }
 
 /**
+ * Factory function.
+ */
+export function createDeleteAllPropertiesCommand(document: OasDocument,
+                                                 schema: Oas20Schema | Oas30Schema | Oas20SchemaDefinition | Oas30SchemaDefinition): DeleteAllPropertiesCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteAllPropertiesCommand_20(schema);
+    } else {
+        return new DeleteAllPropertiesCommand_30(schema);
+    }
+}
+
+/**
  * A command used to delete all properties from a schema.
  */
-export abstract class AbstractDeleteAllPropertiesCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteAllPropertiesCommand extends AbstractCommand implements ICommand {
 
     private _schemaPath: OasNodePath;
 
@@ -94,7 +111,7 @@ export abstract class AbstractDeleteAllPropertiesCommand extends AbstractCommand
 /**
  * OAI 2.0 impl.
  */
-export class DeleteAllPropertiesCommand_20 extends AbstractDeleteAllPropertiesCommand {
+export class DeleteAllPropertiesCommand_20 extends DeleteAllPropertiesCommand {
 
 }
 
@@ -102,6 +119,6 @@ export class DeleteAllPropertiesCommand_20 extends AbstractDeleteAllPropertiesCo
 /**
  * OAI 3.0 impl.
  */
-export class DeleteAllPropertiesCommand_30 extends AbstractDeleteAllPropertiesCommand {
+export class DeleteAllPropertiesCommand_30 extends DeleteAllPropertiesCommand {
 
 }

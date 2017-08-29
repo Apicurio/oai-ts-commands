@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ChangePropertyCommand_20, ChangePropertyCommand_30} from "../src/commands/change-property.command";
 import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createChangePropertyCommand} from "../src/commands/change-property.command";
 
 
 describe("Change Property (2.0)", () => {
@@ -29,7 +29,7 @@ describe("Change Property (2.0)", () => {
             "tests/fixtures/change-property/2.0/add-property.before.json",
             "tests/fixtures/change-property/2.0/add-property.after.json",
             (document: Oas20Document) => {
-                return new ChangePropertyCommand_20<string>(document, "host", "example.org");
+                return createChangePropertyCommand<string>(document, document, "host", "example.org");
             }
         );
     });
@@ -39,7 +39,7 @@ describe("Change Property (2.0)", () => {
             "tests/fixtures/change-property/2.0/change-property.before.json",
             "tests/fixtures/change-property/2.0/change-property.after.json",
             (document: Oas20Document) => {
-                return new ChangePropertyCommand_20<string>(document, "host", "updated.example.org");
+                return createChangePropertyCommand<string>(document, document, "host", "updated.example.org");
             }
         );
     });
@@ -54,7 +54,7 @@ describe("Change Property (3.0)", () => {
             "tests/fixtures/change-property/3.0/add-property.before.json",
             "tests/fixtures/change-property/3.0/add-property.after.json",
             (document: Oas30Document) => {
-                return new ChangePropertyCommand_30<string>(document.info, "termsOfService", "http://example.com/terms/");
+                return createChangePropertyCommand<string>(document, document.info, "termsOfService", "http://example.com/terms/");
             }
         );
     });
@@ -64,7 +64,7 @@ describe("Change Property (3.0)", () => {
             "tests/fixtures/change-property/3.0/change-property.before.json",
             "tests/fixtures/change-property/3.0/change-property.after.json",
             (document: Oas30Document) => {
-                return new ChangePropertyCommand_30<string>(document.info, "termsOfService", "http://example.com/updated-terms/");
+                return createChangePropertyCommand<string>(document, document.info, "termsOfService", "http://example.com/updated-terms/");
             }
         );
     });

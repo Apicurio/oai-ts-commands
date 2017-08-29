@@ -19,7 +19,7 @@
 
 import {commandTest} from "./_test-utils";
 import {Oas20Document, Oas20Parameter, Oas30Document, Oas30Parameter} from "oai-ts-core";
-import {DeleteParameterCommand_20, DeleteParameterCommand_30} from "../src/commands/delete-parameter.command";
+import {createDeleteParameterCommand} from "../src/commands/delete-parameter.command";
 
 
 describe("Delete Parameter (2.0)", () => {
@@ -30,7 +30,7 @@ describe("Delete Parameter (2.0)", () => {
             "tests/fixtures/delete-parameter/2.0/delete-parameter.after.json",
             (document: Oas20Document) => {
                 let param: Oas20Parameter = document.paths.pathItem("/pet/{petId}").post.parameter("formData", "status") as Oas20Parameter;
-                return new DeleteParameterCommand_20(param);
+                return createDeleteParameterCommand(document, param);
             }
         );
     });
@@ -46,7 +46,7 @@ describe("Delete Parameter (3.0)", () => {
             "tests/fixtures/delete-parameter/3.0/delete-parameter.after.json",
             (document: Oas30Document) => {
                 let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameter("query", "freeForm") as Oas30Parameter;
-                return new DeleteParameterCommand_30(param);
+                return createDeleteParameterCommand(document, param);
             }
         );
     });

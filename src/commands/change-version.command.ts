@@ -16,12 +16,23 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document} from "oai-ts-core";
+import {OasDocument} from "oai-ts-core";
+
+/**
+ * Factory function.
+ */
+export function createChangeVersionCommand(document: OasDocument, newVersion: string): ChangeVersionCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeVersionCommand_20(newVersion);
+    } else {
+        return new ChangeVersionCommand_30(newVersion);
+    }
+}
 
 /**
  * A command used to modify the version of a document.
  */
-export abstract class AbstractChangeVersionCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeVersionCommand extends AbstractCommand implements ICommand {
 
     private _newVersion: string;
 
@@ -72,7 +83,7 @@ export abstract class AbstractChangeVersionCommand extends AbstractCommand imple
 /**
  * OAI 2.0 impl.
  */
-export class ChangeVersionCommand_20 extends AbstractChangeVersionCommand {
+export class ChangeVersionCommand_20 extends ChangeVersionCommand {
 
 }
 
@@ -80,6 +91,6 @@ export class ChangeVersionCommand_20 extends AbstractChangeVersionCommand {
 /**
  * OAI 3.0 impl.
  */
-export class ChangeVersionCommand_30 extends AbstractChangeVersionCommand {
+export class ChangeVersionCommand_30 extends ChangeVersionCommand {
 
 }

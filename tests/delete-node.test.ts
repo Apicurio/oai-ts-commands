@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {DeleteNodeCommand_20, DeleteNodeCommand_30} from "../src/commands/delete-node.command";
 import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createDeleteNodeCommand} from "../src/commands/delete-node.command";
 
 
 describe("Delete Node (2.0)", () => {
@@ -29,7 +29,7 @@ describe("Delete Node (2.0)", () => {
             "tests/fixtures/delete-node/2.0/delete-node.before.json",
             "tests/fixtures/delete-node/2.0/delete-node.after.json",
             (document: Oas20Document) => {
-                return new DeleteNodeCommand_20("info", document);
+                return createDeleteNodeCommand(document, "info", document);
             }
         );
     });
@@ -44,7 +44,7 @@ describe("Delete Node (3.0)", () => {
             "tests/fixtures/delete-node/3.0/delete-node.before.json",
             "tests/fixtures/delete-node/3.0/delete-node.after.json",
             (document: Oas30Document) => {
-                return new DeleteNodeCommand_30("info", document);
+                return createDeleteNodeCommand(document, "info", document);
             }
         );
     });

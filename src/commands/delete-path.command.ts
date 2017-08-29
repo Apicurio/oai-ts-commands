@@ -20,9 +20,20 @@ import {OasDocument, OasPathItem, OasPaths} from "oai-ts-core";
 
 
 /**
+ * Factory function.
+ */
+export function createDeletePathCommand(document: OasDocument, path: string): DeletePathCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeletePathCommand_20(path);
+    } else {
+        return new DeletePathCommand_30(path);
+    }
+}
+
+/**
  * A command used to delete a path.
  */
-export abstract class AbstractDeletePathCommand extends AbstractCommand implements ICommand {
+export abstract class DeletePathCommand extends AbstractCommand implements ICommand {
 
     private _path: string;
 
@@ -74,7 +85,7 @@ export abstract class AbstractDeletePathCommand extends AbstractCommand implemen
 /**
  * OAI 2.0 impl.
  */
-export class DeletePathCommand_20 extends AbstractDeletePathCommand {
+export class DeletePathCommand_20 extends DeletePathCommand {
 
 }
 
@@ -82,6 +93,6 @@ export class DeletePathCommand_20 extends AbstractDeletePathCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeletePathCommand_30 extends AbstractDeletePathCommand {
+export class DeletePathCommand_30 extends DeletePathCommand {
 
 }

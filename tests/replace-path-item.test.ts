@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {Oas20Document, Oas20Operation, Oas20PathItem, Oas30Document, Oas30Operation, Oas30PathItem} from "oai-ts-core";
-import {ReplacePathItemCommand_20, ReplacePathItemCommand_30} from "../src/commands/replace-path-item.command";
+import {Oas20Document, Oas20Operation, Oas20PathItem, Oas30Document, Oas30PathItem} from "oai-ts-core";
+import {createReplacePathItemCommand} from "../src/commands/replace-path-item.command";
 
 
 describe("Replace Path Item (2.0)", () => {
@@ -37,7 +37,7 @@ describe("Replace Path Item (2.0)", () => {
                 newPathItem.put.operationId = "updatePet";
                 (<Oas20Operation>newPathItem.put).consumes = ["application/json"];
                 newPathItem.put.deprecated = false;
-                return new ReplacePathItemCommand_20(pathItem, newPathItem);
+                return createReplacePathItemCommand(document, pathItem, newPathItem);
             }
         );
     });
@@ -62,7 +62,7 @@ describe("Replace Path Item (3.0)", () => {
                 newPathItem.put.description = "Updates a pet.";
                 newPathItem.put.operationId = "updatePet";
                 newPathItem.put.deprecated = false;
-                return new ReplacePathItemCommand_30(pathItem, newPathItem);
+                return createReplacePathItemCommand(document, pathItem, newPathItem);
             }
         );
     });

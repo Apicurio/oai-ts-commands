@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Operation, Oas20Parameter, Oas30Operation, OasDocument, OasNodePath, OasOperation} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createNewRequestBodyCommand(document: OasDocument, operation: Oas20Operation | Oas30Operation): NewRequestBodyCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new NewRequestBodyCommand_20(operation);
+    } else {
+        return new NewRequestBodyCommand_30(operation);
+    }
+}
+
+/**
  * A command used to create a new request body (parameter of an operation).
  */
-export abstract class AbstractNewRequestBodyCommand extends AbstractCommand implements ICommand {
+export abstract class NewRequestBodyCommand extends AbstractCommand implements ICommand {
 
     private _operationPath: OasNodePath;
     
@@ -98,7 +109,7 @@ export abstract class AbstractNewRequestBodyCommand extends AbstractCommand impl
 /**
  * OAI 2.0 impl.
  */
-export class NewRequestBodyCommand_20 extends AbstractNewRequestBodyCommand {
+export class NewRequestBodyCommand_20 extends NewRequestBodyCommand {
 
     /**
      * Returns true if the given operation has a body param.
@@ -154,7 +165,7 @@ export class NewRequestBodyCommand_20 extends AbstractNewRequestBodyCommand {
 /**
  * OAI 3.0 impl.
  */
-export class NewRequestBodyCommand_30 extends AbstractNewRequestBodyCommand {
+export class NewRequestBodyCommand_30 extends NewRequestBodyCommand {
 
     /**
      * Returns true if the given operation already has a request body.

@@ -27,9 +27,20 @@ import {
 
 
 /**
+ * Factory function.
+ */
+export function createDeleteParameterCommand(document: OasDocument, parameter: Oas20Parameter | Oas30Parameter): DeleteParameterCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteParameterCommand_20(parameter);
+    } else {
+        return new DeleteParameterCommand_30(parameter);
+    }
+}
+
+/**
  * A command used to delete a single parameter from an operation.
  */
-export abstract class AbstractDeleteParameterCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteParameterCommand extends AbstractCommand implements ICommand {
 
     private _parameterPath: OasNodePath;
     private _parentPath: OasNodePath;
@@ -94,7 +105,7 @@ export abstract class AbstractDeleteParameterCommand extends AbstractCommand imp
 /**
  * OAI 2.0 impl.
  */
-export class DeleteParameterCommand_20 extends AbstractDeleteParameterCommand {
+export class DeleteParameterCommand_20 extends DeleteParameterCommand {
 
 }
 
@@ -102,6 +113,6 @@ export class DeleteParameterCommand_20 extends AbstractDeleteParameterCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeleteParameterCommand_30 extends AbstractDeleteParameterCommand {
+export class DeleteParameterCommand_30 extends DeleteParameterCommand {
 
 }

@@ -18,9 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {DeleteAllParametersCommand_20} from "../src/commands/delete-all-parameters.command";
 import {Oas20Document, Oas20Response, Oas30Document, Oas30Response} from "oai-ts-core";
-import {DeleteResponseCommand_20, DeleteResponseCommand_30} from "../src/commands/delete-response.command";
+import {createDeleteResponseCommand} from "../src/commands/delete-response.command";
 
 
 describe("Delete Response (2.0)", () => {
@@ -31,7 +30,7 @@ describe("Delete Response (2.0)", () => {
             "tests/fixtures/delete-response/2.0/delete-response.after.json",
             (document: Oas20Document) => {
                 let response: Oas20Response = document.paths.pathItem("/pet").post.responses.response("405") as Oas20Response;
-                return new DeleteResponseCommand_20(response);
+                return createDeleteResponseCommand(document, response);
             }
         );
     });
@@ -47,7 +46,7 @@ describe("Delete Response (3.0)", () => {
             "tests/fixtures/delete-response/3.0/delete-response.after.json",
             (document: Oas30Document) => {
                 let response: Oas30Response = document.paths.pathItem("/foo").get.responses.response("200") as Oas30Response;
-                return new DeleteResponseCommand_30(response);
+                return createDeleteResponseCommand(document, response);
             }
         );
     });

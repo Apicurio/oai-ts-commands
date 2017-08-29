@@ -29,9 +29,22 @@ import {
 
 
 /**
+ * Factory function.
+ */
+export function createDeleteAllParametersCommand(document: OasDocument,
+                                                 parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem,
+                                                 type: string): DeleteAllParametersCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteAllParametersCommand_20(parent, type);
+    } else {
+        return new DeleteAllParametersCommand_30(parent, type);
+    }
+}
+
+/**
  * A command used to delete all parameters from an operation.
  */
-export abstract class AbstractDeleteAllParametersCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteAllParametersCommand extends AbstractCommand implements ICommand {
 
     private _parentPath: OasNodePath;
     private _paramType: string;
@@ -109,7 +122,7 @@ export abstract class AbstractDeleteAllParametersCommand extends AbstractCommand
 /**
  * OAI 2.0 impl.
  */
-export class DeleteAllParametersCommand_20 extends AbstractDeleteAllParametersCommand {
+export class DeleteAllParametersCommand_20 extends DeleteAllParametersCommand {
 
 }
 
@@ -117,6 +130,6 @@ export class DeleteAllParametersCommand_20 extends AbstractDeleteAllParametersCo
 /**
  * OAI 3.0 impl.
  */
-export class DeleteAllParametersCommand_30 extends AbstractDeleteAllParametersCommand {
+export class DeleteAllParametersCommand_30 extends DeleteAllParametersCommand {
 
 }

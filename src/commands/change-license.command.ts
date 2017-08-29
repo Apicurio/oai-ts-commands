@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createChangeLicenseCommand(document: OasDocument, name: string, url: string): ChangeLicenseCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeLicenseCommand_20(name, url);
+    } else {
+        return new ChangeLicenseCommand_30(name, url);
+    }
+}
+
+/**
  * A command used to modify the license information of a document.
  */
-export abstract class AbstractChangeLicenseCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeLicenseCommand extends AbstractCommand implements ICommand {
 
     private _newLicenseName: string;
     private _newLicenseUrl: string;
@@ -86,7 +97,7 @@ export abstract class AbstractChangeLicenseCommand extends AbstractCommand imple
 /**
  * The OAI 2.0 impl.
  */
-export class ChangeLicenseCommand_20 extends AbstractChangeLicenseCommand {
+export class ChangeLicenseCommand_20 extends ChangeLicenseCommand {
 
 }
 
@@ -94,6 +105,6 @@ export class ChangeLicenseCommand_20 extends AbstractChangeLicenseCommand {
 /**
  * The OAI 3.0 impl.
  */
-export class ChangeLicenseCommand_30 extends AbstractChangeLicenseCommand {
+export class ChangeLicenseCommand_30 extends ChangeLicenseCommand {
 
 }

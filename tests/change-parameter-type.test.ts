@@ -18,15 +18,19 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    ChangeParameterDefinitionTypeCommand_20, ChangeParameterDefinitionTypeCommand_30,
-    ChangeParameterTypeCommand_20, ChangeParameterTypeCommand_30
-} from "../src/commands/change-parameter-type.command";
 import {SimplifiedType} from "../src/models/simplified-type.model";
 import {
-    Oas20Document, Oas20Parameter, Oas20ParameterDefinition, Oas30Document, Oas30Parameter,
+    Oas20Document,
+    Oas20Parameter,
+    Oas20ParameterDefinition,
+    Oas30Document,
+    Oas30Parameter,
     Oas30ParameterDefinition
 } from "oai-ts-core";
+import {
+    createChangeParameterDefinitionTypeCommand,
+    createChangeParameterTypeCommand
+} from "../src/commands/change-parameter-type.command";
 
 
 describe("Change Parameter Type (2.0)", () => {
@@ -42,7 +46,7 @@ describe("Change Parameter Type (2.0)", () => {
                 type.of = new SimplifiedType();
                 type.of.type = "integer";
                 type.of.as = "int64";
-                return new ChangeParameterTypeCommand_20(param, type);
+                return createChangeParameterTypeCommand(document, param, type);
             }
         );
     });
@@ -58,7 +62,7 @@ describe("Change Parameter Type (2.0)", () => {
                 type.of = new SimplifiedType();
                 type.of.type = "integer";
                 type.of.as = "int64";
-                return new ChangeParameterTypeCommand_20(param, type);
+                return createChangeParameterTypeCommand(document, param, type);
             }
         );
     });
@@ -72,7 +76,7 @@ describe("Change Parameter Type (2.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "integer";
                 type.as = "int32";
-                return new ChangeParameterDefinitionTypeCommand_20(param, type);
+                return createChangeParameterDefinitionTypeCommand(document, param, type);
             }
         );
     });
@@ -90,7 +94,7 @@ describe("Change Parameter Type (3.0)", () => {
                 let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[0] as Oas30Parameter;
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
-                return new ChangeParameterTypeCommand_30(param, type);
+                return createChangeParameterTypeCommand(document, param, type);
             }
         );
     });
@@ -103,7 +107,7 @@ describe("Change Parameter Type (3.0)", () => {
                 let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[0] as Oas30Parameter;
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
-                return new ChangeParameterTypeCommand_30(param, type);
+                return createChangeParameterTypeCommand(document, param, type);
             }
         );
     });
@@ -116,7 +120,7 @@ describe("Change Parameter Type (3.0)", () => {
                 let param: Oas30ParameterDefinition = document.components.getParameterDefinition("Param1");
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
-                return new ChangeParameterDefinitionTypeCommand_30(param, type);
+                return createChangeParameterDefinitionTypeCommand(document, param, type);
             }
         );
     });

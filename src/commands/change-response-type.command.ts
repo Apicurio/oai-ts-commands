@@ -16,11 +16,34 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {
-    Oas20Document, Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition, Oas20Schema, Oas30Response, OasDocument,
-    OasNodePath
-} from "oai-ts-core";
+import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition, OasDocument, OasNodePath} from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
+
+
+/**
+ * Factory function.
+ */
+export function createChangeResponseTypeCommand(document: OasDocument, response: Oas20Response | Oas20ResponseDefinition,
+                                                newType: SimplifiedType): ChangeResponseTypeCommand_20 {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeResponseTypeCommand_20(response, newType);
+    } else {
+        throw new Error("ChangeResponseType is unsupported for OpenAPI 3.0.0 documents.");
+    }
+}
+
+/**
+ * Factory function.
+ */
+export function createChangeResponseDefinitionTypeCommand(document: OasDocument, response: Oas20ResponseDefinition,
+                                                newType: SimplifiedType): ChangeResponseDefinitionTypeCommand_20 {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeResponseDefinitionTypeCommand_20(response, newType);
+    } else {
+        throw new Error("ChangeResponseDefinitionTypeCommand is unsupported for OpenAPI 3.0.0 documents.");
+    }
+}
+
 
 /**
  * A command used to modify the type of a response.

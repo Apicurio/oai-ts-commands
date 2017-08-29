@@ -19,11 +19,22 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasPathItem} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createAddPathItemCommand(document: OasDocument, pathItemName: string, obj: any): AddPathItemCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new AddPathItemCommand_20(pathItemName, obj);
+    } else {
+        return new AddPathItemCommand_30(pathItemName, obj);
+    }
+}
+
+/**
  * A command used to add a new pathItem in a document.  Source for the new
  * pathItem must be provided.  This source will be converted to an OAS
  * pathItem object and then added to the data model.
  */
-export abstract class AbstractAddPathItemCommand extends AbstractCommand implements ICommand {
+export abstract class AddPathItemCommand extends AbstractCommand implements ICommand {
 
     private _pathItemExits: boolean;
     private _newPathItemName: string;
@@ -83,12 +94,12 @@ export abstract class AbstractAddPathItemCommand extends AbstractCommand impleme
 /**
  * The OAI 2.0 impl.
  */
-export class AddPathItemCommand_20 extends AbstractAddPathItemCommand {
+export class AddPathItemCommand_20 extends AddPathItemCommand {
 }
 
 
 /**
  * The OAI 3.0 impl.
  */
-export class AddPathItemCommand_30 extends AbstractAddPathItemCommand {
+export class AddPathItemCommand_30 extends AddPathItemCommand {
 }

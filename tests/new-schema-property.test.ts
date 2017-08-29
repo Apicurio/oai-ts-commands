@@ -18,7 +18,7 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewSchemaPropertyCommand_20, NewSchemaPropertyCommand_30} from "../src/commands/new-schema-property.command";
+import {createNewSchemaPropertyCommand} from "../src/commands/new-schema-property.command";
 import {Oas20Document, Oas30Document} from "oai-ts-core";
 
 
@@ -29,7 +29,7 @@ describe("New Schema Property (2.0)", () => {
             "tests/fixtures/new-schema-property/2.0/new-schema-property.before.json",
             "tests/fixtures/new-schema-property/2.0/new-schema-property.after.json",
             (document: Oas20Document) => {
-                return new NewSchemaPropertyCommand_20(document.definitions.definition("Person"), "newProperty");
+                return createNewSchemaPropertyCommand(document, document.definitions.definition("Person"), "newProperty");
             }
         );
     });
@@ -44,7 +44,7 @@ describe("New Schema Property (3.0)", () => {
             "tests/fixtures/new-schema-property/3.0/new-schema-property.before.json",
             "tests/fixtures/new-schema-property/3.0/new-schema-property.after.json",
             (document: Oas30Document) => {
-                return new NewSchemaPropertyCommand_30(document.components.getSchemaDefinition("MySchema1"), "newProperty");
+                return createNewSchemaPropertyCommand(document, document.components.getSchemaDefinition("MySchema1"), "newProperty");
             }
         );
     });

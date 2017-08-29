@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasTag} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createDeleteTagCommand(document: OasDocument, tagName: string): DeleteTagCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteTagCommand_20(tagName);
+    } else {
+        return new DeleteTagCommand_30(tagName);
+    }
+}
+
+/**
  * A command used to delete a single tag definition from the document.
  */
-export abstract class AbstractDeleteTagCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteTagCommand extends AbstractCommand implements ICommand {
 
     private _tagName: string;
 
@@ -86,7 +97,7 @@ export abstract class AbstractDeleteTagCommand extends AbstractCommand implement
 /**
  * OAI 2.0 impl.
  */
-export class DeleteTagCommand_20 extends AbstractDeleteTagCommand {
+export class DeleteTagCommand_20 extends DeleteTagCommand {
 
 }
 
@@ -94,6 +105,6 @@ export class DeleteTagCommand_20 extends AbstractDeleteTagCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeleteTagCommand_30 extends AbstractDeleteTagCommand {
+export class DeleteTagCommand_30 extends DeleteTagCommand {
 
 }

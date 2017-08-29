@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ChangeTitleCommand_20, ChangeTitleCommand_30} from "../src/commands/change-title.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createChangeTitleCommand} from "../src/commands/change-title.command";
 
 
 describe("Change Title (2.0)", () => {
@@ -27,8 +28,8 @@ describe("Change Title (2.0)", () => {
         commandTest(
             "tests/fixtures/change-title/2.0/add-title.before.json",
             "tests/fixtures/change-title/2.0/add-title.after.json",
-            () => {
-                return new ChangeTitleCommand_20("Swagger Sample App");
+            (document: Oas20Document) => {
+                return createChangeTitleCommand(document, "Swagger Sample App");
             }
         );
     });
@@ -37,8 +38,8 @@ describe("Change Title (2.0)", () => {
         commandTest(
             "tests/fixtures/change-title/2.0/change-title.before.json",
             "tests/fixtures/change-title/2.0/change-title.after.json",
-            () => {
-                return new ChangeTitleCommand_20("Updated Title");
+            (document: Oas20Document) => {
+                return createChangeTitleCommand(document, "Updated Title");
             }
         );
     });
@@ -53,8 +54,8 @@ describe("Change Title (3.0)", () => {
         commandTest(
             "tests/fixtures/change-title/3.0/add-title.before.json",
             "tests/fixtures/change-title/3.0/add-title.after.json",
-            () => {
-                return new ChangeTitleCommand_30("Sample Pet Store App");
+            (document: Oas30Document) => {
+                return createChangeTitleCommand(document, "Sample Pet Store App");
             }
         );
     });
@@ -63,8 +64,8 @@ describe("Change Title (3.0)", () => {
         commandTest(
             "tests/fixtures/change-title/3.0/change-title.before.json",
             "tests/fixtures/change-title/3.0/change-title.after.json",
-            () => {
-                return new ChangeTitleCommand_30("Updated Title");
+            (document: Oas30Document) => {
+                return createChangeTitleCommand(document, "Updated Title");
             }
         );
     });

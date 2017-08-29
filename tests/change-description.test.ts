@@ -18,7 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {ChangeDescriptionCommand_20, ChangeDescriptionCommand_30} from "../src/commands/change-description.command";
+import {createChangeDescriptionCommand} from "../src/commands/change-description.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
 
 
 describe("Change Description (2.0)", () => {
@@ -27,8 +28,8 @@ describe("Change Description (2.0)", () => {
         commandTest(
             "tests/fixtures/change-description/2.0/add-description.before.json",
             "tests/fixtures/change-description/2.0/add-description.after.json",
-            () => {
-                return new ChangeDescriptionCommand_20("A description we added.");
+            (document: Oas20Document) => {
+                return createChangeDescriptionCommand(document, "A description we added.");
             }
         );
     });
@@ -37,8 +38,8 @@ describe("Change Description (2.0)", () => {
         commandTest(
             "tests/fixtures/change-description/2.0/change-description.before.json",
             "tests/fixtures/change-description/2.0/change-description.after.json",
-            () => {
-                return new ChangeDescriptionCommand_20("An updated description.");
+            (document: Oas20Document) => {
+                return createChangeDescriptionCommand(document, "An updated description.");
             }
         );
     });
@@ -53,8 +54,8 @@ describe("Change Description (3.0)", () => {
         commandTest(
             "tests/fixtures/change-description/3.0/add-description.before.json",
             "tests/fixtures/change-description/3.0/add-description.after.json",
-            () => {
-                return new ChangeDescriptionCommand_30("A description we added.");
+            (document: Oas30Document) => {
+                return createChangeDescriptionCommand(document, "A description we added.");
             }
         );
     });
@@ -63,8 +64,8 @@ describe("Change Description (3.0)", () => {
         commandTest(
             "tests/fixtures/change-description/3.0/change-description.before.json",
             "tests/fixtures/change-description/3.0/change-description.after.json",
-            () => {
-                return new ChangeDescriptionCommand_30("An updated description.");
+            (document: Oas30Document) => {
+                return createChangeDescriptionCommand(document, "An updated description.");
             }
         );
     });

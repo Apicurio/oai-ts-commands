@@ -21,8 +21,8 @@ import {commandTest} from "./_test-utils";
 import {SimplifiedType} from "../src/models/simplified-type.model";
 import {Oas20Document, Oas20Response, Oas20ResponseDefinition} from "oai-ts-core";
 import {
-    ChangeResponseDefinitionTypeCommand_20,
-    ChangeResponseTypeCommand_20
+    createChangeResponseDefinitionTypeCommand,
+    createChangeResponseTypeCommand
 } from "../src/commands/change-response-type.command";
 
 
@@ -37,7 +37,7 @@ describe("Change Response Type (2.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
                 type.as = "date-time";
-                return new ChangeResponseTypeCommand_20(response, type);
+                return createChangeResponseTypeCommand(document, response, type);
             }
         );
     });
@@ -51,7 +51,7 @@ describe("Change Response Type (2.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
                 type.as = "date-time";
-                return new ChangeResponseTypeCommand_20(response, type);
+                return createChangeResponseTypeCommand(document, response, type);
             }
         );
     });
@@ -70,7 +70,7 @@ describe("Change Response Definition Type (2.0)", () => {
                 let type: SimplifiedType = new SimplifiedType();
                 type.type = "string";
                 type.as = "date-time";
-                return new ChangeResponseDefinitionTypeCommand_20(response, type);
+                return createChangeResponseDefinitionTypeCommand(document, response, type);
             }
         );
     });

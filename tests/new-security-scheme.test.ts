@@ -18,8 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {NewSecuritySchemeCommand_20, NewSecuritySchemeCommand_30} from "../src/commands/new-security-scheme.command";
 import {Oas20Document, Oas20SecurityScheme, Oas30Document, Oas30SecurityScheme} from "oai-ts-core";
+import {createNewSecuritySchemeCommand} from "../src/commands/new-security-scheme.command";
 
 
 describe("New Security Scheme (2.0)", () => {
@@ -33,7 +33,7 @@ describe("New Security Scheme (2.0)", () => {
                 newScheme.type = "apiKey";
                 newScheme.name = "key";
                 newScheme.in = "header";
-                return new NewSecuritySchemeCommand_20(newScheme);
+                return createNewSecuritySchemeCommand(document, newScheme);
             }
         );
     });
@@ -52,7 +52,7 @@ describe("New Security Scheme (3.0)", () => {
                 newScheme.type = "http";
                 newScheme.scheme = "bearer";
                 newScheme.bearerFormat = "JWT";
-                return new NewSecuritySchemeCommand_30(newScheme);
+                return createNewSecuritySchemeCommand(document, newScheme);
             }
         );
     });

@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNode, OasNodePath} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createDeleteNodeCommand(document: OasDocument, property: string, parent: OasNode): DeleteNodeCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new DeleteNodeCommand_20(property, parent);
+    } else {
+        return new DeleteNodeCommand_30(property, parent);
+    }
+}
+
+/**
  * A command used to delete a child node.
  */
-export abstract class AbstractDeleteNodeCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteNodeCommand extends AbstractCommand implements ICommand {
 
     private _property: string;
     private _parentPath: OasNodePath;
@@ -79,7 +90,7 @@ export abstract class AbstractDeleteNodeCommand extends AbstractCommand implemen
 /**
  * OAI 2.0 impl.
  */
-export class DeleteNodeCommand_20 extends AbstractDeleteNodeCommand {
+export class DeleteNodeCommand_20 extends DeleteNodeCommand {
 
 }
 
@@ -87,7 +98,7 @@ export class DeleteNodeCommand_20 extends AbstractDeleteNodeCommand {
 /**
  * OAI 3.0 impl.
  */
-export class DeleteNodeCommand_30 extends AbstractDeleteNodeCommand {
+export class DeleteNodeCommand_30 extends DeleteNodeCommand {
 
 }
 

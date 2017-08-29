@@ -18,19 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {
-    ChangePropertyTypeCommand_20,
-    ChangePropertyTypeCommand_30
-} from "../src/commands/change-property-type.command";
-import {SimplifiedType} from "../src/models/simplified-type.model";
-import {
-    Oas20Document, Oas20PropertySchema, Oas20SecurityScheme,
-    Oas30Document, Oas30PropertySchema, Oas30SecurityScheme,
-} from "oai-ts-core";
-import {
-    ChangeSecuritySchemeCommand_20,
-    ChangeSecuritySchemeCommand_30
-} from "../src/commands/change-security-scheme.command";
+import {Oas20Document, Oas20SecurityScheme, Oas30Document, Oas30SecurityScheme,} from "oai-ts-core";
+import {createChangeSecuritySchemeCommand} from "../src/commands/change-security-scheme.command";
 
 
 describe("Change Security Scheme (2.0)", () => {
@@ -44,7 +33,7 @@ describe("Change Security Scheme (2.0)", () => {
                 newScheme.type = "apiKey";
                 newScheme.name = "api_key";
                 newScheme.in = "header";
-                return new ChangeSecuritySchemeCommand_20(newScheme);
+                return createChangeSecuritySchemeCommand(document, newScheme);
             }
         );
     });
@@ -63,7 +52,7 @@ describe("Change Security Scheme (3.0)", () => {
                 newScheme.type = "http";
                 newScheme.scheme = "bearer";
                 newScheme.bearerFormat = "JWT";
-                return new ChangeSecuritySchemeCommand_30(newScheme);
+                return createChangeSecuritySchemeCommand(document, newScheme);
             }
         );
     });

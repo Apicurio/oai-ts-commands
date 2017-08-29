@@ -19,9 +19,20 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, Oas20Document} from "oai-ts-core";
 
 /**
+ * Factory function.
+ */
+export function createChangeDescriptionCommand(document: OasDocument, newDescription: string): ChangeDescriptionCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeDescriptionCommand_20(newDescription);
+    } else {
+        return new ChangeDescriptionCommand_30(newDescription);
+    }
+}
+
+/**
  * A command used to modify the description of a document.
  */
-export abstract class AbstractChangeDescriptionCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeDescriptionCommand extends AbstractCommand implements ICommand {
 
     private _newDescription: string;
 
@@ -72,7 +83,7 @@ export abstract class AbstractChangeDescriptionCommand extends AbstractCommand i
 /**
  * The OAI 2.0 impl.
  */
-export class ChangeDescriptionCommand_20 extends AbstractChangeDescriptionCommand {
+export class ChangeDescriptionCommand_20 extends ChangeDescriptionCommand {
 
 }
 
@@ -80,6 +91,6 @@ export class ChangeDescriptionCommand_20 extends AbstractChangeDescriptionComman
 /**
  * The OAI 3.0 impl.
  */
-export class ChangeDescriptionCommand_30 extends AbstractChangeDescriptionCommand {
+export class ChangeDescriptionCommand_30 extends ChangeDescriptionCommand {
 
 }

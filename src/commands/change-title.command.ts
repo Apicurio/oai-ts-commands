@@ -16,12 +16,23 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {OasDocument, Oas20Document} from "oai-ts-core";
+import {OasDocument} from "oai-ts-core";
+
+/**
+ * Factory function.
+ */
+export function createChangeTitleCommand(document: OasDocument, newTitle: string): ChangeTitleCommand {
+    if (document.getSpecVersion() === "2.0") {
+        return new ChangeTitleCommand_20(newTitle);
+    } else {
+        return new ChangeTitleCommand_30(newTitle);
+    }
+}
 
 /**
  * A command used to modify the title of a document.
  */
-export abstract class AbstractChangeTitleCommand extends AbstractCommand implements ICommand {
+export abstract class ChangeTitleCommand extends AbstractCommand implements ICommand {
 
     private _newTitle: string;
 
@@ -72,7 +83,7 @@ export abstract class AbstractChangeTitleCommand extends AbstractCommand impleme
 /**
  * OAI 2.0 impl.
  */
-export class ChangeTitleCommand_20 extends AbstractChangeTitleCommand {
+export class ChangeTitleCommand_20 extends ChangeTitleCommand {
 
 }
 
@@ -80,7 +91,7 @@ export class ChangeTitleCommand_20 extends AbstractChangeTitleCommand {
 /**
  * OAI 3.0 impl.
  */
-export class ChangeTitleCommand_30 extends AbstractChangeTitleCommand {
+export class ChangeTitleCommand_30 extends ChangeTitleCommand {
 
 }
 

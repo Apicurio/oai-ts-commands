@@ -18,9 +18,8 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {DeleteAllParametersCommand_20} from "../src/commands/delete-all-parameters.command";
-import {Oas20Document} from "oai-ts-core";
-import {DeletePathCommand_20, DeletePathCommand_30} from "../src/commands/delete-path.command";
+import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {createDeletePathCommand} from "../src/commands/delete-path.command";
 
 
 describe("Delete Path (2.0)", () => {
@@ -29,8 +28,8 @@ describe("Delete Path (2.0)", () => {
         commandTest(
             "tests/fixtures/delete-path/2.0/delete-path.before.json",
             "tests/fixtures/delete-path/2.0/delete-path.after.json",
-            () => {
-                return new DeletePathCommand_20("/pet/findByStatus");
+            (document: Oas20Document) => {
+                return createDeletePathCommand(document, "/pet/findByStatus");
             }
         );
     });
@@ -44,8 +43,8 @@ describe("Delete Path (3.0)", () => {
         commandTest(
             "tests/fixtures/delete-path/3.0/delete-path.before.json",
             "tests/fixtures/delete-path/3.0/delete-path.after.json",
-            () => {
-                return new DeletePathCommand_30("/foo");
+            (document: Oas30Document) => {
+                return createDeletePathCommand(document, "/foo");
             }
         );
     });
