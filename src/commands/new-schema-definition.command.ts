@@ -19,10 +19,10 @@ import {AbstractCommand, ICommand} from "../base";
 import {
     Oas20Document,
     Oas20SchemaDefinition,
-    Oas20SchemaFactory,
     Oas30Document,
     Oas30SchemaDefinition,
-    OasDocument
+    OasDocument,
+    OasSchemaFactory
 } from "oai-ts-core";
 
 /**
@@ -73,7 +73,7 @@ export class NewSchemaDefinitionCommand_20 extends AbstractNewSchemaDefinitionCo
         if (this.isNullOrUndefined(document.definitions.definition(this._newDefinitionName))) {
             let definition: Oas20SchemaDefinition;
             if (!this.isNullOrUndefined(this._newDefinitionExample)) {
-                definition = new Oas20SchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas20SchemaDefinition;
+                definition = new OasSchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas20SchemaDefinition;
             } else {
                 definition = document.definitions.createSchemaDefinition(this._newDefinitionName);
             }
@@ -127,7 +127,7 @@ export class NewSchemaDefinitionCommand_30 extends AbstractNewSchemaDefinitionCo
         if (this.isNullOrUndefined(document.components.getSchemaDefinition(this._newDefinitionName))) {
             let definition: Oas30SchemaDefinition;
             if (!this.isNullOrUndefined(this._newDefinitionExample)) {
-                definition = new Oas20SchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas30SchemaDefinition;
+                definition = new OasSchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas30SchemaDefinition;
             } else {
                 definition = document.components.createSchemaDefinition(this._newDefinitionName);
             }

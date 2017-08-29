@@ -40,7 +40,7 @@ describe("Replace Schema Definition (2.0)", () => {
                 newSchemaDef.addProperty("petType", newSchemaDef.createPropertySchema("petType"));
                 newSchemaDef.property("name").type = "string";
                 newSchemaDef.property("petType").type = "string";
-                newSchemaDef.required = [ "name", "petType" ] as any; // TODO the data model is wrong - required is a boolean but should be an array of strings
+                newSchemaDef.required = [ "name", "petType" ];
                 return new ReplaceSchemaDefinitionCommand_20(schemaDef, newSchemaDef);
             }
         );
@@ -64,7 +64,7 @@ describe("Replace Schema Definition (3.0)", () => {
                 newSchemaDef.property("name").type = "string";
                 newSchemaDef.property("dob").type = "integer";
                 newSchemaDef.property("dob").format = "int32";
-                newSchemaDef.required = [ "name" ] as any; // TODO the data model is wrong - required is a boolean but should be an array of strings
+                newSchemaDef.required = [ "name" ];
                 return new ReplaceSchemaDefinitionCommand_30(schemaDef, newSchemaDef);
             }
         );

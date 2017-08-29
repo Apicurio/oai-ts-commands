@@ -22,7 +22,7 @@ import {Oas20Document, OasDocument, OasNode} from "oai-ts-core";
 /**
  * A command used to replace a path item with a newer version.
  *
- * TODO should serialize/deserialize the node instead of just keeping a reference to it (both for the old node and the replacement
+ * TODO should serialize/deserialize the node instead of just keeping a reference to it (both for the old node and the replacement)
  */
 export abstract class AbstractReplaceNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
 
