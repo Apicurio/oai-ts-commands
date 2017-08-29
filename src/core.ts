@@ -21,7 +21,7 @@ export * from "./util/model.util";
 
 export * from "./models/simplified-type.model";
 
-export * from "./commands/add-definition.command";
+export * from "./commands/add-schema-definition.command";
 export * from "./commands/add-path.command";
 export * from "./commands/change-contact-info.command";
 export * from "./commands/change-description.command";
@@ -53,3 +53,6 @@ export * from "./commands/new-schema-property.command";
 export * from "./commands/new-security-scheme.command";
 export * from "./commands/new-tag.command";
 export * from "./commands/replace.command";
+export * from "./commands/replace-operation.command";
+export * from "./commands/replace-path-item.command";
+export * from "./commands/replace-schema-definition.command";
