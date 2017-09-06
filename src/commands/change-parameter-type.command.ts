@@ -85,7 +85,7 @@ export abstract class ChangeParameterTypeCommand extends AbstractCommand impleme
      * @param document
      */
     public execute(document: OasDocument): void {
-        console.info("[ChangeParameterTypeCommand] Executing: ");
+        console.info("[ChangeParameterTypeCommand] Executing.");
         let param: OasParameterBase = this._paramPath.resolve(document) as OasParameterBase;
         if (!param) {
             return;
