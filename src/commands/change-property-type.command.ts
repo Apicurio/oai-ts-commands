@@ -22,7 +22,7 @@ import {SimplifiedType} from "../models/simplified-type.model";
 
 export class SimplifiedPropertyType extends SimplifiedType {
 
-    public static fromSchema(schema: Oas20PropertySchema | Oas30PropertySchema): SimplifiedType {
+    public static fromPropertySchema(schema: Oas20PropertySchema | Oas30PropertySchema): SimplifiedPropertyType {
         let rval: SimplifiedPropertyType = new SimplifiedPropertyType();
 
         let propName: string = schema.propertyName();
@@ -127,18 +127,20 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
             }
         }
 
-        // Going from optional to required
-        if (this._newType.required && !this._oldRequired) {
-            if (this.isNullOrUndefined(required)) {
-                required = [];
-                prop.parent()["required"] = required;
-                this._nullRequired = true;
+        if (!this.isNullOrUndefined(this._newType.required)) {
+            // Going from optional to required
+            if (this._newType.required && !this._oldRequired) {
+                if (this.isNullOrUndefined(required)) {
+                    required = [];
+                    prop.parent()["required"] = required;
+                    this._nullRequired = true;
+                }
+                required.push(prop.propertyName());
             }
-            required.push(prop.propertyName());
-        }
-        // Going from required to optional
-        if (!this._newType.required && this._oldRequired) {
-            required.splice(required.indexOf(prop.propertyName()), 1);
+            // Going from required to optional
+            if (!this._newType.required && this._oldRequired) {
+                required.splice(required.indexOf(prop.propertyName()), 1);
+            }
         }
     }
 
@@ -162,16 +164,18 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
         parentSchema.removeProperty(this._propName);
         parentSchema.addProperty(this._propName, oldProp);
 
-        if (this._nullRequired) {
-            prop.parent()["required"] = null;
-        } else {
-            // Restoring optional from required
-            if (wasRequired && !this._oldRequired) {
-                required.splice(required.indexOf(prop.propertyName()), 1);
-            }
-            // Restoring required from optional
-            if (!wasRequired && this._oldRequired) {
-                required.push(prop.propertyName());
+        if (!this.isNullOrUndefined(this._newType.required)) {
+            if (this._nullRequired) {
+                prop.parent()["required"] = null;
+            } else {
+                // Restoring optional from required
+                if (wasRequired && !this._oldRequired) {
+                    required.splice(required.indexOf(prop.propertyName()), 1);
+                }
+                // Restoring required from optional
+                if (!wasRequired && this._oldRequired) {
+                    required.push(prop.propertyName());
+                }
             }
         }
     }

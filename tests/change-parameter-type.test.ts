@@ -18,7 +18,6 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {SimplifiedType} from "../src/models/simplified-type.model";
 import {
     Oas20Document,
     Oas20Parameter,
@@ -29,7 +28,8 @@ import {
 } from "oai-ts-core";
 import {
     createChangeParameterDefinitionTypeCommand,
-    createChangeParameterTypeCommand
+    createChangeParameterTypeCommand,
+    SimplifiedParameterType
 } from "../src/commands/change-parameter-type.command";
 
 
@@ -41,9 +41,9 @@ describe("Change Parameter Type (2.0)", () => {
             "tests/fixtures/change-parameter-type/2.0/add-parameter-type.after.json",
             (document: Oas20Document) => {
                 let param: Oas20Parameter = document.paths.pathItem("/pets").get.parameters[0] as Oas20Parameter;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "array";
-                type.of = new SimplifiedType();
+                type.of = new SimplifiedParameterType();
                 type.of.type = "integer";
                 type.of.as = "int64";
                 return createChangeParameterTypeCommand(document, param, type);
@@ -57,11 +57,25 @@ describe("Change Parameter Type (2.0)", () => {
             "tests/fixtures/change-parameter-type/2.0/change-parameter-type.after.json",
             (document: Oas20Document) => {
                 let param: Oas20Parameter = document.paths.pathItem("/pets").get.parameters[0] as Oas20Parameter;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "array";
-                type.of = new SimplifiedType();
+                type.of = new SimplifiedParameterType();
                 type.of.type = "integer";
                 type.of.as = "int64";
+                return createChangeParameterTypeCommand(document, param, type);
+            }
+        );
+    });
+
+    it("Change Parameter Required", () => {
+        commandTest(
+            "tests/fixtures/change-parameter-type/2.0/change-parameter-type-required.before.json",
+            "tests/fixtures/change-parameter-type/2.0/change-parameter-type-required.after.json",
+            (document: Oas20Document) => {
+                let param: Oas20Parameter = document.paths.pathItem("/pets").get.parameters[1] as Oas20Parameter;
+                let type: SimplifiedParameterType = SimplifiedParameterType.fromParameter(param);
+                console.info("SimplifiedParameterType: %s", JSON.stringify(type));
+                type.required = false;
                 return createChangeParameterTypeCommand(document, param, type);
             }
         );
@@ -73,7 +87,7 @@ describe("Change Parameter Type (2.0)", () => {
             "tests/fixtures/change-parameter-type/2.0/change-parameter-definition-type.after.json",
             (document: Oas20Document) => {
                 let param: Oas20ParameterDefinition = document.parameters.parameter("skipParam");
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "integer";
                 type.as = "int32";
                 return createChangeParameterDefinitionTypeCommand(document, param, type);
@@ -92,7 +106,7 @@ describe("Change Parameter Type (3.0)", () => {
             "tests/fixtures/change-parameter-type/3.0/add-parameter-type.after.json",
             (document: Oas30Document) => {
                 let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[0] as Oas30Parameter;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "string";
                 return createChangeParameterTypeCommand(document, param, type);
             }
@@ -105,8 +119,21 @@ describe("Change Parameter Type (3.0)", () => {
             "tests/fixtures/change-parameter-type/3.0/change-parameter-type.after.json",
             (document: Oas30Document) => {
                 let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[0] as Oas30Parameter;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "string";
+                return createChangeParameterTypeCommand(document, param, type);
+            }
+        );
+    });
+
+    it("Change Parameter Required", () => {
+        commandTest(
+            "tests/fixtures/change-parameter-type/3.0/change-parameter-type-required.before.json",
+            "tests/fixtures/change-parameter-type/3.0/change-parameter-type-required.after.json",
+            (document: Oas30Document) => {
+                let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[1] as Oas30Parameter;
+                let type: SimplifiedParameterType = SimplifiedParameterType.fromParameter(param);
+                type.required = true;
                 return createChangeParameterTypeCommand(document, param, type);
             }
         );
@@ -118,7 +145,7 @@ describe("Change Parameter Type (3.0)", () => {
             "tests/fixtures/change-parameter-type/3.0/change-parameter-definition-type.after.json",
             (document: Oas30Document) => {
                 let param: Oas30ParameterDefinition = document.components.getParameterDefinition("Param1");
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "string";
                 return createChangeParameterDefinitionTypeCommand(document, param, type);
             }

@@ -20,7 +20,7 @@ import {
     IOasParameterParent,
     Oas20Document,
     Oas20Parameter,
-    Oas20ParameterDefinition,
+    Oas20ParameterDefinition, Oas20PropertySchema,
     Oas30Document,
     Oas30Parameter,
     Oas30ParameterBase,
@@ -32,12 +32,40 @@ import {
 } from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
 
+export class SimplifiedParameterType extends SimplifiedType {
+
+    public static fromParameter(param: Oas20Parameter | Oas30Parameter): SimplifiedParameterType {
+        let rval: SimplifiedParameterType = new SimplifiedParameterType();
+        let st: SimplifiedType;
+        if (param.ownerDocument().getSpecVersion() === "2.0") {
+            if (param.in === "body") {
+                st = SimplifiedType.fromSchema(param.schema);
+            } else {
+                st = SimplifiedType.fromItems(param as Oas20Parameter);
+            }
+        } else {
+            st = SimplifiedType.fromSchema((param as Oas30Parameter).schema);
+        }
+
+        rval.type = st.type;
+        rval.of = st.of;
+        rval.as = st.as;
+        rval.required = param.required;
+
+        return rval;
+    }
+
+    required: boolean;
+
+}
+
+
 /**
  * Factory function.
  */
 export function createChangeParameterTypeCommand(document: OasDocument,
                                                  parameter: Oas20Parameter | Oas30Parameter,
-                                                 newType: SimplifiedType): ChangeParameterTypeCommand {
+                                                 newType: SimplifiedParameterType): ChangeParameterTypeCommand {
     if (document.getSpecVersion() === "2.0") {
         return new ChangeParameterTypeCommand_20(parameter, newType);
     } else {
@@ -50,7 +78,7 @@ export function createChangeParameterTypeCommand(document: OasDocument,
  */
 export function createChangeParameterDefinitionTypeCommand(document: OasDocument,
                                                  parameter: Oas20ParameterDefinition | Oas30ParameterDefinition,
-                                                 newType: SimplifiedType): ChangeParameterTypeCommand {
+                                                 newType: SimplifiedParameterType): ChangeParameterTypeCommand {
     if (document.getSpecVersion() === "2.0") {
         return new ChangeParameterDefinitionTypeCommand_20(parameter as Oas20ParameterDefinition, newType);
     } else {
@@ -64,17 +92,17 @@ export function createChangeParameterDefinitionTypeCommand(document: OasDocument
 export abstract class ChangeParameterTypeCommand extends AbstractCommand implements ICommand {
 
     protected _paramPath: OasNodePath;
-    protected _newType: SimplifiedType;
+    protected _newType: SimplifiedParameterType;
 
     protected _oldParameter: any;
 
     /**
      * C'tor.
      * @param {Oas20Parameter | Oas30Parameter | Oas20ParameterDefinition | Oas30ParameterDefinition} parameter
-     * @param {SimplifiedType} newType
+     * @param {SimplifiedParameterType} newType
      */
     constructor(parameter: Oas20Parameter | Oas30Parameter | Oas20ParameterDefinition | Oas30ParameterDefinition,
-                newType: SimplifiedType) {
+                newType: SimplifiedParameterType) {
         super();
         this._paramPath = this.oasLibrary().createNodePath(parameter);
         this._newType = newType;
@@ -177,6 +205,9 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
                 }
             }
         }
+        if (!this.isNullOrUndefined(this._newType.required)) {
+            param.required = this._newType.required;
+        }
     }
 
 }
@@ -191,9 +222,9 @@ export class ChangeParameterDefinitionTypeCommand_20 extends ChangeParameterType
     /**
      * C'tor.
      * @param {Oas20ParameterDefinition} parameter
-     * @param {SimplifiedType} newType
+     * @param {SimplifiedParameterType} newType
      */
-    constructor(parameter: Oas20ParameterDefinition, newType: SimplifiedType) {
+    constructor(parameter: Oas20ParameterDefinition, newType: SimplifiedParameterType) {
         super(parameter, newType);
     }
 
@@ -251,6 +282,9 @@ export class ChangeParameterTypeCommand_30 extends ChangeParameterTypeCommand {
         }
 
         parameter.schema = schema;
+        if (!this.isNullOrUndefined(this._newType.required)) {
+            parameter.required = this._newType.required;
+        }
     }
 
 }
@@ -265,9 +299,9 @@ export class ChangeParameterDefinitionTypeCommand_30 extends ChangeParameterType
     /**
      * C'tor.
      * @param {Oas30ParameterDefinition} parameter
-     * @param {SimplifiedType} newType
+     * @param {SimplifiedParameterType} newType
      */
-    constructor(parameter: Oas30ParameterDefinition, newType: SimplifiedType) {
+    constructor(parameter: Oas30ParameterDefinition, newType: SimplifiedParameterType) {
         super(parameter, newType);
     }
 
