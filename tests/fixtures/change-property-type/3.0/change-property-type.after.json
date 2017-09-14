@@ -4,9 +4,6 @@
     "schemas": {
       "MySchema1" : {
         "type": "object",
-        "required": [
-          "name"
-        ],
         "properties": {
           "name": {
             "type": "integer",

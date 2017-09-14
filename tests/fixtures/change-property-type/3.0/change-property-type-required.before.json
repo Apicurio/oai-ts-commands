@@ -4,6 +4,9 @@
     "schemas": {
       "MySchema1" : {
         "type": "object",
+        "required": [
+          "age", "address", "name"
+        ],
         "properties": {
           "name": {
             "type": "string"

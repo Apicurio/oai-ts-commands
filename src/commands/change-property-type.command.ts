@@ -19,12 +19,37 @@ import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasS
 import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
 
+
+export class SimplifiedPropertyType extends SimplifiedType {
+
+    public static fromSchema(schema: Oas20PropertySchema | Oas30PropertySchema): SimplifiedType {
+        let rval: SimplifiedPropertyType = new SimplifiedPropertyType();
+
+        let propName: string = schema.propertyName();
+        let required: string[] = schema.parent()["required"];
+
+        let st: SimplifiedType = SimplifiedType.fromSchema(schema);
+        rval.type = st.type;
+        rval.of = st.of;
+        rval.as = st.as;
+        rval.required = false;
+        if (required && required.length > 0 && required.indexOf(propName) != -1) {
+            rval.required = true;
+        }
+
+        return rval;
+    }
+
+    required: boolean;
+
+}
+
 /**
  * Factory function.
  */
 export function createChangePropertyTypeCommand(document: OasDocument,
                                                 property: Oas20PropertySchema | Oas30PropertySchema,
-                                                newType: SimplifiedType): ChangePropertyTypeCommand {
+                                                newType: SimplifiedPropertyType): ChangePropertyTypeCommand {
     if (document.getSpecVersion() === "2.0") {
         return new ChangePropertyTypeCommand_20(property, newType);
     } else {
@@ -39,16 +64,18 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
 
     private _propPath: OasNodePath;
     private _propName: string;
-    private _newType: SimplifiedType;
+    private _newType: SimplifiedPropertyType;
 
     protected _oldProperty: any;
+    protected _oldRequired: boolean;
+    protected _nullRequired: boolean;
 
     /**
      * C'tor.
      * @param {Oas20PropertySchema | Oas30PropertySchema} property
-     * @param {SimplifiedType} newType
+     * @param {SimplifiedPropertyType} newType
      */
-    constructor(property: Oas20PropertySchema | Oas30PropertySchema, newType: SimplifiedType) {
+    constructor(property: Oas20PropertySchema | Oas30PropertySchema, newType: SimplifiedPropertyType) {
         super();
         this._propName = property.propertyName();
         this._propPath = this.oasLibrary().createNodePath(property);
@@ -61,13 +88,16 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
      */
     public execute(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Executing: " + this._newType);
-        let prop: OasSchema = this._propPath.resolve(document) as OasSchema;
+        let prop: Oas20PropertySchema | Oas30PropertySchema = this._propPath.resolve(document) as any;
         if (!prop) {
             return;
         }
 
+        let required: string[] = prop.parent()["required"];
+
         // Save the old info (for later undo operation)
         this._oldProperty = this.oasLibrary().writeNode(prop);
+        this._oldRequired = required && required.length > 0 && required.indexOf(prop.propertyName()) != -1;
 
         // Update the schema's type
         if (this._newType.isSimpleType()) {
@@ -96,6 +126,20 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
                 }
             }
         }
+
+        // Going from optional to required
+        if (this._newType.required && !this._oldRequired) {
+            if (this.isNullOrUndefined(required)) {
+                required = [];
+                prop.parent()["required"] = required;
+                this._nullRequired = true;
+            }
+            required.push(prop.propertyName());
+        }
+        // Going from required to optional
+        if (!this._newType.required && this._oldRequired) {
+            required.splice(required.indexOf(prop.propertyName()), 1);
+        }
     }
 
     /**
@@ -104,16 +148,32 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
      */
     public undo(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Reverting.");
-        let prop: OasSchema = this._propPath.resolve(document) as OasSchema;
+        let prop: Oas20PropertySchema | Oas30PropertySchema = this._propPath.resolve(document) as any;
         if (!prop) {
             return;
         }
+
+        let required: string[] = prop.parent()["required"];
+        let wasRequired: boolean = required && required.length > 0 && required.indexOf(prop.propertyName()) != -1;
 
         let parentSchema: OasSchema = prop.parent() as OasSchema;
         let oldProp: OasSchema = parentSchema.createPropertySchema(this._propName);
         this.oasLibrary().readNode(this._oldProperty, oldProp);
         parentSchema.removeProperty(this._propName);
         parentSchema.addProperty(this._propName, oldProp);
+
+        if (this._nullRequired) {
+            prop.parent()["required"] = null;
+        } else {
+            // Restoring optional from required
+            if (wasRequired && !this._oldRequired) {
+                required.splice(required.indexOf(prop.propertyName()), 1);
+            }
+            // Restoring required from optional
+            if (!wasRequired && this._oldRequired) {
+                required.push(prop.propertyName());
+            }
+        }
     }
 
 }

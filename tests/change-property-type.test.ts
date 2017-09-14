@@ -18,7 +18,7 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {createChangePropertyTypeCommand} from "../src/commands/change-property-type.command";
+import {createChangePropertyTypeCommand, SimplifiedPropertyType} from "../src/commands/change-property-type.command";
 import {SimplifiedType} from "../src/models/simplified-type.model";
 import {Oas20Document, Oas20PropertySchema, Oas30Document, Oas30PropertySchema,} from "oai-ts-core";
 
@@ -31,9 +31,24 @@ describe("Change Property Type (2.0)", () => {
             "tests/fixtures/change-property-type/2.0/change-property-type.after.json",
             (document: Oas20Document) => {
                 let property: Oas20PropertySchema = document.definitions.definition("Person").property("id") as Oas20PropertySchema;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
                 type.type = "string";
                 type.as = "date-time";
+                type.required = false;
+                return createChangePropertyTypeCommand(document, property, type);
+            }
+        );
+    });
+
+    it("Change Property Type (Required)", () => {
+        commandTest(
+            "tests/fixtures/change-property-type/2.0/change-property-type-required.before.json",
+            "tests/fixtures/change-property-type/2.0/change-property-type-required.after.json",
+            (document: Oas20Document) => {
+                let property: Oas20PropertySchema = document.definitions.definition("Person").property("name") as Oas20PropertySchema;
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
+                type.type = "string";
+                type.required = false;
                 return createChangePropertyTypeCommand(document, property, type);
             }
         );
@@ -50,9 +65,24 @@ describe("Change Property Type (3.0)", () => {
             "tests/fixtures/change-property-type/3.0/change-property-type.after.json",
             (document: Oas30Document) => {
                 let property: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("name") as Oas30PropertySchema;
-                let type: SimplifiedType = new SimplifiedType();
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
                 type.type = "integer";
                 type.as = "int32";
+                type.required = false;
+                return createChangePropertyTypeCommand(document, property, type);
+            }
+        );
+    });
+
+    it("Change Property Type (Required)", () => {
+        commandTest(
+            "tests/fixtures/change-property-type/3.0/change-property-type-required.before.json",
+            "tests/fixtures/change-property-type/3.0/change-property-type-required.after.json",
+            (document: Oas30Document) => {
+                let property: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("name") as Oas30PropertySchema;
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
+                type.type = "string";
+                type.required = false;
                 return createChangePropertyTypeCommand(document, property, type);
             }
         );
