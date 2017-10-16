@@ -45,8 +45,10 @@ export abstract class NewSecuritySchemeCommand extends AbstractCommand implement
      */
     constructor(scheme: Oas20SecurityScheme | Oas30SecurityScheme) {
         super();
-        this._scheme = this.oasLibrary().writeNode(scheme);
-        this._schemeName = scheme.schemeName();
+        if (scheme) {
+            this._scheme = this.oasLibrary().writeNode(scheme);
+            this._schemeName = scheme.schemeName();
+        }
     }
 
     /**
@@ -69,6 +71,13 @@ export abstract class NewSecuritySchemeCommand extends AbstractCommand implement
 export class NewSecuritySchemeCommand_20 extends NewSecuritySchemeCommand {
 
     private _nullSecurityDefinitions: boolean;
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "NewSecuritySchemeCommand_20";
+    }
 
     /**
      * Adds the new security scheme to the document.
@@ -118,6 +127,13 @@ export class NewSecuritySchemeCommand_20 extends NewSecuritySchemeCommand {
 export class NewSecuritySchemeCommand_30 extends NewSecuritySchemeCommand {
 
     protected _nullComponents: boolean;
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "NewSecuritySchemeCommand_30";
+    }
 
     /**
      * Adds the new security scheme to the document.

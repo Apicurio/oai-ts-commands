@@ -42,6 +42,39 @@ export abstract class AbstractCommand {
         return AbstractCommand._oasLibrary;
     }
 
+    /**
+     * Returns the type of the command (i.e. the command's class name).
+     * @return {string}
+     */
+    protected abstract type(): string;
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        var cmdType: string = this.type();
+        var obj: any = {
+            __type: cmdType
+        };
+        for (let propName in this) {
+            obj[propName] = this[propName];
+        }
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        for (let propName in obj) {
+            if (propName !== "__type") {
+                this[propName] = obj[propName];
+            }
+        }
+    }
+
 }
 
 
@@ -61,5 +94,17 @@ export interface ICommand {
      * @param document
      */
     undo(document: OasDocument): void;
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    marshall(): any;
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    unmarshall(obj: any): void;
 
 }

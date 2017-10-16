@@ -16,24 +16,15 @@
  */
 
 import {ICommand} from "../base";
-import {
-    Oas20Document,
-    Oas20PathItem,
-    Oas20Paths,
-    Oas30Document,
-    Oas30PathItem,
-    Oas30Paths,
-    OasDocument
-} from "oai-ts-core";
+import {Oas20PathItem, Oas30PathItem, OasDocument, OasPathItem} from "oai-ts-core";
 import {ReplaceNodeCommand} from "./replace.command";
 
 
 /**
  * Factory function.
  */
-export function createReplacePathItemCommand(document: OasDocument,
-                                              old: Oas20PathItem | Oas30PathItem,
-                                              replacement: Oas20PathItem | Oas30PathItem): ReplaceNodeCommand<Oas20PathItem> | ReplaceNodeCommand<Oas30PathItem> {
+export function createReplacePathItemCommand(document: OasDocument, old: Oas20PathItem | Oas30PathItem,
+                                             replacement: Oas20PathItem | Oas30PathItem): ReplaceNodeCommand<Oas20PathItem> | ReplaceNodeCommand<Oas30PathItem> {
     if (document.getSpecVersion() === "2.0") {
         return new ReplacePathItemCommand_20(old as Oas20PathItem, replacement as Oas20PathItem);
     } else {
@@ -45,16 +36,28 @@ export function createReplacePathItemCommand(document: OasDocument,
 /**
  * A command used to replace a path item with a newer version.
  */
-export class ReplacePathItemCommand_20 extends ReplaceNodeCommand<Oas20PathItem> implements ICommand {
+export abstract class AbstractReplacePathItemCommand<T extends OasPathItem> extends ReplaceNodeCommand<T> implements ICommand {
+
+    private _pathName: string;
+
+    /**
+     * @param {OasPathItem} old
+     * @param {OasPathItem} replacement
+     */
+    constructor(old: T, replacement: T) {
+        super(old, replacement);
+        if (old) {
+            this._pathName = old.path();
+        }
+    }
 
     /**
      * Remove the given node.
      * @param doc
      * @param node
      */
-    protected removeNode(doc: Oas20Document, node: Oas20PathItem): void {
-        let paths: Oas20Paths = <Oas20Paths>node.parent();
-        paths.removePathItem(node.path());
+    protected removeNode(doc: OasDocument, node: T): void {
+        doc.paths.removePathItem(node.path());
     }
 
     /**
@@ -62,9 +65,37 @@ export class ReplacePathItemCommand_20 extends ReplaceNodeCommand<Oas20PathItem>
      * @param doc
      * @param node
      */
-    protected addNode(doc: Oas20Document, node: Oas20PathItem): void {
-        let paths: Oas20Paths = doc.paths as Oas20Paths;
-        paths.addPathItem(node.path(), node);
+    protected addNode(doc: OasDocument, node: T): void {
+        node._ownerDocument = doc;
+        node._parent = doc.paths;
+        doc.paths.addPathItem(this._pathName, node);
+    }
+
+    /**
+     * Reads a node into the appropriate model.
+     * @param {OasDocument} doc
+     * @param node
+     * @return {T}
+     */
+    protected readNode(doc: OasDocument, node: any): T {
+        let pathItem: T = doc.paths.createPathItem(this._pathName) as T;
+        this.oasLibrary().readNode(node, pathItem);
+        return pathItem;
+    }
+
+}
+
+
+/**
+ * A command used to replace a path item with a newer version.
+ */
+export class ReplacePathItemCommand_20 extends AbstractReplacePathItemCommand<Oas20PathItem> implements ICommand {
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ReplacePathItemCommand_20";
     }
 
 }
@@ -74,26 +105,13 @@ export class ReplacePathItemCommand_20 extends ReplaceNodeCommand<Oas20PathItem>
 /**
  * A command used to replace a path item with a newer version.
  */
-export class ReplacePathItemCommand_30 extends ReplaceNodeCommand<Oas30PathItem> implements ICommand {
+export class ReplacePathItemCommand_30 extends AbstractReplacePathItemCommand<Oas30PathItem> implements ICommand {
 
     /**
-     * Remove the given node.
-     * @param doc
-     * @param node
+     * @return {string}
      */
-    protected removeNode(doc: Oas30Document, node: Oas30PathItem): void {
-        let paths: Oas30Paths = node.parent() as Oas30Paths;
-        paths.removePathItem(node.path());
-    }
-
-    /**
-     * Adds the node to the document.
-     * @param doc
-     * @param node
-     */
-    protected addNode(doc: Oas30Document, node: Oas30PathItem): void {
-        let paths: Oas30Paths = doc.paths as Oas30Paths;
-        paths.addPathItem(node.path(), node);
+    protected type(): string {
+        return "ReplacePathItemCommand_30";
     }
 
 }

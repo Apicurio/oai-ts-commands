@@ -24,6 +24,7 @@ import {
     OasDocument,
     OasNodePath
 } from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -55,8 +56,17 @@ export class NewMediaTypeCommand extends AbstractCommand implements ICommand {
      */
     constructor(node: Oas30ParameterBase | Oas30RequestBody | Oas30ResponseBase, newMediaType: string) {
         super();
-        this._nodePath = this.oasLibrary().createNodePath(node);
+        if (node) {
+            this._nodePath = this.oasLibrary().createNodePath(node);
+        }
         this._newMediaType = newMediaType;
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "NewMediaTypeCommand";
     }
 
     /**
@@ -97,6 +107,25 @@ export class NewMediaTypeCommand extends AbstractCommand implements ICommand {
         }
 
         node.removeMediaType(this._newMediaType);
+    }
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._nodePath = MarshallUtils.marshallNodePath(obj._nodePath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._nodePath = MarshallUtils.unmarshallNodePath(this._nodePath as any);
     }
 
 }

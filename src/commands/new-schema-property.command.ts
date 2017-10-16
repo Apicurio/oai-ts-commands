@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20Schema, Oas30Schema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -46,7 +47,9 @@ export abstract class NewSchemaPropertyCommand extends AbstractCommand implement
      */
     constructor(schema: Oas20Schema | Oas30Schema, propertyName: string) {
         super();
-        this._schemaPath = this.oasLibrary().createNodePath(schema);
+        if (schema) {
+            this._schemaPath = this.oasLibrary().createNodePath(schema);
+        }
         this._propertyName = propertyName;
     }
 
@@ -98,6 +101,25 @@ export abstract class NewSchemaPropertyCommand extends AbstractCommand implement
         schema.removeProperty(this._propertyName);
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._schemaPath = MarshallUtils.marshallNodePath(obj._schemaPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._schemaPath = MarshallUtils.unmarshallNodePath(this._schemaPath as any);
+    }
+
 }
 
 
@@ -106,6 +128,10 @@ export abstract class NewSchemaPropertyCommand extends AbstractCommand implement
  */
 export class NewSchemaPropertyCommand_20 extends NewSchemaPropertyCommand {
 
+    protected type(): string {
+        return "NewSchemaPropertyCommand_20";
+    }
+
 }
 
 
@@ -113,6 +139,10 @@ export class NewSchemaPropertyCommand_20 extends NewSchemaPropertyCommand {
  * OAI 3.0 impl.
  */
 export class NewSchemaPropertyCommand_30 extends NewSchemaPropertyCommand {
+
+    protected type(): string {
+        return "NewSchemaPropertyCommand_30";
+    }
 
 }
 

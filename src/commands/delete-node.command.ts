@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNode, OasNodePath} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -48,7 +49,9 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
     constructor(property: string, parent: OasNode) {
         super();
         this._property = property;
-        this._parentPath = this.oasLibrary().createNodePath(parent);
+        if (parent) {
+            this._parentPath = this.oasLibrary().createNodePath(parent);
+        }
     }
 
     /**
@@ -84,6 +87,25 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
         this._oldValue._ownerDocument = parent.ownerDocument();
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
 }
 
 
@@ -92,6 +114,10 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
  */
 export class DeleteNodeCommand_20 extends DeleteNodeCommand {
 
+    protected type(): string {
+        return "DeleteNodeCommand_20";
+    }
+
 }
 
 
@@ -99,6 +125,10 @@ export class DeleteNodeCommand_20 extends DeleteNodeCommand {
  * OAI 3.0 impl.
  */
 export class DeleteNodeCommand_30 extends DeleteNodeCommand {
+
+    protected type(): string {
+        return "DeleteNodeCommand_30";
+    }
 
 }
 

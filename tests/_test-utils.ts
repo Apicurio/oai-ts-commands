@@ -18,6 +18,7 @@
 
 import {OasDocument, OasLibraryUtils} from "oai-ts-core";
 import {ICommand} from "../src/base";
+import {MarshallUtils} from "../src/util/marshall.util";
 
 var library = new OasLibraryUtils();
 
@@ -37,6 +38,10 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
 
     // Create the command.
     let cmd: ICommand = command(document);
+
+    // Serialize/deserialize the command
+    let serializedCmd: string = JSON.stringify(MarshallUtils.marshallCommand(cmd));
+    cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
 
     // Execute the command
     cmd.execute(document);

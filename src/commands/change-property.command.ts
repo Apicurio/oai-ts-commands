@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNode, OasNodePath} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -50,7 +51,9 @@ export abstract class ChangePropertyCommand<T> extends AbstractCommand implement
      */
     constructor(node: OasNode, property: string, newValue: T) {
         super();
-        this._nodePath = this.oasLibrary().createNodePath(node);
+        if (node) {
+            this._nodePath = this.oasLibrary().createNodePath(node);
+        }
         this._property = property;
         this._newValue = newValue;
     }
@@ -86,6 +89,25 @@ export abstract class ChangePropertyCommand<T> extends AbstractCommand implement
         this._oldValue = null;
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._nodePath = MarshallUtils.marshallNodePath(obj._nodePath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._nodePath = MarshallUtils.unmarshallNodePath(this._nodePath as any);
+    }
+
 }
 
 
@@ -93,6 +115,11 @@ export abstract class ChangePropertyCommand<T> extends AbstractCommand implement
  * OAI 2.0 impl.
  */
 export class ChangePropertyCommand_20<T> extends ChangePropertyCommand<T> {
+
+    protected type(): string {
+        return "ChangePropertyCommand_20";
+    }
+
 }
 
 
@@ -100,4 +127,9 @@ export class ChangePropertyCommand_20<T> extends ChangePropertyCommand<T> {
  * OAI 3.0 impl.
  */
 export class ChangePropertyCommand_30<T> extends ChangePropertyCommand<T> {
+
+    protected type(): string {
+        return "ChangePropertyCommand_30";
+    }
+
 }

@@ -111,6 +111,10 @@ export abstract class NewTagCommand extends AbstractCommand implements ICommand 
  */
 export class NewTagCommand_20 extends NewTagCommand {
 
+    protected type(): string {
+        return "NewTagCommand_20";
+    }
+
 }
 
 
@@ -118,5 +122,9 @@ export class NewTagCommand_20 extends NewTagCommand {
  * OAI 3.0 impl.
  */
 export class NewTagCommand_30 extends NewTagCommand {
+
+    protected type(): string {
+        return "NewTagCommand_30";
+    }
 
 }

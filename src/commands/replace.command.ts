@@ -16,18 +16,19 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Document, OasDocument, OasNode} from "oai-ts-core";
+import {Oas20Document, OasDocument, OasNode, OasNodePath} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 
 /**
  * A command used to replace a path item with a newer version.
- *
- * TODO should serialize/deserialize the node instead of just keeping a reference to it (both for the old node and the replacement)
  */
 export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
 
-    private _newNode: T;
-    private _oldNode: T;
+    private _nodePath: OasNodePath;
+    private _new: any;
+
+    private _old: any;
 
     /**
      * C'tor.
@@ -36,8 +37,12 @@ export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractComm
      */
     constructor(old: T, replacement: T) {
         super();
-        this._oldNode = old;
-        this._newNode = replacement;
+        if (old) {
+            this._nodePath = this.oasLibrary().createNodePath(old);
+        }
+        if (replacement) {
+            this._new = this.oasLibrary().writeNode(replacement);
+        }
     }
 
     /**
@@ -46,9 +51,18 @@ export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractComm
      */
     public execute(document: OasDocument): void {
         console.info("[AbstractReplaceNodeCommand] Executing.");
+        this._old = null;
 
-        this.removeNode(document, this._oldNode);
-        this.addNode(document, this._newNode);
+        let oldNode: T = this._nodePath.resolve(document) as T;
+        if (this.isNullOrUndefined(oldNode)) {
+            return;
+        }
+
+        this._old = this.oasLibrary().writeNode(oldNode);
+        this.removeNode(document, oldNode);
+
+        let newNode: T = this.readNode(document, this._new);
+        this.addNode(document, newNode);
     }
 
     /**
@@ -57,16 +71,20 @@ export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractComm
      */
     public undo(document: OasDocument): void {
         console.info("[AbstractReplaceNodeCommand] Reverting.");
-        let doc: Oas20Document  = <Oas20Document>document;
-        if (this.isNullOrUndefined(this._oldNode)) {
+        let doc: Oas20Document  = document as Oas20Document;
+        if (this.isNullOrUndefined(this._old)) {
             return;
         }
 
-        this._oldNode._parent = this._newNode._parent;
-        this._oldNode._ownerDocument = this._newNode._ownerDocument;
+        let node: T = this._nodePath.resolve(document) as T;
+        if (this.isNullOrUndefined(node)) {
+            return;
+        }
 
-        this.removeNode(doc, this._newNode);
-        this.addNode(doc, this._oldNode);
+        this.removeNode(doc, node);
+
+        let restoreNode: T = this.readNode(document, this._old);
+        this.addNode(document, restoreNode);
     }
 
     /**
@@ -82,4 +100,31 @@ export abstract class ReplaceNodeCommand<T extends OasNode> extends AbstractComm
      * @param {T} node
      */
     protected abstract addNode(doc: OasDocument, node: T): void;
+
+    /**
+     * Unmarshalls a node into the appropriate type.
+     * @param node
+     * @return {T}
+     */
+    protected abstract readNode(doc: OasDocument, node: any): T;
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._nodePath = MarshallUtils.marshallNodePath(obj._nodePath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._nodePath = MarshallUtils.unmarshallNodePath(this._nodePath as any);
+    }
+
 }

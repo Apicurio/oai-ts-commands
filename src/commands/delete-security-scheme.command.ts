@@ -95,6 +95,10 @@ export abstract class DeleteSecuritySchemeCommand extends AbstractCommand implem
  */
 export class DeleteSecuritySchemeCommand_20 extends DeleteSecuritySchemeCommand {
 
+    protected type(): string {
+        return "DeleteSecuritySchemeCommand_20";
+    }
+
     /**
      * Delete the scheme.
      * @param {Oas20Document} document
@@ -132,6 +136,10 @@ export class DeleteSecuritySchemeCommand_20 extends DeleteSecuritySchemeCommand 
  * OAI 3.0 impl.
  */
 export class DeleteSecuritySchemeCommand_30 extends DeleteSecuritySchemeCommand {
+
+    protected type(): string {
+        return "DeleteSecuritySchemeCommand_30";
+    }
 
     /**
      * Deletes the scheme.

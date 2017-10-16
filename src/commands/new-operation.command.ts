@@ -104,6 +104,10 @@ export abstract class NewOperationCommand extends AbstractCommand implements ICo
  */
 export class NewOperationCommand_20 extends NewOperationCommand {
 
+    protected type(): string {
+        return "NewOperationCommand_20";
+    }
+
 }
 
 
@@ -111,6 +115,10 @@ export class NewOperationCommand_20 extends NewOperationCommand {
  * OAI 3.0 impl.
  */
 export class NewOperationCommand_30 extends NewOperationCommand {
+
+    protected type(): string {
+        return "NewOperationCommand_30";
+    }
 
 }
 

@@ -97,6 +97,10 @@ export abstract class DeleteSchemaDefinitionCommand extends AbstractCommand impl
  */
 export class DeleteSchemaDefinitionCommand_20 extends DeleteSchemaDefinitionCommand {
 
+    protected type(): string {
+        return "DeleteSchemaDefinitionCommand_20";
+    }
+
     /**
      * Deletes the schema definition.
      * @param {Oas20Document} document
@@ -134,6 +138,10 @@ export class DeleteSchemaDefinitionCommand_20 extends DeleteSchemaDefinitionComm
  * OAI 3.0 impl.
  */
 export class DeleteSchemaDefinitionCommand_30 extends DeleteSchemaDefinitionCommand {
+
+    protected type(): string {
+        return "DeleteSchemaDefinitionCommand_30";
+    }
 
     /**
      * Deletes the schema definition.

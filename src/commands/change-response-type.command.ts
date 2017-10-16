@@ -18,6 +18,7 @@
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition, OasDocument, OasNodePath} from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
+import {MarshallUtils} from "../util/marshall.util";
 
 
 /**
@@ -62,8 +63,17 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
      */
     constructor(response: Oas20Response | Oas20ResponseDefinition, newType: SimplifiedType) {
         super();
-        this._responsePath = this.oasLibrary().createNodePath(response);
+        if (response) {
+            this._responsePath = this.oasLibrary().createNodePath(response);
+        }
         this._newType = newType;
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ChangeResponseTypeCommand_20";
     }
 
     /**
@@ -118,6 +128,27 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
         }
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._responsePath = MarshallUtils.marshallNodePath(obj._responsePath);
+        obj._newType = MarshallUtils.marshallSimplifiedParameterType(obj._newType);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._responsePath = MarshallUtils.unmarshallNodePath(this._responsePath as any);
+        this._newType = MarshallUtils.unmarshallSimplifiedParameterType(this._newType);
+    }
+
 }
 
 
@@ -133,6 +164,13 @@ export class ChangeResponseDefinitionTypeCommand_20 extends ChangeResponseTypeCo
      */
     constructor(response: Oas20ResponseDefinition, newType: SimplifiedType) {
         super(response, newType);
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ChangeResponseDefinitionTypeCommand_20";
     }
 
 }

@@ -26,6 +26,7 @@ import {
     OasNodePath,
     OasParameterBase
 } from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 
 /**
@@ -51,6 +52,7 @@ export abstract class DeleteAllParametersCommand extends AbstractCommand impleme
 
     private _oldParams: any[];
 
+
     /**
      * C'tor.
      * @param {Oas20Operation | Oas20PathItem} parent
@@ -58,7 +60,9 @@ export abstract class DeleteAllParametersCommand extends AbstractCommand impleme
      */
     constructor(parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, type: string) {
         super();
-        this._parentPath = this.oasLibrary().createNodePath(parent);
+        if (parent) {
+            this._parentPath = this.oasLibrary().createNodePath(parent);
+        }
         this._paramType = type;
     }
 
@@ -116,6 +120,25 @@ export abstract class DeleteAllParametersCommand extends AbstractCommand impleme
         });
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
 }
 
 
@@ -124,6 +147,10 @@ export abstract class DeleteAllParametersCommand extends AbstractCommand impleme
  */
 export class DeleteAllParametersCommand_20 extends DeleteAllParametersCommand {
 
+    protected type(): string {
+        return "DeleteAllParametersCommand_20";
+    }
+
 }
 
 
@@ -131,5 +158,9 @@ export class DeleteAllParametersCommand_20 extends DeleteAllParametersCommand {
  * OAI 3.0 impl.
  */
 export class DeleteAllParametersCommand_30 extends DeleteAllParametersCommand {
+
+    protected type(): string {
+        return "DeleteAllParametersCommand_20";
+    }
 
 }

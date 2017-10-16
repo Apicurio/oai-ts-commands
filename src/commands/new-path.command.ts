@@ -96,6 +96,10 @@ export abstract class NewPathCommand extends AbstractCommand implements ICommand
  */
 export class NewPathCommand_20 extends NewPathCommand {
 
+    protected type(): string {
+        return "NewPathCommand_20";
+    }
+
 }
 
 
@@ -103,5 +107,9 @@ export class NewPathCommand_20 extends NewPathCommand {
  * OAI 3.0 impl.
  */
 export class NewPathCommand_30 extends NewPathCommand {
+
+    protected type(): string {
+        return "NewPathCommand_30";
+    }
 
 }

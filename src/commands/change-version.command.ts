@@ -85,6 +85,10 @@ export abstract class ChangeVersionCommand extends AbstractCommand implements IC
  */
 export class ChangeVersionCommand_20 extends ChangeVersionCommand {
 
+    protected type(): string {
+        return "ChangeVersionCommand_20";
+    }
+
 }
 
 
@@ -92,5 +96,9 @@ export class ChangeVersionCommand_20 extends ChangeVersionCommand {
  * OAI 3.0 impl.
  */
 export class ChangeVersionCommand_30 extends ChangeVersionCommand {
+
+    protected type(): string {
+        return "ChangeVersionCommand_30";
+    }
 
 }

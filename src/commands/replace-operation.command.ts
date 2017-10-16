@@ -16,15 +16,7 @@
  */
 
 import {ICommand} from "../base";
-import {
-    Oas20Document,
-    Oas20Operation,
-    Oas20PathItem,
-    Oas30Document,
-    Oas30Operation,
-    Oas30PathItem,
-    OasDocument
-} from "oai-ts-core";
+import {Oas20Operation, Oas30Operation, OasDocument, OasOperation, OasPathItem} from "oai-ts-core";
 import {ReplaceNodeCommand} from "./replace.command";
 
 /**
@@ -40,29 +32,60 @@ export function createReplaceOperationCommand(document: OasDocument,
     }
 }
 
+
 /**
  * A command used to replace an operation with a newer version.
  */
-export class ReplaceOperationCommand_20 extends ReplaceNodeCommand<Oas20Operation> implements ICommand {
+export abstract class AbstractReplaceOperationCommand<T extends OasOperation> extends ReplaceNodeCommand<T> implements ICommand {
+
+    private _method: string;
+    private _path: string;
+
+    /**
+     * @param {T} old
+     * @param {T} replacement
+     */
+    constructor(old: T, replacement: T) {
+        super(old, replacement);
+        if (old) {
+            this._method = old.method();
+            this._path = (<OasPathItem>old.parent()).path();
+        }
+    }
 
     /**
      * Remove the given node.
-     * @param doc
-     * @param node
+     * @param {OasDocument} doc
+     * @param {T} node
      */
-    protected removeNode(doc: Oas20Document, node: Oas20Operation): void {
-        let path: Oas20PathItem = node.parent() as Oas20PathItem;
+    protected removeNode(doc: OasDocument, node: T): void {
+        let path: OasPathItem = doc.paths.pathItem(this._path);
         path[node.method()] = null;
     }
 
     /**
      * Adds the node to the document.
-     * @param doc
-     * @param node
+     * @param {OasDocument} doc
+     * @param {T} node
      */
-    protected addNode(doc: Oas20Document, node: Oas20Operation): void {
-        let path: Oas20PathItem = node.parent() as Oas20PathItem;
+    protected addNode(doc: OasDocument, node: T): void {
+        let path: OasPathItem = doc.paths.pathItem(this._path) as OasPathItem;
+        node._parent = path;
+        node._ownerDocument = path.ownerDocument();
         path[node.method()] = node;
+    }
+
+    /**
+     * Reads a node into the appropriate model.
+     * @param {OasDocument} doc
+     * @param node
+     * @return {T}
+     */
+    protected readNode(doc: OasDocument, node: any): T {
+        let parent: OasPathItem = doc.paths.pathItem(this._path);
+        let operation: T = parent.createOperation(this._method) as T;
+        this.oasLibrary().readNode(node, operation);
+        return operation;
     }
 
 }
@@ -71,26 +94,28 @@ export class ReplaceOperationCommand_20 extends ReplaceNodeCommand<Oas20Operatio
 /**
  * A command used to replace an operation with a newer version.
  */
-export class ReplaceOperationCommand_30 extends ReplaceNodeCommand<Oas30Operation> implements ICommand {
+export class ReplaceOperationCommand_20 extends AbstractReplaceOperationCommand<Oas20Operation> implements ICommand {
 
     /**
-     * Remove the given node.
-     * @param doc
-     * @param node
+     * @return {string}
      */
-    protected removeNode(doc: Oas30Document, node: Oas30Operation): void {
-        let path: Oas30PathItem = node.parent() as Oas30PathItem;
-        path[node.method()] = null;
+    protected type(): string {
+        return "ReplaceOperationCommand_20";
     }
 
+}
+
+
+/**
+ * A command used to replace an operation with a newer version.
+ */
+export class ReplaceOperationCommand_30 extends AbstractReplaceOperationCommand<Oas30Operation> implements ICommand {
+
     /**
-     * Adds the node to the document.
-     * @param doc
-     * @param node
+     * @return {string}
      */
-    protected addNode(doc: Oas30Document, node: Oas30Operation): void {
-        let path: Oas30PathItem = node.parent() as Oas30PathItem;
-        path[node.method()] = node;
+    protected type(): string {
+        return "ReplaceOperationCommand_30";
     }
 
 }

@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20Response, Oas30Response, OasDocument, OasNodePath, OasResponse, OasResponses} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -46,9 +47,11 @@ export abstract class DeleteResponseCommand extends AbstractCommand implements I
      */
     constructor(response: Oas20Response | Oas30Response) {
         super();
-        this._responseCode = response.statusCode();
-        this._responsePath = this.oasLibrary().createNodePath(response);
-        this._responsesPath = this.oasLibrary().createNodePath(response.parent());
+        if (response) {
+            this._responseCode = response.statusCode();
+            this._responsePath = this.oasLibrary().createNodePath(response);
+            this._responsesPath = this.oasLibrary().createNodePath(response.parent());
+        }
     }
 
     /**
@@ -97,6 +100,28 @@ export abstract class DeleteResponseCommand extends AbstractCommand implements I
             responses.addResponse(this._responseCode, response);
         }
     }
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._responsePath = MarshallUtils.marshallNodePath(obj._responsePath);
+        obj._responsesPath = MarshallUtils.marshallNodePath(obj._responsesPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._responsePath = MarshallUtils.unmarshallNodePath(this._responsePath as any);
+        this._responsesPath = MarshallUtils.unmarshallNodePath(this._responsesPath as any);
+    }
+
 }
 
 
@@ -105,6 +130,10 @@ export abstract class DeleteResponseCommand extends AbstractCommand implements I
  */
 export class DeleteResponseCommand_20 extends DeleteResponseCommand {
 
+    protected type(): string {
+        return "DeleteResponseCommand_20";
+    }
+
 }
 
 
@@ -112,5 +141,9 @@ export class DeleteResponseCommand_20 extends DeleteResponseCommand {
  * OAI 3.0 impl.
  */
 export class DeleteResponseCommand_30 extends DeleteResponseCommand {
+
+    protected type(): string {
+        return "DeleteResponseCommand_30";
+    }
 
 }

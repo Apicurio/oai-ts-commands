@@ -34,8 +34,8 @@ export function createChangeSecuritySchemeCommand(document: OasDocument, scheme:
  */
 export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implements ICommand {
 
-    // TODO should serialize the incoming data instead of just keeping a ref to the data model object
-    protected _scheme: Oas20SecurityScheme | Oas30SecurityScheme;
+    protected _schemeName: string;
+    protected _schemeObj: any;
 
     private _oldScheme: any;
 
@@ -45,7 +45,10 @@ export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implem
      */
     constructor(scheme: Oas20SecurityScheme | Oas30SecurityScheme) {
         super();
-        this._scheme = scheme;
+        if (scheme) {
+            this._schemeName = scheme.schemeName();
+            this._schemeObj = this.oasLibrary().writeNode(scheme);
+        }
     }
 
     /**
@@ -65,7 +68,7 @@ export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implem
         this._oldScheme = this.oasLibrary().writeNode(scheme);
 
         // Replace with new scheme info
-        this.replaceSchemeWith(scheme, this._scheme);
+        this.replaceSchemeWith(scheme, this._schemeObj);
     }
 
     /**
@@ -99,10 +102,9 @@ export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implem
      * @param {Oas20SecurityScheme | Oas30SecurityScheme} toScheme
      * @param {Oas20SecurityScheme | Oas30SecurityScheme} fromScheme
      */
-    protected replaceSchemeWith(toScheme: Oas20SecurityScheme | Oas30SecurityScheme, fromScheme: Oas20SecurityScheme | Oas30SecurityScheme): void {
-        let from: any = this.oasLibrary().writeNode(fromScheme);
+    protected replaceSchemeWith(toScheme: Oas20SecurityScheme | Oas30SecurityScheme, fromScheme: any): void {
         this.nullScheme(toScheme);
-        this.oasLibrary().readNode(from, toScheme);
+        this.oasLibrary().readNode(fromScheme, toScheme);
     }
 
     /**
@@ -123,6 +125,10 @@ export abstract class ChangeSecuritySchemeCommand extends AbstractCommand implem
  */
 export class ChangeSecuritySchemeCommand_20 extends ChangeSecuritySchemeCommand {
 
+    protected type(): string {
+        return "ChangeSecuritySchemeCommand_20";
+    }
+
     /**
      * Return the scheme.
      * @param {Oas20Document} document
@@ -132,7 +138,7 @@ export class ChangeSecuritySchemeCommand_20 extends ChangeSecuritySchemeCommand 
         if (this.isNullOrUndefined(document.securityDefinitions)) {
             return;
         }
-        return document.securityDefinitions.securityScheme(this._scheme.schemeName());
+        return document.securityDefinitions.securityScheme(this._schemeName);
     }
 
     /**
@@ -155,6 +161,10 @@ export class ChangeSecuritySchemeCommand_20 extends ChangeSecuritySchemeCommand 
  */
 export class ChangeSecuritySchemeCommand_30 extends ChangeSecuritySchemeCommand {
 
+    protected type(): string {
+        return "ChangeSecuritySchemeCommand_30";
+    }
+
     /**
      * Return the scheme.
      * @param {Oas30Document} document
@@ -164,7 +174,7 @@ export class ChangeSecuritySchemeCommand_30 extends ChangeSecuritySchemeCommand 
         if (this.isNullOrUndefined(document.components)) {
             return;
         }
-        return document.components.getSecurityScheme(this._scheme.schemeName());
+        return document.components.getSecurityScheme(this._schemeName);
     }
 
     /**

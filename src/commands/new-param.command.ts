@@ -26,6 +26,7 @@ import {
     OasParameterBase
 } from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -59,7 +60,9 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
      */
     constructor(operation: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, paramName: string, paramType: string) {
         super();
-        this._parentPath = this.oasLibrary().createNodePath(operation);
+        if (operation) {
+            this._parentPath = this.oasLibrary().createNodePath(operation);
+        }
         this._paramName = paramName;
         this._paramType = paramType;
     }
@@ -147,6 +150,25 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
         }).length > 0;
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
 }
 
 
@@ -155,6 +177,10 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
  */
 export class NewParamCommand_20 extends NewParamCommand {
 
+    protected type(): string {
+        return "NewParamCommand_20";
+    }
+
 }
 
 
@@ -162,5 +188,9 @@ export class NewParamCommand_20 extends NewParamCommand {
  * OAI 3.0 impl.
  */
 export class NewParamCommand_30 extends NewParamCommand {
+
+    protected type(): string {
+        return "NewParamCommand_30";
+    }
 
 }

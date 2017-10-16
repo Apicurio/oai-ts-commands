@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-import {Oas20Items, Oas20ItemsSchema, OasSchema} from "oai-ts-core";
+import {
+    Oas20Items, Oas20ItemsSchema, Oas20Parameter, Oas20PropertySchema, Oas30Parameter, Oas30PropertySchema,
+    OasSchema
+} from "oai-ts-core";
 import {ModelUtils} from "../util/model.util";
 
 
@@ -90,3 +93,58 @@ export class SimplifiedType {
 
 }
 
+
+/**
+ * Adds the "required" property to the standard SimplifiedType.
+ */
+export class SimplifiedParameterType extends SimplifiedType {
+
+    public static fromParameter(param: Oas20Parameter | Oas30Parameter): SimplifiedParameterType {
+        let rval: SimplifiedParameterType = new SimplifiedParameterType();
+        let st: SimplifiedType;
+        if (param.ownerDocument().getSpecVersion() === "2.0") {
+            if (param.in === "body") {
+                st = SimplifiedType.fromSchema(param.schema);
+            } else {
+                st = SimplifiedType.fromItems(param as Oas20Parameter);
+            }
+        } else {
+            st = SimplifiedType.fromSchema((param as Oas30Parameter).schema);
+        }
+
+        rval.type = st.type;
+        rval.of = st.of;
+        rval.as = st.as;
+        rval.required = param.required;
+
+        return rval;
+    }
+
+    required: boolean;
+
+}
+
+
+export class SimplifiedPropertyType extends SimplifiedType {
+
+    public static fromPropertySchema(schema: Oas20PropertySchema | Oas30PropertySchema): SimplifiedPropertyType {
+        let rval: SimplifiedPropertyType = new SimplifiedPropertyType();
+
+        let propName: string = schema.propertyName();
+        let required: string[] = schema.parent()["required"];
+
+        let st: SimplifiedType = SimplifiedType.fromSchema(schema);
+        rval.type = st.type;
+        rval.of = st.of;
+        rval.as = st.as;
+        rval.required = false;
+        if (required && required.length > 0 && required.indexOf(propName) != -1) {
+            rval.required = true;
+        }
+
+        return rval;
+    }
+
+    required: boolean;
+
+}

@@ -18,6 +18,7 @@
 export * from "./base";
 
 export * from "./util/model.util";
+export * from "./util/marshall.util";
 
 export * from "./models/simplified-type.model";
 

@@ -25,8 +25,9 @@ import {
     OasNodePath,
     OasSchema
 } from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
-export class OldPropertySchema {
+export interface OldPropertySchema {
     name: string;
     schema: any;
 }
@@ -58,7 +59,9 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
      */
     constructor(schema: Oas20Schema | Oas30Schema | Oas20SchemaDefinition | Oas30SchemaDefinition) {
         super();
-        this._schemaPath = this.oasLibrary().createNodePath(schema);
+        if (schema) {
+            this._schemaPath = this.oasLibrary().createNodePath(schema);
+        }
     }
 
     /**
@@ -105,6 +108,25 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
         });
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._schemaPath = MarshallUtils.marshallNodePath(obj._schemaPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._schemaPath = MarshallUtils.unmarshallNodePath(this._schemaPath as any);
+    }
+
 }
 
 
@@ -113,6 +135,10 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
  */
 export class DeleteAllPropertiesCommand_20 extends DeleteAllPropertiesCommand {
 
+    protected type(): string {
+        return "DeleteAllPropertiesCommand_20";
+    }
+
 }
 
 
@@ -120,5 +146,9 @@ export class DeleteAllPropertiesCommand_20 extends DeleteAllPropertiesCommand {
  * OAI 3.0 impl.
  */
 export class DeleteAllPropertiesCommand_30 extends DeleteAllPropertiesCommand {
+
+    protected type(): string {
+        return "DeleteAllPropertiesCommand_30";
+    }
 
 }

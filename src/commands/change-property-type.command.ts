@@ -17,32 +17,9 @@
 
 import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
-import {SimplifiedType} from "../models/simplified-type.model";
+import {SimplifiedPropertyType, SimplifiedType} from "../models/simplified-type.model";
+import {MarshallUtils} from "../util/marshall.util";
 
-
-export class SimplifiedPropertyType extends SimplifiedType {
-
-    public static fromPropertySchema(schema: Oas20PropertySchema | Oas30PropertySchema): SimplifiedPropertyType {
-        let rval: SimplifiedPropertyType = new SimplifiedPropertyType();
-
-        let propName: string = schema.propertyName();
-        let required: string[] = schema.parent()["required"];
-
-        let st: SimplifiedType = SimplifiedType.fromSchema(schema);
-        rval.type = st.type;
-        rval.of = st.of;
-        rval.as = st.as;
-        rval.required = false;
-        if (required && required.length > 0 && required.indexOf(propName) != -1) {
-            rval.required = true;
-        }
-
-        return rval;
-    }
-
-    required: boolean;
-
-}
 
 /**
  * Factory function.
@@ -77,8 +54,10 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
      */
     constructor(property: Oas20PropertySchema | Oas30PropertySchema, newType: SimplifiedPropertyType) {
         super();
-        this._propName = property.propertyName();
-        this._propPath = this.oasLibrary().createNodePath(property);
+        if (property) {
+            this._propName = property.propertyName();
+            this._propPath = this.oasLibrary().createNodePath(property);
+        }
         this._newType = newType;
     }
 
@@ -180,6 +159,27 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
         }
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._propPath = MarshallUtils.marshallNodePath(obj._propPath);
+        obj._newType = MarshallUtils.marshallSimplifiedParameterType(obj._newType);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._propPath = MarshallUtils.unmarshallNodePath(this._propPath as any);
+        this._newType = MarshallUtils.unmarshallSimplifiedParameterType(this._newType);
+    }
+
 }
 
 
@@ -188,6 +188,10 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
  */
 export class ChangePropertyTypeCommand_20 extends ChangePropertyTypeCommand {
 
+    protected type(): string {
+        return "ChangePropertyTypeCommand_20";
+    }
+
 }
 
 
@@ -195,5 +199,9 @@ export class ChangePropertyTypeCommand_20 extends ChangePropertyTypeCommand {
  * OAI 3.0 impl.
  */
 export class ChangePropertyTypeCommand_30 extends ChangePropertyTypeCommand {
+
+    protected type(): string {
+        return "ChangePropertyTypeCommand_30";
+    }
 
 }

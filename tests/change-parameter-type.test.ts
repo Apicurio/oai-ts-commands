@@ -29,8 +29,8 @@ import {
 import {
     createChangeParameterDefinitionTypeCommand,
     createChangeParameterTypeCommand,
-    SimplifiedParameterType
 } from "../src/commands/change-parameter-type.command";
+import {SimplifiedParameterType} from "../src/models/simplified-type.model";
 
 
 describe("Change Parameter Type (2.0)", () => {

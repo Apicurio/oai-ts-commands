@@ -45,14 +45,33 @@ export function createReplaceSchemaDefinitionCommand(document: OasDocument,
  */
 export class ReplaceSchemaDefinitionCommand_20 extends ReplaceNodeCommand<Oas20SchemaDefinition> implements ICommand {
 
+    private _defName: string;
+
+    /**
+     * @param {Oas20SchemaDefinition} old
+     * @param {Oas20SchemaDefinition} replacement
+     */
+    constructor(old: Oas20SchemaDefinition, replacement: Oas20SchemaDefinition) {
+        super(old, replacement);
+        if (old) {
+            this._defName = old.definitionName();
+        }
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ReplaceSchemaDefinitionCommand_20";
+    }
+
     /**
      * Remove the given node.
      * @param doc
      * @param node
      */
     protected removeNode(doc: Oas20Document, node: Oas20SchemaDefinition): void {
-        let definitions: Oas20Definitions = doc.definitions;
-        definitions.removeDefinition(node.definitionName());
+        doc.definitions.removeDefinition(node.definitionName());
     }
 
     /**
@@ -61,8 +80,21 @@ export class ReplaceSchemaDefinitionCommand_20 extends ReplaceNodeCommand<Oas20S
      * @param node
      */
     protected addNode(doc: Oas20Document, node: Oas20SchemaDefinition): void {
-        let definitions: Oas20Definitions = doc.definitions;
-        definitions.addDefinition(node.definitionName(), node);
+        node._ownerDocument = doc;
+        node._parent = doc.definitions;
+        doc.definitions.addDefinition(node.definitionName(), node);
+    }
+
+    /**
+     * Reads a node into the appropriate model.
+     * @param {Oas20Document} doc
+     * @param node
+     * @return {Oas20SchemaDefinition}
+     */
+    protected readNode(doc: Oas20Document, node: any): Oas20SchemaDefinition {
+        let definition: Oas20SchemaDefinition = doc.definitions.createSchemaDefinition(this._defName) as Oas20SchemaDefinition;
+        this.oasLibrary().readNode(node, definition);
+        return definition;
     }
 
 }
@@ -72,6 +104,26 @@ export class ReplaceSchemaDefinitionCommand_20 extends ReplaceNodeCommand<Oas20S
  * A command used to replace a definition schema with a newer version.
  */
 export class ReplaceSchemaDefinitionCommand_30 extends ReplaceNodeCommand<Oas30SchemaDefinition> implements ICommand {
+
+    private _defName: string;
+
+    /**
+     * @param {Oas20SchemaDefinition} old
+     * @param {Oas20SchemaDefinition} replacement
+     */
+    constructor(old: Oas30SchemaDefinition, replacement: Oas30SchemaDefinition) {
+        super(old, replacement);
+        if (old) {
+            this._defName = old.name();
+        }
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ReplaceSchemaDefinitionCommand_30";
+    }
 
     /**
      * Remove the given node.
@@ -88,7 +140,21 @@ export class ReplaceSchemaDefinitionCommand_30 extends ReplaceNodeCommand<Oas30S
      * @param node
      */
     protected addNode(doc: Oas30Document, node: Oas30SchemaDefinition): void {
+        node._ownerDocument = doc;
+        node._parent = doc.components;
         doc.components.addSchemaDefinition(node.name(), node);
+    }
+
+    /**
+     * Reads a node into the appropriate model.
+     * @param {Oas30Document} doc
+     * @param node
+     * @return {Oas30SchemaDefinition}
+     */
+    protected readNode(doc: Oas30Document, node: any): Oas30SchemaDefinition {
+        let definition: Oas30SchemaDefinition = doc.components.createSchemaDefinition(this._defName) as Oas30SchemaDefinition;
+        this.oasLibrary().readNode(node, definition);
+        return definition;
     }
 
 }

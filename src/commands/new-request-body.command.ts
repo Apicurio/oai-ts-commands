@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20Operation, Oas20Parameter, Oas30Operation, OasDocument, OasNodePath, OasOperation} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -44,7 +45,9 @@ export abstract class NewRequestBodyCommand extends AbstractCommand implements I
      */
     constructor(operation: Oas20Operation | Oas30Operation) {
         super();
-        this._operationPath = this.oasLibrary().createNodePath(operation);
+        if (operation) {
+            this._operationPath = this.oasLibrary().createNodePath(operation);
+        }
     }
 
     /**
@@ -103,6 +106,26 @@ export abstract class NewRequestBodyCommand extends AbstractCommand implements I
      * Removes the request body.
      */
     protected abstract doRemoveRequestBody(operation: OasOperation): void;
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._operationPath = MarshallUtils.marshallNodePath(obj._operationPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._operationPath = MarshallUtils.unmarshallNodePath(this._operationPath as any);
+    }
+
 }
 
 
@@ -110,6 +133,13 @@ export abstract class NewRequestBodyCommand extends AbstractCommand implements I
  * OAI 2.0 impl.
  */
 export class NewRequestBodyCommand_20 extends NewRequestBodyCommand {
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "NewRequestBodyCommand_20";
+    }
 
     /**
      * Returns true if the given operation has a body param.
@@ -166,6 +196,13 @@ export class NewRequestBodyCommand_20 extends NewRequestBodyCommand {
  * OAI 3.0 impl.
  */
 export class NewRequestBodyCommand_30 extends NewRequestBodyCommand {
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "NewRequestBodyCommand_30";
+    }
 
     /**
      * Returns true if the given operation already has a request body.

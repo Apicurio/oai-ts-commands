@@ -18,9 +18,9 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {createChangePropertyTypeCommand, SimplifiedPropertyType} from "../src/commands/change-property-type.command";
-import {SimplifiedType} from "../src/models/simplified-type.model";
+import {createChangePropertyTypeCommand} from "../src/commands/change-property-type.command";
 import {Oas20Document, Oas20PropertySchema, Oas30Document, Oas30PropertySchema,} from "oai-ts-core";
+import {SimplifiedPropertyType} from "../src/models/simplified-type.model";
 
 
 describe("Change Property Type (2.0)", () => {

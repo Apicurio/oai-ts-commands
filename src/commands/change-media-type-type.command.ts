@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-import {Oas30MediaType, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
+import {Oas30MediaType, OasDocument, OasNodePath} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -50,9 +51,18 @@ export class ChangeMediaTypeTypeCommand extends AbstractCommand implements IComm
      */
     constructor(mediaType: Oas30MediaType, newType: SimplifiedType) {
         super();
-        this._mediaTypeName = mediaType.name();
-        this._mediaTypePath = this.oasLibrary().createNodePath(mediaType);
+        if (mediaType) {
+            this._mediaTypeName = mediaType.name();
+            this._mediaTypePath = this.oasLibrary().createNodePath(mediaType);
+        }
         this._newType = newType;
+    }
+
+    /**
+     * @return {string}
+     */
+    protected type(): string {
+        return "ChangeMediaTypeTypeCommand";
     }
 
     /**
@@ -128,6 +138,27 @@ export class ChangeMediaTypeTypeCommand extends AbstractCommand implements IComm
             mediaType.schema = mediaType.createSchema();
             this.oasLibrary().readNode(this._oldMediaTypeSchema, mediaType.schema);
         }
+    }
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._mediaTypePath = MarshallUtils.marshallNodePath(obj._mediaTypePath);
+        obj._newType = MarshallUtils.marshallSimplifiedType(obj._newType);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._mediaTypePath = MarshallUtils.unmarshallNodePath(this._mediaTypePath as any);
+        this._newType = MarshallUtils.unmarshallSimplifiedType(this._newType);
     }
 
 }

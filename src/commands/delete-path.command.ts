@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasPathItem, OasPaths} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 
 /**
@@ -87,6 +88,10 @@ export abstract class DeletePathCommand extends AbstractCommand implements IComm
  */
 export class DeletePathCommand_20 extends DeletePathCommand {
 
+    protected type(): string {
+        return "DeletePathCommand_20";
+    }
+
 }
 
 
@@ -94,5 +99,9 @@ export class DeletePathCommand_20 extends DeletePathCommand {
  * OAI 3.0 impl.
  */
 export class DeletePathCommand_30 extends DeletePathCommand {
+
+    protected type(): string {
+        return "DeletePathCommand_30";
+    }
 
 }

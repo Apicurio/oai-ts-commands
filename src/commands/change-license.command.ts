@@ -99,6 +99,10 @@ export abstract class ChangeLicenseCommand extends AbstractCommand implements IC
  */
 export class ChangeLicenseCommand_20 extends ChangeLicenseCommand {
 
+    protected type(): string {
+        return "ChangeLicenseCommand_20";
+    }
+
 }
 
 
@@ -106,5 +110,9 @@ export class ChangeLicenseCommand_20 extends ChangeLicenseCommand {
  * The OAI 3.0 impl.
  */
 export class ChangeLicenseCommand_30 extends ChangeLicenseCommand {
+
+    protected type(): string {
+        return "ChangeLicenseCommand_30";
+    }
 
 }

@@ -95,6 +95,11 @@ export abstract class AddPathItemCommand extends AbstractCommand implements ICom
  * The OAI 2.0 impl.
  */
 export class AddPathItemCommand_20 extends AddPathItemCommand {
+
+    protected type(): string {
+        return "AddPathItemCommand_20";
+    }
+
 }
 
 
@@ -102,4 +107,9 @@ export class AddPathItemCommand_20 extends AddPathItemCommand {
  * The OAI 3.0 impl.
  */
 export class AddPathItemCommand_30 extends AddPathItemCommand {
+
+    protected type(): string {
+        return "AddPathItemCommand_30";
+    }
+
 }

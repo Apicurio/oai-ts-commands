@@ -24,6 +24,7 @@ import {
     OasDocument,
     OasNodePath
 } from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -53,9 +54,15 @@ export class DeleteMediaTypeCommand extends AbstractCommand implements ICommand 
      */
     constructor(mediaType: Oas30MediaType) {
         super();
-        this._mediaTypeName = mediaType.name();
-        this._mediaTypePath = this.oasLibrary().createNodePath(mediaType);
-        this._parentPath = this.oasLibrary().createNodePath(mediaType.parent());
+        if (mediaType) {
+            this._mediaTypeName = mediaType.name();
+            this._mediaTypePath = this.oasLibrary().createNodePath(mediaType);
+            this._parentPath = this.oasLibrary().createNodePath(mediaType.parent());
+        }
+    }
+
+    protected type(): string {
+        return "DeleteMediaTypeCommand";
     }
 
     /**
@@ -96,5 +103,27 @@ export class DeleteMediaTypeCommand extends AbstractCommand implements ICommand 
         this.oasLibrary().readNode(this._oldMediaType, mediaType);
         parent.addMediaType(this._mediaTypeName, mediaType);
     }
+
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._mediaTypePath = MarshallUtils.marshallNodePath(obj._mediaTypePath);
+        obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._mediaTypePath = MarshallUtils.unmarshallNodePath(this._mediaTypePath as any);
+        this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
 }
 

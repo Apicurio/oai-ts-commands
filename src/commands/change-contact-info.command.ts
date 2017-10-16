@@ -104,6 +104,10 @@ export abstract class ChangeContactCommand extends AbstractCommand implements IC
  */
 export class ChangeContactCommand_20 extends ChangeContactCommand {
 
+    protected type(): string {
+        return "ChangeContactCommand_20";
+    }
+
 }
 
 
@@ -111,5 +115,9 @@ export class ChangeContactCommand_20 extends ChangeContactCommand {
  * The OAI 3.0 impl.
  */
 export class ChangeContactCommand_30 extends ChangeContactCommand {
+
+    protected type(): string {
+        return "ChangeContactCommand_30";
+    }
 
 }

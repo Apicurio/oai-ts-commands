@@ -24,6 +24,7 @@ import {
     OasNodePath,
     OasParameterBase
 } from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 
 /**
@@ -52,8 +53,10 @@ export abstract class DeleteParameterCommand extends AbstractCommand implements 
      */
     constructor(parameter: Oas20Parameter | Oas30Parameter) {
         super();
-        this._parameterPath = this.oasLibrary().createNodePath(parameter);
-        this._parentPath = this.oasLibrary().createNodePath(parameter.parent());
+        if (parameter) {
+            this._parameterPath = this.oasLibrary().createNodePath(parameter);
+            this._parentPath = this.oasLibrary().createNodePath(parameter.parent());
+        }
     }
 
     /**
@@ -99,6 +102,27 @@ export abstract class DeleteParameterCommand extends AbstractCommand implements 
         parent.addParameter(param);
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._parameterPath = MarshallUtils.marshallNodePath(obj._parameterPath);
+        obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._parameterPath = MarshallUtils.unmarshallNodePath(this._parameterPath as any);
+        this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
 }
 
 
@@ -107,6 +131,10 @@ export abstract class DeleteParameterCommand extends AbstractCommand implements 
  */
 export class DeleteParameterCommand_20 extends DeleteParameterCommand {
 
+    protected type(): string {
+        return "DeleteParameterCommand_20";
+    }
+
 }
 
 
@@ -114,5 +142,9 @@ export class DeleteParameterCommand_20 extends DeleteParameterCommand {
  * OAI 3.0 impl.
  */
 export class DeleteParameterCommand_30 extends DeleteParameterCommand {
+
+    protected type(): string {
+        return "DeleteParameterCommand_30";
+    }
 
 }

@@ -85,6 +85,10 @@ export abstract class ChangeTitleCommand extends AbstractCommand implements ICom
  */
 export class ChangeTitleCommand_20 extends ChangeTitleCommand {
 
+    protected type(): string {
+        return "ChangeTitleCommand_20";
+    }
+
 }
 
 
@@ -92,6 +96,10 @@ export class ChangeTitleCommand_20 extends ChangeTitleCommand {
  * OAI 3.0 impl.
  */
 export class ChangeTitleCommand_30 extends ChangeTitleCommand {
+
+    protected type(): string {
+        return "ChangeTitleCommand_30";
+    }
 
 }
 

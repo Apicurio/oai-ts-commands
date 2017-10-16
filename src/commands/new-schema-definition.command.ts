@@ -64,12 +64,16 @@ export abstract class NewSchemaDefinitionCommand extends AbstractCommand impleme
 
 }
 
-        /**
+/**
  * OAI 2.0 impl.
  */
 export class NewSchemaDefinitionCommand_20 extends NewSchemaDefinitionCommand {
 
     protected _nullDefinitions: boolean;
+
+    protected type(): string {
+        return "NewSchemaDefinitionCommand_20";
+    }
 
     /**
      * Adds the new definition to the document.
@@ -122,6 +126,10 @@ export class NewSchemaDefinitionCommand_20 extends NewSchemaDefinitionCommand {
 export class NewSchemaDefinitionCommand_30 extends NewSchemaDefinitionCommand {
 
     protected _nullComponents: boolean;
+
+    protected type(): string {
+        return "NewSchemaDefinitionCommand_30";
+    }
 
     /**
      * Adds the new definition to the document.

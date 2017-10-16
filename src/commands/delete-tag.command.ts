@@ -99,6 +99,10 @@ export abstract class DeleteTagCommand extends AbstractCommand implements IComma
  */
 export class DeleteTagCommand_20 extends DeleteTagCommand {
 
+    protected type(): string {
+        return "DeleteTagCommand_20";
+    }
+
 }
 
 
@@ -106,5 +110,9 @@ export class DeleteTagCommand_20 extends DeleteTagCommand {
  * OAI 3.0 impl.
  */
 export class DeleteTagCommand_30 extends DeleteTagCommand {
+
+    protected type(): string {
+        return "DeleteTagCommand_30";
+    }
 
 }

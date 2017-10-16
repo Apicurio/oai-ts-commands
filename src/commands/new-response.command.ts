@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20Operation, Oas30Operation, OasDocument, OasNodePath, OasOperation, OasResponse} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -40,6 +41,7 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
     private _created: boolean;
     private _nullResponses: boolean;
 
+
     /**
      * C'tor.
      * @param {Oas20Operation | Oas30Operation} operation
@@ -47,7 +49,9 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
      */
     constructor(operation: Oas20Operation | Oas30Operation, statusCode: string) {
         super();
-        this._operationPath = this.oasLibrary().createNodePath(operation);
+        if (operation) {
+            this._operationPath = this.oasLibrary().createNodePath(operation);
+        }
         this._statusCode = statusCode;
     }
 
@@ -103,6 +107,25 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
         operation.responses.removeResponse(this._statusCode);
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._operationPath = MarshallUtils.marshallNodePath(obj._operationPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._operationPath = MarshallUtils.unmarshallNodePath(this._operationPath as any);
+    }
+
 }
 
 
@@ -111,6 +134,10 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
  */
 export class NewResponseCommand_20 extends NewResponseCommand {
 
+    protected type(): string {
+        return "NewResponseCommand_20";
+    }
+
 }
 
 
@@ -118,5 +145,9 @@ export class NewResponseCommand_20 extends NewResponseCommand {
  * OAI 3.0 impl.
  */
 export class NewResponseCommand_30 extends NewResponseCommand {
+
+    protected type(): string {
+        return "NewResponseCommand_30";
+    }
 
 }

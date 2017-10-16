@@ -85,6 +85,10 @@ export abstract class ChangeDescriptionCommand extends AbstractCommand implement
  */
 export class ChangeDescriptionCommand_20 extends ChangeDescriptionCommand {
 
+    protected type(): string {
+        return "ChangeDescriptionCommand_20";
+    }
+
 }
 
 
@@ -92,5 +96,9 @@ export class ChangeDescriptionCommand_20 extends ChangeDescriptionCommand {
  * The OAI 3.0 impl.
  */
 export class ChangeDescriptionCommand_30 extends ChangeDescriptionCommand {
+
+    protected type(): string {
+        return "ChangeDescriptionCommand_30";
+    }
 
 }

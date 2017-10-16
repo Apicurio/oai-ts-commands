@@ -17,6 +17,7 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
+import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
@@ -46,9 +47,11 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
      */
     constructor(property: Oas20PropertySchema | Oas30PropertySchema) {
         super();
-        this._propertyName = property.propertyName();
-        this._propertyPath = this.oasLibrary().createNodePath(property);
-        this._schemaPath = this.oasLibrary().createNodePath(property.parent());
+        if (property) {
+            this._propertyName = property.propertyName();
+            this._propertyPath = this.oasLibrary().createNodePath(property);
+            this._schemaPath = this.oasLibrary().createNodePath(property.parent());
+        }
     }
 
     /**
@@ -88,6 +91,27 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
         schema.addProperty(this._propertyName, propSchema);
     }
 
+    /**
+     * Marshall the command into a JS object.
+     * @return {any}
+     */
+    public marshall(): any {
+        let obj: any = super.marshall();
+        obj._propertyPath = MarshallUtils.marshallNodePath(obj._propertyPath);
+        obj._schemaPath = MarshallUtils.marshallNodePath(obj._schemaPath);
+        return obj;
+    }
+
+    /**
+     * Unmarshall the JS object.
+     * @param obj
+     */
+    public unmarshall(obj: any): void {
+        super.unmarshall(obj);
+        this._propertyPath = MarshallUtils.unmarshallNodePath(this._propertyPath as any);
+        this._schemaPath = MarshallUtils.unmarshallNodePath(this._schemaPath as any);
+    }
+
 }
 
 
@@ -96,6 +120,10 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
  */
 export class DeletePropertyCommand_20 extends DeletePropertyCommand {
 
+    protected type(): string {
+        return "DeletePropertyCommand_20";
+    }
+
 }
 
 
@@ -103,5 +131,9 @@ export class DeletePropertyCommand_20 extends DeletePropertyCommand {
  * OAI 3.0 impl.
  */
 export class DeletePropertyCommand_30 extends DeletePropertyCommand {
+
+    protected type(): string {
+        return "DeletePropertyCommand_30";
+    }
 
 }

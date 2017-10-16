@@ -103,6 +103,10 @@ export class AddSchemaDefinitionCommand_20 extends AddSchemaDefinitionCommand {
 
     private _nullDefinitions: boolean;
 
+    protected type(): string {
+        return "AddSchemaDefinitionCommand_20";
+    }
+
     protected defExists(document: Oas20Document): boolean {
         if (this.isNullOrUndefined(document.definitions)) {
             return false;
@@ -144,6 +148,10 @@ export class AddSchemaDefinitionCommand_20 extends AddSchemaDefinitionCommand {
 export class AddSchemaDefinitionCommand_30 extends AddSchemaDefinitionCommand {
 
     private _nullComponents: boolean;
+
+    protected type(): string {
+        return "AddSchemaDefinitionCommand_30";
+    }
 
     protected defExists(document: Oas30Document): boolean {
         if (this.isNullOrUndefined(document.components)) {
