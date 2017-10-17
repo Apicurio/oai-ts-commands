@@ -19,27 +19,16 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNode, OasNodePath} from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
 
-/**
- * Factory function.
- */
-export function createDeleteNodeCommand(document: OasDocument, property: string, parent: OasNode): DeleteNodeCommand {
-    if (document.getSpecVersion() === "2.0") {
-        return new DeleteNodeCommand_20(property, parent);
-    } else {
-        return new DeleteNodeCommand_30(property, parent);
-    }
-}
 
 /**
  * A command used to delete a child node.
  */
-export abstract class DeleteNodeCommand extends AbstractCommand implements ICommand {
+export abstract class DeleteNodeCommand<T extends OasNode> extends AbstractCommand implements ICommand {
 
-    private _property: string;
-    private _parentPath: OasNodePath;
+    protected _property: string;
+    protected _parentPath: OasNodePath;
 
-    // TODO this is not serializable - need to come up with a better way to undo() this operation
-    private _oldValue: OasNode;
+    protected _oldValue: any;
 
     /**
      * C'tor.
@@ -59,13 +48,13 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
      * @param document
      */
     public execute(document: OasDocument): void {
-        console.info("[DeleteNodeCommand] Executing.");
+        console.info("[" + this.type() + "] Executing.");
         let parent: OasNode = this._parentPath.resolve(document);
         if (!parent) {
             return;
         }
 
-        this._oldValue = parent[this._property] as OasNode;
+        this._oldValue = this.oasLibrary().writeNode(parent[this._property] as T);
 
         parent[this._property] = null;
         delete parent[this._property];
@@ -76,16 +65,25 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
      * @param document
      */
     public undo(document: OasDocument): void {
-        console.info("[DeleteNodeCommand] Reverting.");
+        console.info("[" + this.type() + "] Reverting.");
         let parent: OasNode = this._parentPath.resolve(document);
         if (!parent) {
             return;
         }
 
-        parent[this._property] = this._oldValue;
-        this._oldValue._parent = parent;
-        this._oldValue._ownerDocument = parent.ownerDocument();
+        let restoredNode: T = this.readNode(document, this._oldValue);
+        restoredNode._parent = parent;
+        restoredNode._ownerDocument = parent.ownerDocument();
+
+        parent[this._property] = restoredNode;
     }
+
+    /**
+     * Unmarshalls a node into the appropriate type.
+     * @param node
+     * @return {T}
+     */
+    protected abstract readNode(doc: OasDocument, node: any): T;
 
     /**
      * Marshall the command into a JS object.
@@ -104,30 +102,6 @@ export abstract class DeleteNodeCommand extends AbstractCommand implements IComm
     public unmarshall(obj: any): void {
         super.unmarshall(obj);
         this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
-    }
-
-}
-
-
-/**
- * OAI 2.0 impl.
- */
-export class DeleteNodeCommand_20 extends DeleteNodeCommand {
-
-    protected type(): string {
-        return "DeleteNodeCommand_20";
-    }
-
-}
-
-
-/**
- * OAI 3.0 impl.
- */
-export class DeleteNodeCommand_30 extends DeleteNodeCommand {
-
-    protected type(): string {
-        return "DeleteNodeCommand_30";
     }
 
 }

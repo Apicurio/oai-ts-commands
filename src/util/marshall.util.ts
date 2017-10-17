@@ -44,7 +44,6 @@ import {ChangeVersionCommand_20, ChangeVersionCommand_30} from "../commands/chan
 import {DeleteAllParametersCommand_20, DeleteAllParametersCommand_30} from "../commands/delete-all-parameters.command";
 import {DeleteAllPropertiesCommand_20, DeleteAllPropertiesCommand_30} from "../commands/delete-all-properties.command";
 import {DeleteMediaTypeCommand} from "../commands/delete-media-type.command";
-import {DeleteNodeCommand_20, DeleteNodeCommand_30} from "../commands/delete-node.command";
 import {DeleteParameterCommand_20, DeleteParameterCommand_30} from "../commands/delete-parameter.command";
 import {DeletePathCommand_20, DeletePathCommand_30} from "../commands/delete-path.command";
 import {DeletePropertyCommand_20, DeletePropertyCommand_30} from "../commands/delete-property.command";
@@ -77,6 +76,11 @@ import {
 import {OasNodePath} from "oai-ts-core";
 import {SimplifiedParameterType, SimplifiedPropertyType, SimplifiedType} from "../models/simplified-type.model";
 import {ModelUtils} from "./model.util";
+import {DeleteOperationCommand_20, DeleteOperationCommand_30} from "../commands/delete-operation.command";
+import {DeleteRequestBodyCommand_30} from "../commands/delete-request-body.command";
+import {DeleteAllResponsesCommand_20, DeleteAllResponsesCommand_30} from "../commands/delete-all-responses.command";
+import {DeleteContactCommand_20, DeleteContactCommand_30} from "../commands/delete-contact.command";
+import {DeleteLicenseCommand_20, DeleteLicenseCommand_30} from "../commands/delete-license.command";
 
 
 let commandFactory: any = {
@@ -112,8 +116,8 @@ let commandFactory: any = {
     "DeleteAllPropertiesCommand_20": function() { return new DeleteAllPropertiesCommand_20(null); },
     "DeleteAllPropertiesCommand_30": function() { return new DeleteAllPropertiesCommand_30(null); },
     "DeleteMediaTypeCommand": function() { return new DeleteMediaTypeCommand(null); },
-    "DeleteNodeCommand_20": function() { return new DeleteNodeCommand_20(null, null); },
-    "DeleteNodeCommand_30": function() { return new DeleteNodeCommand_30(null, null); },
+    "DeleteOperationCommand_20": function() { return new DeleteOperationCommand_20(null, null); },
+    "DeleteOperationCommand_30": function() { return new DeleteOperationCommand_30(null, null); },
     "DeleteParameterCommand_20": function() { return new DeleteParameterCommand_20(null); },
     "DeleteParameterCommand_30": function() { return new DeleteParameterCommand_30(null); },
     "DeletePathCommand_20": function() { return new DeletePathCommand_20(null); },
@@ -128,6 +132,13 @@ let commandFactory: any = {
     "DeleteSecuritySchemeCommand_30": function() { return new DeleteSecuritySchemeCommand_30(null); },
     "DeleteTagCommand_20": function() { return new DeleteTagCommand_20(null); },
     "DeleteTagCommand_30": function() { return new DeleteTagCommand_30(null); },
+    "DeleteRequestBodyCommand_30": function() { return new DeleteRequestBodyCommand_30(null, null); },
+    "DeleteAllResponsesCommand_20": function() { return new DeleteAllResponsesCommand_20(null, null); },
+    "DeleteAllResponsesCommand_30": function() { return new DeleteAllResponsesCommand_30(null, null); },
+    "DeleteContactCommand_20": function() { return new DeleteContactCommand_20(null, null); },
+    "DeleteContactCommand_30": function() { return new DeleteContactCommand_30(null, null); },
+    "DeleteLicenseCommand_20": function() { return new DeleteLicenseCommand_20(null, null); },
+    "DeleteLicenseCommand_30": function() { return new DeleteLicenseCommand_30(null, null); },
     "NewMediaTypeCommand": function() { return new NewMediaTypeCommand(null, null); },
     "NewOperationCommand_20": function() { return new NewOperationCommand_20(null, null); },
     "NewOperationCommand_30": function() { return new NewOperationCommand_30(null, null); },
@@ -173,8 +184,12 @@ export class MarshallUtils {
      * @return {ICommand}
      */
     public static unmarshallCommand(object: any): ICommand {
-        var cmdType: string = object["__type"];
-        var cmd: ICommand = commandFactory[cmdType]();
+        let cmdType: string = object["__type"];
+        let factory: any = commandFactory[cmdType];
+        if (!factory) {
+            throw new Error("No unmarshalling factory found for command type: " + cmdType);
+        }
+        let cmd: ICommand = factory();
         cmd.unmarshall(object);
         return cmd;
     }

@@ -18,33 +18,19 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {Oas20Document, Oas30Document} from "oai-ts-core";
-import {createDeleteNodeCommand} from "../src/commands/delete-node.command";
+import {Oas30Document, Oas30Operation} from "oai-ts-core";
+import {createDeleteRequestBodyCommand} from "../src/commands/delete-request-body.command";
 
 
-describe("Delete Node (2.0)", () => {
+describe("Delete Request Body (3.0)", () => {
 
-    it("Delete Node", () => {
+    it("Delete Request Body", () => {
         commandTest(
-            "tests/fixtures/delete-node/2.0/delete-node.before.json",
-            "tests/fixtures/delete-node/2.0/delete-node.after.json",
-            (document: Oas20Document) => {
-                return createDeleteNodeCommand(document, "info", document);
-            }
-        );
-    });
-
-});
-
-
-describe("Delete Node (3.0)", () => {
-
-    it("Delete Node", () => {
-        commandTest(
-            "tests/fixtures/delete-node/3.0/delete-node.before.json",
-            "tests/fixtures/delete-node/3.0/delete-node.after.json",
+            "tests/fixtures/delete-request-body/3.0/delete-request-body.before.json",
+            "tests/fixtures/delete-request-body/3.0/delete-request-body.after.json",
             (document: Oas30Document) => {
-                return createDeleteNodeCommand(document, "info", document);
+                let operation: Oas30Operation = document.paths.pathItem("/v2").put as Oas30Operation;
+                return createDeleteRequestBodyCommand(document, operation);
             }
         );
     });

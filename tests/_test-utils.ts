@@ -55,6 +55,10 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     }
     expect(actual).toEqual(expected);
 
+    // Serialize/deserialize the command (again)
+    serializedCmd = JSON.stringify(MarshallUtils.marshallCommand(cmd));
+    cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
+
     // Undo the command
     cmd.undo(document);
 
