@@ -48,13 +48,17 @@ export abstract class DeleteNodeCommand<T extends OasNode> extends AbstractComma
      * @param document
      */
     public execute(document: OasDocument): void {
-        console.info("[" + this.type() + "] Executing.");
         let parent: OasNode = this._parentPath.resolve(document);
-        if (!parent) {
+        if (this.isNullOrUndefined(parent)) {
             return;
         }
-
-        this._oldValue = this.oasLibrary().writeNode(parent[this._property] as T);
+        let propertyNode: T = parent[this._property] as T;
+        if (this.isNullOrUndefined(propertyNode)) {
+            this._oldValue = null;
+            return;
+        } else {
+            this._oldValue = this.oasLibrary().writeNode(propertyNode);
+        }
 
         parent[this._property] = null;
         delete parent[this._property];
@@ -67,7 +71,7 @@ export abstract class DeleteNodeCommand<T extends OasNode> extends AbstractComma
     public undo(document: OasDocument): void {
         console.info("[" + this.type() + "] Reverting.");
         let parent: OasNode = this._parentPath.resolve(document);
-        if (!parent) {
+        if (this.isNullOrUndefined(parent) || this.isNullOrUndefined(this._oldValue)) {
             return;
         }
 

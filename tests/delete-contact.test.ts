@@ -49,5 +49,15 @@ describe("Delete Contact (3.0)", () => {
         );
     });
 
+    it("Delete Contact (N/A)", () => {
+        commandTest(
+            "tests/fixtures/delete-contact/3.0/delete-contact-na.before.json",
+            "tests/fixtures/delete-contact/3.0/delete-contact-na.after.json",
+            (document: Oas30Document) => {
+                return createDeleteContactCommand(document);
+            }
+        );
+    });
+
 });
 
