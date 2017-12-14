@@ -65,7 +65,7 @@ export abstract class ChangePropertyCommand<T> extends AbstractCommand implement
     public execute(document: OasDocument): void {
         console.info("[ChangePropertyCommand] Executing.");
         let node: OasNode = this._nodePath.resolve(document);
-        if (!node) {
+        if (this.isNullOrUndefined(node)) {
             return;
         }
 
@@ -81,7 +81,7 @@ export abstract class ChangePropertyCommand<T> extends AbstractCommand implement
     public undo(document: OasDocument): void {
         console.info("[ChangePropertyCommand] Reverting.");
         let node: OasNode = this._nodePath.resolve(document);
-        if (!node) {
+        if (this.isNullOrUndefined(node)) {
             return;
         }
 

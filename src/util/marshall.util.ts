@@ -81,6 +81,9 @@ import {DeleteRequestBodyCommand_30} from "../commands/delete-request-body.comma
 import {DeleteAllResponsesCommand_20, DeleteAllResponsesCommand_30} from "../commands/delete-all-responses.command";
 import {DeleteContactCommand_20, DeleteContactCommand_30} from "../commands/delete-contact.command";
 import {DeleteLicenseCommand_20, DeleteLicenseCommand_30} from "../commands/delete-license.command";
+import {NewServerCommand} from "../commands/new-server.command";
+import {DeleteServerCommand} from "../commands/delete-server.command";
+import {ChangeServerCommand} from "../commands/change-server.command";
 
 
 let commandFactory: any = {
@@ -107,6 +110,7 @@ let commandFactory: any = {
     "ChangeResponseDefinitionTypeCommand_20": function() { return new ChangeResponseDefinitionTypeCommand_20(null, null); },
     "ChangeSecuritySchemeCommand_20": function() { return new ChangeSecuritySchemeCommand_20(null); },
     "ChangeSecuritySchemeCommand_30": function() { return new ChangeSecuritySchemeCommand_30(null); },
+    "ChangeServerCommand": function() { return new ChangeServerCommand(null); },
     "ChangeTitleCommand_20": function() { return new ChangeTitleCommand_20(null); },
     "ChangeTitleCommand_30": function() { return new ChangeTitleCommand_30(null); },
     "ChangeVersionCommand_20": function() { return new ChangeVersionCommand_20(null); },
@@ -130,6 +134,7 @@ let commandFactory: any = {
     "DeleteSchemaDefinitionCommand_30": function() { return new DeleteSchemaDefinitionCommand_30(null); },
     "DeleteSecuritySchemeCommand_20": function() { return new DeleteSecuritySchemeCommand_20(null); },
     "DeleteSecuritySchemeCommand_30": function() { return new DeleteSecuritySchemeCommand_30(null); },
+    "DeleteServerCommand": function() { return new DeleteServerCommand(null); },
     "DeleteTagCommand_20": function() { return new DeleteTagCommand_20(null); },
     "DeleteTagCommand_30": function() { return new DeleteTagCommand_30(null); },
     "DeleteRequestBodyCommand_30": function() { return new DeleteRequestBodyCommand_30(null, null); },
@@ -156,6 +161,7 @@ let commandFactory: any = {
     "NewSchemaPropertyCommand_30": function() { return new NewSchemaPropertyCommand_30(null, null); },
     "NewSecuritySchemeCommand_20": function() { return new NewSecuritySchemeCommand_20(null); },
     "NewSecuritySchemeCommand_30": function() { return new NewSecuritySchemeCommand_30(null); },
+    "NewServerCommand": function() { return new NewServerCommand(null, null); },
     "NewTagCommand_20": function() { return new NewTagCommand_20(null); },
     "NewTagCommand_30": function() { return new NewTagCommand_30(null); },
     "ReplaceOperationCommand_20": function() { return new ReplaceOperationCommand_20(null, null); },

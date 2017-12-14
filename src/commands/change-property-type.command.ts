@@ -68,7 +68,7 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
     public execute(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Executing: " + this._newType);
         let prop: Oas20PropertySchema | Oas30PropertySchema = this._propPath.resolve(document) as any;
-        if (!prop) {
+        if (this.isNullOrUndefined(prop)) {
             return;
         }
 
@@ -130,7 +130,7 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
     public undo(document: OasDocument): void {
         console.info("[ChangePropertyTypeCommand] Reverting.");
         let prop: Oas20PropertySchema | Oas30PropertySchema = this._propPath.resolve(document) as any;
-        if (!prop) {
+        if (this.isNullOrUndefined(prop)) {
             return;
         }
 

@@ -29,7 +29,7 @@ export function createChangeResponseTypeCommand(document: OasDocument, response:
     if (document.getSpecVersion() === "2.0") {
         return new ChangeResponseTypeCommand_20(response, newType);
     } else {
-        throw new Error("ChangeResponseType is unsupported for OpenAPI 3.0.0 documents.");
+        throw new Error("ChangeResponseType is unsupported for OpenAPI 3.0.x documents.");
     }
 }
 
@@ -41,7 +41,7 @@ export function createChangeResponseDefinitionTypeCommand(document: OasDocument,
     if (document.getSpecVersion() === "2.0") {
         return new ChangeResponseDefinitionTypeCommand_20(response, newType);
     } else {
-        throw new Error("ChangeResponseDefinitionTypeCommand is unsupported for OpenAPI 3.0.0 documents.");
+        throw new Error("ChangeResponseDefinitionTypeCommand is unsupported for OpenAPI 3.0.x documents.");
     }
 }
 
