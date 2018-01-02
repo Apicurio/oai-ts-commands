@@ -94,12 +94,13 @@ export class OtEngine {
      */
     public executeCommand(command: OtCommand, pending?: boolean): void {
         if (pending) {
+            console.info("[OtEngine] Executing PENDING command with contentId: %s", command.contentVersion);
             command.command.execute(this.document);
             this.pendingCommands.push(command);
             return;
         }
 
-        console.info("Executing command with content version: %s", command.contentVersion);
+        console.info("[OtEngine] Executing command with content version: %s", command.contentVersion);
 
         // Rewind any pending commands first.
         let pidx: number;
@@ -152,6 +153,7 @@ export class OtEngine {
      * @param {number} finalizedContentVersion
      */
     public finalizeCommand(pendingCommandId: number, finalizedContentVersion: number): void {
+        console.info("[OtEngine] Executing PENDING command with contentId: %s", command.contentVersion);
 
         let pending: OtCommand[] = this.pendingCommands;
         this.pendingCommands = [];
