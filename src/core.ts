@@ -68,3 +68,6 @@ export * from "./commands/replace.command";
 export * from "./commands/replace-operation.command";
 export * from "./commands/replace-path-item.command";
 export * from "./commands/replace-schema-definition.command";
+
+export * from "./ot/ot-command";
+export * from "./ot/ot-engine";
