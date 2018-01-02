@@ -153,7 +153,7 @@ export class OtEngine {
      * @param {number} finalizedContentVersion
      */
     public finalizeCommand(pendingCommandId: number, finalizedContentVersion: number): void {
-        console.info("[OtEngine] Executing PENDING command with contentId: %s", command.contentVersion);
+        console.info("[OtEngine] Executing PENDING command with contentId: %s", pendingCommandId);
 
         let pending: OtCommand[] = this.pendingCommands;
         this.pendingCommands = [];
