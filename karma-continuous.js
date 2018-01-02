@@ -19,7 +19,7 @@ module.exports = function(config) {
         "tests/**/*.ts",
         "node_modules/oai-ts-core/bundles/OAI.umd.js",
         "node_modules/karma-read-json/karma-read-json.js",
-        { pattern: "tests/fixtures/**/*.json", included: false }
+        { pattern: "tests/_fixtures/**/*.*", included: false }
     ],
 
 
