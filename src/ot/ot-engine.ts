@@ -165,6 +165,18 @@ export class OtEngine {
     public finalizeCommand(pendingCommandId: number, finalizedContentVersion: number): void {
         console.info("[OtEngine] Finalizing command with contentId: %d  and new contentVersion: %d", pendingCommandId, finalizedContentVersion);
 
+        // Note: special case where the command being finalized is the first (or only) pending command in the list *AND* its
+        // finalizedContentVersion > than the most recent finalized command.  This represents the case where a single user
+        // is editing a document and results in a simple shifting of the pending command from one queue to another without
+        // doing the unnecessary work of unwinding the pending commands and re-applying them.
+        let isFirstPendingCmd: boolean = this.pendingCommands.length > 0 && this.pendingCommands[0].contentVersion === pendingCommandId;
+        let isLatestCmd: boolean = this.commands.length === 0 || (this.commands[this.commands.length - 1].contentVersion < finalizedContentVersion);
+        if (isFirstPendingCmd && isLatestCmd) {
+            console.info("[OtEngine] Pending command is 'next up', performing simple shift from pending to finalized.");
+            this.commands.push(this.pendingCommands.splice(0, 1)[0])
+            return;
+        }
+
         // Rewind all pending commands.
         let pidx: number;
         for (pidx = this.pendingCommands.length - 1; pidx >= 0; pidx--) {
