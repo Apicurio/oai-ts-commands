@@ -173,7 +173,9 @@ export class OtEngine {
         let isLatestCmd: boolean = this.commands.length === 0 || (this.commands[this.commands.length - 1].contentVersion < finalizedContentVersion);
         if (isFirstPendingCmd && isLatestCmd) {
             console.info("[OtEngine] Pending command is 'next up', performing simple shift from pending to finalized.");
-            this.commands.push(this.pendingCommands.splice(0, 1)[0])
+            let command: OtCommand = this.pendingCommands.splice(0, 1)[0];
+            command.contentVersion = finalizedContentVersion;
+            this.commands.push(command);
             return;
         }
 
