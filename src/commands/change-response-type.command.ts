@@ -104,8 +104,15 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
         if (this._newType.isArray()) {
             response.schema.type = "array";
             response.schema.items = response.schema.createItemsSchema();
-            response.schema.items.type = this._newType.of.type;
-            response.schema.items.format = this._newType.of.as;
+            if (this._newType.of) {
+                if (this._newType.of.isSimpleType()) {
+                    response.schema.items.type = this._newType.of.type;
+                    response.schema.items.format = this._newType.of.as;
+                }
+                if (this._newType.of.isRef()) {
+                    response.schema.items.$ref = this._newType.of.type;
+                }
+            }
         }
     }
 
