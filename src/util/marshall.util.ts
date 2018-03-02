@@ -84,6 +84,7 @@ import {DeleteLicenseCommand_20, DeleteLicenseCommand_30} from "../commands/dele
 import {NewServerCommand} from "../commands/new-server.command";
 import {DeleteServerCommand} from "../commands/delete-server.command";
 import {ChangeServerCommand} from "../commands/change-server.command";
+import {SetExampleCommand_20, SetExampleCommand_30} from "../commands/set-example.command";
 
 
 let commandFactory: any = {
@@ -170,6 +171,8 @@ let commandFactory: any = {
     "ReplacePathItemCommand_30": function() { return new ReplacePathItemCommand_30(null, null); },
     "ReplaceSchemaDefinitionCommand_20": function() { return new ReplaceSchemaDefinitionCommand_20(null, null); },
     "ReplaceSchemaDefinitionCommand_30": function() { return new ReplaceSchemaDefinitionCommand_30(null, null); },
+    "SetExampleCommand_20": function() { return new SetExampleCommand_20(null, null, null); },
+    "SetExampleCommand_30": function() { return new SetExampleCommand_30(null, null); },
 };
 
 
