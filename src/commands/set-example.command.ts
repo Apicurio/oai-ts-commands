@@ -57,7 +57,7 @@ export abstract class SetExampleCommand extends AbstractCommand implements IComm
     public abstract execute(document: OasDocument): void;
     public abstract undo(document: OasDocument): void;
 
-        /**
+    /**
      * Marshall the command into a JS object.
      * @return {any}
      */

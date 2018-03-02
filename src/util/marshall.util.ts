@@ -85,6 +85,10 @@ import {NewServerCommand} from "../commands/new-server.command";
 import {DeleteServerCommand} from "../commands/delete-server.command";
 import {ChangeServerCommand} from "../commands/change-server.command";
 import {SetExampleCommand_20, SetExampleCommand_30} from "../commands/set-example.command";
+import {
+    RenameSchemaDefinitionCommand_20,
+    RenameSchemaDefinitionCommand_30
+} from "../commands/rename-schema-definition.command";
 
 
 let commandFactory: any = {
@@ -165,6 +169,8 @@ let commandFactory: any = {
     "NewServerCommand": function() { return new NewServerCommand(null, null); },
     "NewTagCommand_20": function() { return new NewTagCommand_20(null); },
     "NewTagCommand_30": function() { return new NewTagCommand_30(null); },
+    "RenameSchemaDefinitionCommand_20": function() { return new RenameSchemaDefinitionCommand_20(null, null); },
+    "RenameSchemaDefinitionCommand_30": function() { return new RenameSchemaDefinitionCommand_30(null, null); },
     "ReplaceOperationCommand_20": function() { return new ReplaceOperationCommand_20(null, null); },
     "ReplaceOperationCommand_30": function() { return new ReplaceOperationCommand_30(null, null); },
     "ReplacePathItemCommand_20": function() { return new ReplacePathItemCommand_20(null, null); },

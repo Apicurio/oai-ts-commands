@@ -41,8 +41,7 @@ describe("Set Example (2.0)", () => {
                     }
                 };
                 return createSetExampleCommand(document, response, example, "application/json");
-            },
-            true
+            }
         );
     });
 
