@@ -90,6 +90,7 @@ import {
     RenameSchemaDefinitionCommand_30
 } from "../commands/rename-schema-definition.command";
 import {AddExampleCommand_30} from "../commands/add-example.command";
+import {DeleteExampleCommand_30} from "../commands/delete-example.command";
 
 
 let commandFactory: any = {
@@ -126,6 +127,7 @@ let commandFactory: any = {
     "DeleteAllParametersCommand_30": function() { return new DeleteAllParametersCommand_30(null, null); },
     "DeleteAllPropertiesCommand_20": function() { return new DeleteAllPropertiesCommand_20(null); },
     "DeleteAllPropertiesCommand_30": function() { return new DeleteAllPropertiesCommand_30(null); },
+    "DeleteExampleCommand_30": function() { return new DeleteExampleCommand_30(null); },
     "DeleteMediaTypeCommand": function() { return new DeleteMediaTypeCommand(null); },
     "DeleteOperationCommand_20": function() { return new DeleteOperationCommand_20(null, null); },
     "DeleteOperationCommand_30": function() { return new DeleteOperationCommand_30(null, null); },

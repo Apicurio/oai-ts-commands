@@ -41,6 +41,7 @@ export * from "./commands/delete-all-parameters.command";
 export * from "./commands/delete-all-properties.command";
 export * from "./commands/delete-all-responses.command";
 export * from "./commands/delete-contact.command";
+export * from "./commands/delete-example.command";
 export * from "./commands/delete-license.command";
 export * from "./commands/delete-media-type.command";
 export * from "./commands/delete-node.command";

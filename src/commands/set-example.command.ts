@@ -16,7 +16,7 @@
  */
 
 import {
-    Oas20Document, Oas20Response, Oas30Document, Oas30ExampleItems, Oas30MediaType, OasDocument,
+    Oas20Document, Oas20Response, Oas30Document, Oas30Example, Oas30ExampleItems, Oas30MediaType, OasDocument,
     OasNodePath
 } from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
@@ -192,15 +192,13 @@ export class SetExampleCommand_30 extends SetExampleCommand {
         }
 
         if (!this.isNullOrUndefined(this._newExampleName)) {
-            if (this.isNullOrUndefined(mediaType.examples)) {
-                mediaType.examples = new Oas30ExampleItems();
-            }
-            if (this.isNullOrUndefined(mediaType.examples[this._newExampleName])) {
-                mediaType.examples[this._newExampleName] = mediaType.createExample(this._newExampleName);
+            if (this.isNullOrUndefined(mediaType.getExample(this._newExampleName))) {
+                mediaType.addExample(mediaType.createExample(this._newExampleName));
                 this._nullExample = true;
+            } else {
+                this._oldValue = mediaType.getExample(this._newExampleName).value;
             }
-            this._oldValue = mediaType.examples[this._newExampleName].value;
-            mediaType.examples[this._newExampleName].value = this._newExample;
+            mediaType.getExample(this._newExampleName).value = this._newExample;
         } else {
             this._oldValue = mediaType.example;
             mediaType.example = this._newExample;
@@ -220,9 +218,9 @@ export class SetExampleCommand_30 extends SetExampleCommand {
 
         if (!this.isNullOrUndefined(this._newExampleName)) {
             if (this._nullExample) {
-                delete mediaType.examples[this._newExampleName];
+                mediaType.removeExample(this._newExampleName);
             } else {
-                mediaType.examples[this._newExampleName].value = this._oldValue;
+                mediaType.getExample(this._newExampleName).value = this._oldValue;
             }
         } else {
             mediaType.example = this._oldValue;
