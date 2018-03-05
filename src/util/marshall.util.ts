@@ -89,9 +89,11 @@ import {
     RenameSchemaDefinitionCommand_20,
     RenameSchemaDefinitionCommand_30
 } from "../commands/rename-schema-definition.command";
+import {AddExampleCommand_30} from "../commands/add-example.command";
 
 
 let commandFactory: any = {
+    "AddExampleCommand_30": function() { return new AddExampleCommand_30(null, null, null, null, null) },
     "AddPathItemCommand_20": function() { return new AddPathItemCommand_20(null, null); },
     "AddPathItemCommand_30": function() { return new AddPathItemCommand_30(null, null); },
     "AddSchemaDefinitionCommand_20": function() { return new AddSchemaDefinitionCommand_20(null); },

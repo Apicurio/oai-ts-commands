@@ -22,6 +22,7 @@ export * from "./util/marshall.util";
 
 export * from "./models/simplified-type.model";
 
+export * from "./commands/add-example.command";
 export * from "./commands/add-path.command";
 export * from "./commands/add-schema-definition.command";
 export * from "./commands/change-contact-info.command";

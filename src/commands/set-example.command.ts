@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 
-import {Oas20Document, Oas20Response, Oas30Document, Oas30MediaType, OasDocument, OasNodePath} from "oai-ts-core";
+import {
+    Oas20Document, Oas20Response, Oas30Document, Oas30ExampleItems, Oas30MediaType, OasDocument,
+    OasNodePath
+} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {MarshallUtils} from "../util/marshall.util";
 
@@ -23,11 +26,11 @@ import {MarshallUtils} from "../util/marshall.util";
  * Factory function.
  */
 export function createSetExampleCommand(document: OasDocument, parent: Oas30MediaType | Oas20Response, example: any,
-                                        contentType?: string): SetExampleCommand {
+                                        nameOrContentType?: string): SetExampleCommand {
     if (document.getSpecVersion() === "2.0") {
-        return new SetExampleCommand_20(parent as Oas20Response, example, contentType);
+        return new SetExampleCommand_20(parent as Oas20Response, example, nameOrContentType);
     } else {
-        return new SetExampleCommand_30(parent, example);
+        return new SetExampleCommand_30(parent as Oas30MediaType, example, nameOrContentType);
     }
 }
 
@@ -38,7 +41,7 @@ export abstract class SetExampleCommand extends AbstractCommand implements IComm
 
     protected _parentPath: OasNodePath;
     protected _newExample: any;
-    
+
     protected _oldValue: any;
 
     /**
@@ -155,6 +158,21 @@ export class SetExampleCommand_20 extends SetExampleCommand {
 
 export class SetExampleCommand_30 extends SetExampleCommand {
 
+    protected _newExampleName: string;
+
+    protected _nullExample: boolean;
+
+    /**
+     * Constructor.
+     * @param {Oas30MediaType} parent
+     * @param example
+     * @param exampleName
+     */
+    constructor(parent: Oas30MediaType, example: any, exampleName?: string) {
+        super(parent, example);
+        this._newExampleName = exampleName;
+    }
+
     protected type(): string {
         return "SetExampleCommand_30";
     }
@@ -166,14 +184,27 @@ export class SetExampleCommand_30 extends SetExampleCommand {
     public execute(document: Oas30Document): void {
         console.info("[SetExampleCommand_30] Executing.");
         this._oldValue = null;
+        this._nullExample = false;
 
         let mediaType: Oas30MediaType = this._parentPath.resolve(document) as Oas30MediaType;
         if (this.isNullOrUndefined(mediaType)) {
             return;
         }
 
-        this._oldValue = mediaType.example;
-        mediaType.example = this._newExample;
+        if (!this.isNullOrUndefined(this._newExampleName)) {
+            if (this.isNullOrUndefined(mediaType.examples)) {
+                mediaType.examples = new Oas30ExampleItems();
+            }
+            if (this.isNullOrUndefined(mediaType.examples[this._newExampleName])) {
+                mediaType.examples[this._newExampleName] = mediaType.createExample(this._newExampleName);
+                this._nullExample = true;
+            }
+            this._oldValue = mediaType.examples[this._newExampleName].value;
+            mediaType.examples[this._newExampleName].value = this._newExample;
+        } else {
+            this._oldValue = mediaType.example;
+            mediaType.example = this._newExample;
+        }
     }
 
     /**
@@ -187,8 +218,16 @@ export class SetExampleCommand_30 extends SetExampleCommand {
             return;
         }
 
-        mediaType.example = this._oldValue;
-        this._oldValue = null;
+        if (!this.isNullOrUndefined(this._newExampleName)) {
+            if (this._nullExample) {
+                delete mediaType.examples[this._newExampleName];
+            } else {
+                mediaType.examples[this._newExampleName].value = this._oldValue;
+            }
+        } else {
+            mediaType.example = this._oldValue;
+            this._oldValue = null;
+        }
     }
 
 }

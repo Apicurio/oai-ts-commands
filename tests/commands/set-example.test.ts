@@ -120,4 +120,17 @@ describe("Set Example (3.0)", () => {
         );
     });
 
+    it("Set Example Object", () => {
+        commandTest(
+            "tests/_fixtures/commands/set-example/3.0/set-exampleObject.before.json",
+            "tests/_fixtures/commands/set-example/3.0/set-exampleObject.after.json",
+            (document: Oas30Document) => {
+                let response: Oas30Response = document.paths.pathItem("/foo").get.responses.response("200") as Oas30Response;
+                let mediaType: Oas30MediaType = response.content["application/xml"];
+                let example: any = "<UpdatedData>GOES HERE</UpdatedData>";
+                return createSetExampleCommand(document, mediaType, example, "list");
+            }
+        );
+    });
+
 });
