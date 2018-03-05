@@ -17,30 +17,18 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    Oas20Document, Oas30Document, Oas30MediaType, Oas30Schema, OasDocument, OasNodePath,
+    Oas20AdditionalPropertiesSchema, Oas20AllOfSchema,
+    Oas20Document, Oas20ItemsSchema, Oas20PropertySchema, Oas20SchemaDefinition, Oas30AdditionalPropertiesSchema,
+    Oas30AllOfSchema,
+    Oas30AnyOfSchema,
+    Oas30Document, Oas30ItemsSchema, Oas30NotSchema, Oas30OneOfSchema,
+    Oas30PropertySchema,
+    Oas30SchemaDefinition,
+    OasCombinedVisitorAdapter, OasDocument,
+    OasNodePath, OasSchema,
     OasVisitorUtil
 } from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
-import {OasCombinedVisitorAdapter} from "oai-ts-core/src/visitors/visitor.base";
-import {OasSchema} from "oai-ts-core/src/models/common/schema.model";
-import {
-    Oas20AdditionalPropertiesSchema,
-    Oas20AllOfSchema,
-    Oas20ItemsSchema,
-    Oas20PropertySchema,
-    Oas20SchemaDefinition
-} from "oai-ts-core/src/models/2.0/schema.model";
-import {
-    Oas30AdditionalPropertiesSchema,
-    Oas30AllOfSchema,
-    Oas30AnyOfSchema,
-    Oas30ItemsSchema,
-    Oas30NotSchema,
-    Oas30OneOfSchema,
-    Oas30PropertySchema,
-    Oas30SchemaDefinition
-} from "oai-ts-core/src/models/3.0/schema.model";
-import {OasOperation} from "oai-ts-core/src/models/common/operation.model";
 
 /**
  * Factory function.
