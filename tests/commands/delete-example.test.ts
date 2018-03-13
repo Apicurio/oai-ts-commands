@@ -18,8 +18,25 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {Oas30Document, Oas30Example} from "oai-ts-core";
-import {createDeleteExampleCommand} from "../../src/commands/delete-example.command";
+import {Oas20Document, Oas20Response, Oas30Document, Oas30Example} from "oai-ts-core";
+import {createDelete20ExampleCommand, createDeleteExampleCommand} from "../../src/commands/delete-example.command";
+
+
+describe("Delete Example (2.0)", () => {
+
+    it("Delete Example", () => {
+        commandTest(
+            "tests/_fixtures/commands/delete-example/2.0/delete-example.before.json",
+            "tests/_fixtures/commands/delete-example/2.0/delete-example.after.json",
+            (document: Oas20Document) => {
+                let response: Oas20Response = document.paths.pathItem("/pet/findByStatus").get.responses.response("200") as any;
+                return createDelete20ExampleCommand(document, response, "application/json");
+            }
+        );
+    });
+
+});
+
 
 
 describe("Delete Example (3.0)", () => {
