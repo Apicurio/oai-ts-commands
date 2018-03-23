@@ -20,13 +20,15 @@
 import {OasDocument, OasLibraryUtils} from "oai-ts-core";
 import {ICommand} from "../../src/base";
 import {MarshallUtils} from "../../src/util/marshall.util";
+import * as JsDiff from "diff";
 
 var library = new OasLibraryUtils();
 
 export function commandTest(beforeFile: string, afterFile: string, command: (document: OasDocument) => ICommand, debug?: boolean): void {
     if (debug) {
-        console.info("======================    START   =============================")
+        console.info("TEST:: Loading before/after files.")
     }
+
     let before: any = readJSON(beforeFile);
     let after: any = readJSON(afterFile);
 
@@ -35,45 +37,93 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     expect(before === null).toBeFalsy();
     expect(after === null).toBeFalsy();
 
+    if (debug) {
+        console.info("TEST:: Creating 'before' document.")
+    }
+
     let document: OasDocument = library.createDocument(before);
+
+    if (debug) {
+        console.info("TEST:: Creating the command to be tested.")
+    }
 
     // Create the command.
     let cmd: ICommand = command(document);
+
+    if (debug) {
+        console.info("TEST:: Serializing/deserializing the command.")
+    }
 
     // Serialize/deserialize the command
     let serializedCmd: string = JSON.stringify(MarshallUtils.marshallCommand(cmd));
     cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
 
+    if (debug) {
+        console.info("TEST:: Executing the command.")
+    }
+
     // Execute the command
     cmd.execute(document);
+
+    if (debug) {
+        console.info("TEST:: Asserting the command worked.")
+    }
 
     // Check the result.
     let actual: any = library.writeNode(document);
     let expected: any = after;
-    if (debug) {
-        console.info("------- ACTUAL (exec) --------\n " + JSON.stringify(actual, null, 2) + "\n-------------------");
-        console.info("------- EXPECTED (exec) --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
+    let failureOutput: string = "";
+    {
+        let changes: any[] = JsDiff.diffJson(actual, expected);
+        changes.forEach( change => {
+            if (change.added) {
+                console.info("--- EXPECTED BUT MISSING ---\n" + change.value);
+                console.info("----------------------------");
+            }
+            if (change.removed) {
+                console.info("--- FOUND EXTRA ---\n" + change.value);
+                console.info("-------------------");
+            }
+        });
+
     }
-    expect(actual).toEqual(expected);
+    expect(actual).toEqual(expected, failureOutput);
+
+    if (debug) {
+        console.info("TEST:: Serializing/deserializing the command (again).")
+    }
 
     // Serialize/deserialize the command (again)
     serializedCmd = JSON.stringify(MarshallUtils.marshallCommand(cmd));
     cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
 
+    if (debug) {
+        console.info("TEST:: Undoing the command.")
+    }
+
     // Undo the command
     cmd.undo(document);
+
+    if (debug) {
+        console.info("TEST:: Asserting that the undo() worked.")
+    }
 
     // Check again
     actual = library.writeNode(document);
     expected = before;
-    if (debug) {
-        console.info("------- ACTUAL (undo) --------\n " + JSON.stringify(actual, null, 2) + "\n-------------------");
-        console.info("------- EXPECTED (undo) --------\n " + JSON.stringify(expected, null, 2) + "\n-------------------");
+    failureOutput = "";
+    {
+        let changes: any[] = JsDiff.diffJson(actual, expected);
+        changes.forEach( change => {
+            if (change.added) {
+                console.info("--- EXPECTED BUT MISSING ---\n" + change.value);
+                console.info("----------------------------");
+            }
+            if (change.removed) {
+                console.info("--- FOUND EXTRA ---\n" + change.value);
+                console.info("-------------------");
+            }
+        });
     }
-    expect(actual).toEqual(expected);
-
-    if (debug) {
-        console.info("======================    END   =============================")
-    }
-
+    expect(actual).toEqual(expected, failureOutput);
 }

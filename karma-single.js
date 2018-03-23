@@ -17,6 +17,7 @@ module.exports = function(config) {
     files: [
         "src/**/*.ts",
         "tests/**/*.ts",
+        "node_modules/diff/dist/diff.js",
         "node_modules/oai-ts-core/bundles/OAI.umd.js",
         "node_modules/karma-read-json/karma-read-json.js",
         { pattern: "tests/_fixtures/**/*.*", included: false }

@@ -64,8 +64,7 @@ describe("Change Server (3.0)", () => {
                 var2.default = "var-2-default";
                 server.addServerVariable("variable-2", var2);
                 return createChangeServerCommand(document, server);
-            },
-            true
+            }
         );
     });
 

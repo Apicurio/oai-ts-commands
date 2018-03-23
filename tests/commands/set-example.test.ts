@@ -56,8 +56,7 @@ describe("Set Example (2.0)", () => {
                     hello: [ "world" ]
                 };
                 return createSetExampleCommand(document, response, example, "application/json");
-            },
-            true
+            }
         );
     });
 
