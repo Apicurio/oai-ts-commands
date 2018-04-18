@@ -91,6 +91,7 @@ import {
 } from "../commands/rename-schema-definition.command";
 import {AddExampleCommand_30} from "../commands/add-example.command";
 import {DeleteExampleCommand_20, DeleteExampleCommand_30} from "../commands/delete-example.command";
+import {AddSecurityRequirementCommand} from "../commands/add-security-requirement.command";
 
 
 let commandFactory: any = {
@@ -99,6 +100,7 @@ let commandFactory: any = {
     "AddPathItemCommand_30": function() { return new AddPathItemCommand_30(null, null); },
     "AddSchemaDefinitionCommand_20": function() { return new AddSchemaDefinitionCommand_20(null); },
     "AddSchemaDefinitionCommand_30": function() { return new AddSchemaDefinitionCommand_30(null); },
+    "AddSecurityRequirementCommand": function() { return new AddSecurityRequirementCommand(null, null); },
     "ChangeContactCommand_20": function() { return new ChangeContactCommand_20(null, null, null); },
     "ChangeContactCommand_30": function() { return new ChangeContactCommand_30(null, null, null); },
     "ChangeDescriptionCommand_20": function() { return new ChangeDescriptionCommand_20(null); },
