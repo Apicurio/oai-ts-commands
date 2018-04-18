@@ -92,6 +92,7 @@ import {
 import {AddExampleCommand_30} from "../commands/add-example.command";
 import {DeleteExampleCommand_20, DeleteExampleCommand_30} from "../commands/delete-example.command";
 import {AddSecurityRequirementCommand} from "../commands/add-security-requirement.command";
+import {DeleteSecurityRequirementCommand} from "../commands/delete-security-requirement.command";
 
 
 let commandFactory: any = {
@@ -144,6 +145,7 @@ let commandFactory: any = {
     "DeleteResponseCommand_30": function() { return new DeleteResponseCommand_30(null); },
     "DeleteSchemaDefinitionCommand_20": function() { return new DeleteSchemaDefinitionCommand_20(null); },
     "DeleteSchemaDefinitionCommand_30": function() { return new DeleteSchemaDefinitionCommand_30(null); },
+    "DeleteSecurityRequirementCommand": function() { return new DeleteSecurityRequirementCommand(null, null); },
     "DeleteSecuritySchemeCommand_20": function() { return new DeleteSecuritySchemeCommand_20(null); },
     "DeleteSecuritySchemeCommand_30": function() { return new DeleteSecuritySchemeCommand_30(null); },
     "DeleteServerCommand": function() { return new DeleteServerCommand(null); },

@@ -19,32 +19,30 @@ import {AbstractCommand, ICommand} from "../base";
 import {OasDocument, OasNodePath, OasOperation, OasSecurityRequirement} from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
 
-
 /**
  * Factory function.
  */
-export function createAddSecurityRequirementCommand(document: OasDocument, parent: OasOperation | OasDocument,
-                                                    requirement: OasSecurityRequirement): AddSecurityRequirementCommand {
-    return new AddSecurityRequirementCommand(parent, requirement);
+export function createDeleteSecurityRequirementCommand(document: OasDocument, parent: OasDocument | OasOperation,
+                                                       requirement: OasSecurityRequirement): DeleteSecurityRequirementCommand {
+    return new DeleteSecurityRequirementCommand(parent, requirement);
 }
 
-
 /**
- * A command used to create a new definition in a document.
+ * A command used to delete a single securityRequirement from an operation.
  */
-export class AddSecurityRequirementCommand extends AbstractCommand implements ICommand {
+export class DeleteSecurityRequirementCommand extends AbstractCommand implements ICommand {
 
-    protected _parentPath: OasNodePath;
-    protected _requirement: any;
+    private _parentPath: OasNodePath;
+    private _requirement: any;
 
-    protected _added: boolean;
+    private _oldRequirement: any;
 
     /**
      * C'tor.
-     * @param {OasOperation | OasDocument} parent
+     * @param {OasDocument | OasOperation} parent
      * @param {OasSecurityRequirement} requirement
      */
-    constructor(parent: OasOperation | OasDocument, requirement: OasSecurityRequirement) {
+    constructor(parent: OasDocument | OasOperation, requirement: OasSecurityRequirement) {
         super();
         if (parent) {
             this._parentPath = this.oasLibrary().createNodePath(parent);
@@ -55,7 +53,7 @@ export class AddSecurityRequirementCommand extends AbstractCommand implements IC
     }
 
     protected type(): string {
-        return "AddSecurityRequirementCommand";
+        return "DeleteSecurityRequirementCommand";
     }
 
     /**
@@ -78,47 +76,46 @@ export class AddSecurityRequirementCommand extends AbstractCommand implements IC
     }
 
     /**
-     * Adds the new security scheme to the document.
+     * Deletes the security requirement.
      * @param document
      */
     public execute(document: OasDocument): void {
-        console.info("[AddSecurityRequirementCommand] Executing.");
-        this._added = false;
+        console.info("[DeleteSecurityRequirementCommand] Executing.");
+        this._oldRequirement = null;
 
-        let parent: OasDocument | OasOperation = this._parentPath.resolve(document) as OasDocument | OasOperation;
+        let parent: OasDocument | OasOperation = this._parentPath.resolve(document) as any;
         if (this.isNullOrUndefined(parent)) {
             return;
         }
+
         let requirement: OasSecurityRequirement = parent.createSecurityRequirement();
         this.oasLibrary().readNode(this._requirement, requirement);
-        parent.addSecurityRequirement(requirement);
-        this._added = true;
+
+        let idx: number = this.indexOfRequirement(parent.security, requirement);
+        if (idx !== -1) {
+            this._oldRequirement = this.oasLibrary().writeNode(parent.security[idx]);
+            parent.security.splice(idx, 1);
+        }
     }
 
     /**
-     * Removes the security scheme.
+     * Restore the old (deleted) requirement.
      * @param document
      */
     public undo(document: OasDocument): void {
-        console.info("[AddSecurityRequirementCommand] Reverting.");
-        if (!this._added) {
+        console.info("[DeleteSecurityRequirementCommand] Reverting.");
+        if (this.isNullOrUndefined(this._oldRequirement)) {
             return;
         }
 
-        let parent: OasDocument | OasOperation = this._parentPath.resolve(document) as OasDocument | OasOperation;
+        let parent: OasDocument | OasOperation = this._parentPath.resolve(document) as any;
         if (this.isNullOrUndefined(parent)) {
             return;
         }
 
-        let security: OasSecurityRequirement[] = parent.security;
-
-        let requirement: OasSecurityRequirement = parent.createSecurityRequirement();
-        this.oasLibrary().readNode(this._requirement, requirement);
-
-        let idx: number = this.indexOfRequirement(security, requirement);
-        if (idx !== -1) {
-            security.splice(idx, 1);
-        }
+        let restoredRequirement: OasSecurityRequirement = parent.createSecurityRequirement();
+        this.oasLibrary().readNode(this._oldRequirement, restoredRequirement);
+        parent.addSecurityRequirement(restoredRequirement);
     }
 
     protected indexOfRequirement(requirements: OasSecurityRequirement[], requirement: OasSecurityRequirement): number {
@@ -146,4 +143,6 @@ export class AddSecurityRequirementCommand extends AbstractCommand implements IC
         });
         return rval;
     }
+
 }
+

@@ -16,14 +16,7 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {
-    Oas30Server,
-    Oas30ParameterBase,
-    Oas30RequestBody,
-    Oas30ResponseBase,
-    OasDocument,
-    OasNodePath, Oas30Operation, Oas30PathItem, Oas30Document
-} from "oai-ts-core";
+import {Oas30Document, Oas30Operation, Oas30PathItem, Oas30Server, OasDocument, OasNodePath} from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
 
 /**
