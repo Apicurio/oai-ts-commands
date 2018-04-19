@@ -16,14 +16,7 @@
  */
 
 import {ICommand} from "../base";
-import {
-    Oas20Definitions,
-    Oas20Document,
-    Oas20SchemaDefinition,
-    Oas30Document,
-    Oas30SchemaDefinition,
-    OasDocument
-} from "oai-ts-core";
+import {Oas20Document, Oas20SchemaDefinition, Oas30Document, Oas30SchemaDefinition, OasDocument} from "oai-ts-core";
 import {ReplaceNodeCommand} from "./replace.command";
 
 

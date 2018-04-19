@@ -73,6 +73,7 @@ export * from "./commands/replace.command";
 export * from "./commands/replace-operation.command";
 export * from "./commands/replace-path-item.command";
 export * from "./commands/replace-schema-definition.command";
+export * from "./commands/replace-security-requirement.command";
 export * from "./commands/set-example.command";
 
 export * from "./ot/ot-command";

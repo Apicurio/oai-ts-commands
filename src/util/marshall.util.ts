@@ -93,6 +93,7 @@ import {AddExampleCommand_30} from "../commands/add-example.command";
 import {DeleteExampleCommand_20, DeleteExampleCommand_30} from "../commands/delete-example.command";
 import {AddSecurityRequirementCommand} from "../commands/add-security-requirement.command";
 import {DeleteSecurityRequirementCommand} from "../commands/delete-security-requirement.command";
+import {ReplaceSecurityRequirementCommand} from "../commands/replace-security-requirement.command";
 
 
 let commandFactory: any = {
@@ -186,6 +187,7 @@ let commandFactory: any = {
     "ReplacePathItemCommand_30": function() { return new ReplacePathItemCommand_30(null, null); },
     "ReplaceSchemaDefinitionCommand_20": function() { return new ReplaceSchemaDefinitionCommand_20(null, null); },
     "ReplaceSchemaDefinitionCommand_30": function() { return new ReplaceSchemaDefinitionCommand_30(null, null); },
+    "ReplaceSecurityRequirementCommand": function() { return new ReplaceSecurityRequirementCommand(null, null); },
     "SetExampleCommand_20": function() { return new SetExampleCommand_20(null, null, null); },
     "SetExampleCommand_30": function() { return new SetExampleCommand_30(null, null); },
 };
