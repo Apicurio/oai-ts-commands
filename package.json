@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "core-js": "2.4.1",
-    "oai-ts-core": "0.2.18"
+    "oai-ts-core": "0.2.19"
   },
   "devDependencies": {
     "cpx": "1.5.0",
