@@ -94,6 +94,10 @@ import {DeleteExampleCommand_20, DeleteExampleCommand_30} from "../commands/dele
 import {AddSecurityRequirementCommand} from "../commands/add-security-requirement.command";
 import {DeleteSecurityRequirementCommand} from "../commands/delete-security-requirement.command";
 import {ReplaceSecurityRequirementCommand} from "../commands/replace-security-requirement.command";
+import {DeleteAllTagsCommand} from "../commands/delete-all-tags.command";
+import {DeleteAllServersCommand} from "../commands/delete-all-servers.command";
+import {DeleteAllSecurityRequirementsCommand} from "../commands/delete-all-security-requirements.command";
+import {DeleteAllSecuritySchemesCommand} from "../commands/delete-all-security-schemes.command";
 
 
 let commandFactory: any = {
@@ -131,6 +135,10 @@ let commandFactory: any = {
     "DeleteAllParametersCommand_30": function() { return new DeleteAllParametersCommand_30(null, null); },
     "DeleteAllPropertiesCommand_20": function() { return new DeleteAllPropertiesCommand_20(null); },
     "DeleteAllPropertiesCommand_30": function() { return new DeleteAllPropertiesCommand_30(null); },
+    "DeleteAllTagsCommand": function() { return new DeleteAllTagsCommand(); },
+    "DeleteAllServersCommand": function() { return new DeleteAllServersCommand(null); },
+    "DeleteAllSecurityRequirementsCommand": function() { return new DeleteAllSecurityRequirementsCommand(null); },
+    "DeleteAllSecuritySchemesCommand": function() { return new DeleteAllSecuritySchemesCommand(); },
     "DeleteExampleCommand_20": function() { return new DeleteExampleCommand_20(null, null); },
     "DeleteExampleCommand_30": function() { return new DeleteExampleCommand_30(null); },
     "DeleteMediaTypeCommand": function() { return new DeleteMediaTypeCommand(null); },
