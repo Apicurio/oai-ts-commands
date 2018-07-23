@@ -16,10 +16,28 @@
  */
 
 import {ICommand} from "../base";
+import {OasDocument} from "oai-ts-core";
 
 export class OtCommand {
 
+    public author: string;
     public contentVersion: number;
     public command: ICommand;
+    public local: boolean;
+    public reverted: boolean;
+
+    /**
+     * Executes the command against the given document.  Skips execution if the command
+     * has been reverted/undone.
+     * @param document
+     */
+    public execute(document: OasDocument): void {
+        if (!this.reverted) {
+            // console.info("Executing CV: ", this.contentVersion);
+            this.command.execute(document);
+        } else {
+            // console.info("Skipped execute on CV: ", this.contentVersion);
+        }
+    }
 
 }

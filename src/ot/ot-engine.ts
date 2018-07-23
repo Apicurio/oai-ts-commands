@@ -46,6 +46,7 @@ export class OtEngine {
     private pendingCommands: OtCommand[];
     private commands: OtCommand[];
     private document: OasDocument;
+    private pendingUndos: number[];
 
     /**
      * C'tor.
@@ -104,8 +105,9 @@ export class OtEngine {
      */
     public executeCommand(command: OtCommand, pending?: boolean): void {
         if (pending) {
+            command.local = true;
             console.info("[OtEngine] Executing PENDING command with contentId: %s", command.contentVersion);
-            command.command.execute(this.document);
+            command.execute(this.document);
             this.pendingCommands.push(command);
             return;
         }
@@ -136,13 +138,13 @@ export class OtEngine {
         // Re-apply commands as necessary
         let idx: number = insertionIdx;
         while (idx < this.commands.length) {
-            this.commands[idx].command.execute(this.document);
+            this.commands[idx].execute(this.document);
             idx++;
         }
 
         // Now re-apply any pending commands
         for (pidx = 0; pidx < this.pendingCommands.length; pidx++) {
-            this.pendingCommands[pidx].command.execute(this.document);
+            this.pendingCommands[pidx].execute(this.document);
         }
     }
 
@@ -213,9 +215,192 @@ export class OtEngine {
         // Now re-apply and restore all remaining pending commands (if any)
         this.pendingCommands = pending;
         for (let pidx = 0; pidx < this.pendingCommands.length; pidx++) {
-            this.pendingCommands[pidx].command.execute(this.document);
+            this.pendingCommands[pidx].execute(this.document);
+        }
+    }
+
+    /**
+     * Called to undo the last local command.  Returns the command that was undone (on success)
+     * or null if there was no command to undo.
+     */
+    public undoLastLocalCommand(): OtCommand {
+        let idx: number;
+        // Check pending commands first (these are ALL local).  If found, undo immediately and return.
+        for (idx = this.pendingCommands.length - 1; idx >= 0; idx--) {
+            let cmd: OtCommand = this.pendingCommands[idx];
+            if (!cmd.reverted) {
+                cmd.reverted = true;
+                cmd.command.undo(this.document);
+                return cmd;
+            }
         }
 
+        // Next check for local commands in the finalized command list.  Some of these are
+        // local and some are remote (from collaborators).
+        let undoneCmd: OtCommand = null;
+        if (undoneCmd === null) {
+            for (idx = this.commands.length - 1; idx >= 0; idx--) {
+                let cmd: OtCommand = this.commands[idx];
+                // Only interested if the command is local and not already reverted
+                if (cmd.local && !cmd.reverted) {
+                    undoneCmd = cmd;
+                    break;
+                }
+            }
+        }
+
+        if (undoneCmd !== null) {
+            this.undo(undoneCmd.contentVersion);
+        }
+
+        return undoneCmd;
+    }
+
+    /**
+     * Called to redo the last "undone" local command.  Returns the command that was redone (on success)
+     * or null if there was no command to redo.
+     */
+    public redoLastLocalCommand(): OtCommand {
+        let idx: number;
+        // Check the most recent pending command.  If it's reverted, then immediately redo it and return.  If it
+        // is NOT reverted, then do nothing and return (following the semantics of redo).
+        if (this.pendingCommands.length > 0) {
+            let cmd: OtCommand = this.pendingCommands[this.pendingCommands.length - 1];
+            if (cmd.reverted) {
+                cmd.reverted = false;
+                cmd.command.execute(this.document);
+                return cmd;
+            } else {
+                return null;
+            }
+        }
+
+        // Next check for local commands in the finalized command list.  Some of these are
+        // local and some are remote (from collaborators).
+        let redoneCmd: OtCommand = null;
+        if (redoneCmd === null) {
+            for (idx = this.commands.length - 1; idx >= 0; idx--) {
+                let cmd: OtCommand = this.commands[idx];
+                // Only interested if the command is local and previously reverted
+                if (cmd.local && cmd.reverted) {
+                    redoneCmd = cmd;
+                }
+                if (cmd.local && !cmd.reverted) {
+                    break;
+                }
+            }
+        }
+
+        if (redoneCmd !== null) {
+            this.redo(redoneCmd.contentVersion);
+        }
+
+        return redoneCmd;
+    }
+
+    /**
+     * Called to undo a specific command by its contentVersion identifier.  Note: this will never
+     * be invoked for a pending command (pending commands don't have content versions yet).
+     * @param contentVersion
+     */
+    public undo(contentVersion: number): void {
+        let idx: number;
+        let commandsToUndo: OtCommand[] = [];
+
+        // 1. Undo all pending commands
+        // 2. Undo all commands (in reverse chronological order) up to and including the one referenced by "contentVersion"
+        // 3. Mark the command as "reverted"
+        // 4. Re-apply all previously undone commands *except* the one actually being undone (including pending commands)
+        // 5. Profit!
+
+        // Add all pending commands to the "commands to undo" list.
+        for (idx = this.pendingCommands.length - 1; idx >= 0; idx--) {
+            let cmd: OtCommand = this.pendingCommands[idx];
+            commandsToUndo.push(cmd);
+        }
+
+        // Search backwards through the list of commands until we find the one we're looking for.
+        let found: boolean = false;
+        let foundCmd: OtCommand = null;
+        for (idx = this.commands.length - 1; idx >= 0; idx--) {
+            let cmd: OtCommand = this.commands[idx];
+            commandsToUndo.push(cmd);
+            if (cmd.contentVersion === contentVersion) {
+                found = true;
+                foundCmd = cmd;
+                break;
+            }
+        }
+
+        // Did we find it?  If not, log the CV and return.  Nothing to do now.  The assumption
+        // is that we haven't received the command for this CV yet.  When we do, we'll immediately
+        // mark it as "reverted" and not apply it.
+        if (!found) {
+            this.pendingUndos.push(contentVersion);
+            return;
+        }
+
+        // Now undo all the commands we found
+        commandsToUndo.forEach(cmd => cmd.command.undo(this.document));
+
+        // Mark the found command as reverted
+        foundCmd.reverted = true;
+
+        // Re-apply all previously undone commands (auto-skipping the one we just marked as reverted)
+        commandsToUndo.reverse().forEach(cmd => cmd.execute(this.document));
+
+        // Profit!
+    }
+
+    /**
+     * Called to redo a specific command by its contentVersion identifier.
+     * @param contentVersion
+     */
+    public redo(contentVersion: number): void {
+        let idx: number;
+        let commandsToUndo: OtCommand[] = [];
+
+        // 1. Undo all pending commands
+        // 2. Undo all commands (in reverse chronological order) up to and including the one referenced by "contentVersion"
+        // 3. Mark the command as "NOT reverted"
+        // 4. Re-apply all previously undone commands *INCLUDING* the one being redone (including pending commands)
+
+        // Add all pending commands to the "commands to undo" list.
+        for (idx = this.pendingCommands.length - 1; idx >= 0; idx--) {
+            let cmd: OtCommand = this.pendingCommands[idx];
+            commandsToUndo.push(cmd);
+        }
+
+        // Search backwards through the list of commands until we find the one we're looking for.
+        let found: boolean = false;
+        let foundCmd: OtCommand = null;
+        for (idx = this.commands.length - 1; idx >= 0; idx--) {
+            let cmd: OtCommand = this.commands[idx];
+            commandsToUndo.push(cmd);
+            if (cmd.contentVersion === contentVersion) {
+                found = true;
+                foundCmd = cmd;
+                break;
+            }
+        }
+
+        // Did we find it?  If not, possibly remove the CV from the list of pending undos.
+        if (!found) {
+            idx = this.pendingUndos.indexOf(contentVersion);
+            if (idx !== -1) {
+                this.pendingUndos.splice(idx, 1);
+            }
+            return;
+        }
+
+        // Now undo all the commands we found
+        commandsToUndo.forEach(cmd => cmd.command.undo(this.document));
+
+        // Mark the found command as reverted
+        foundCmd.reverted = false;
+
+        // Re-apply all previously undone commands (auto-skipping the one we just marked as reverted)
+        commandsToUndo.reverse().forEach(cmd => cmd.execute(this.document));
     }
 
 }
