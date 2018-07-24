@@ -55,6 +55,7 @@ export class OtEngine {
     constructor(document: OasDocument) {
         this.document = document;
         this.pendingCommands = [];
+        this.pendingUndos = [];
         this.commands = [];
     }
 
@@ -113,11 +114,21 @@ export class OtEngine {
         }
 
         console.info("[OtEngine] Executing command with content version: %s", command.contentVersion);
+        let pidx: number;
+
+        // Check to see if this command was already "undone" - if so then there's much less
+        // work to do - just insert it into the command list at the right place.
+        pidx = this.pendingUndos.indexOf(command.contentVersion);
+        if (pidx !== -1) {
+            this.pendingUndos.splice(pidx, 1);
+            command.reverted = true;
+        }
 
         // Rewind any pending commands first.
-        let pidx: number;
         for (pidx = this.pendingCommands.length - 1; pidx >= 0; pidx--) {
-            this.pendingCommands[pidx].command.undo(this.document);
+            if (!this.pendingCommands[pidx].reverted) {
+                this.pendingCommands[pidx].command.undo(this.document);
+            }
         }
 
         // Note: when finding the insertion point, search backwards since that will likely be the shortest trip
@@ -126,7 +137,9 @@ export class OtEngine {
         let insertionIdx: number = this.commands.length - 1;
         if (this.commands.length > 0) {
             while (insertionIdx >= 0 && this.commands[insertionIdx].contentVersion > command.contentVersion) {
-                this.commands[insertionIdx].command.undo(this.document);
+                if (!this.commands[insertionIdx].reverted) {
+                    this.commands[insertionIdx].command.undo(this.document);
+                }
                 insertionIdx--;
             }
         }
@@ -184,7 +197,9 @@ export class OtEngine {
         // Rewind all pending commands.
         let pidx: number;
         for (pidx = this.pendingCommands.length - 1; pidx >= 0; pidx--) {
-            this.pendingCommands[pidx].command.undo(this.document);
+            if (!this.pendingCommands[pidx].reverted) {
+                this.pendingCommands[pidx].command.undo(this.document);
+            }
         }
 
         // Temporarily detach the pending commands (so we don't undo them twice).
@@ -229,8 +244,7 @@ export class OtEngine {
         for (idx = this.pendingCommands.length - 1; idx >= 0; idx--) {
             let cmd: OtCommand = this.pendingCommands[idx];
             if (!cmd.reverted) {
-                cmd.reverted = true;
-                cmd.command.undo(this.document);
+                cmd.undo(this.document);
                 return cmd;
             }
         }
@@ -267,8 +281,7 @@ export class OtEngine {
         if (this.pendingCommands.length > 0) {
             let cmd: OtCommand = this.pendingCommands[this.pendingCommands.length - 1];
             if (cmd.reverted) {
-                cmd.reverted = false;
-                cmd.command.execute(this.document);
+                cmd.redo(this.document);
                 return cmd;
             } else {
                 return null;
@@ -303,7 +316,7 @@ export class OtEngine {
      * be invoked for a pending command (pending commands don't have content versions yet).
      * @param contentVersion
      */
-    public undo(contentVersion: number): void {
+    public undo(contentVersion: number): OtCommand {
         let idx: number;
         let commandsToUndo: OtCommand[] = [];
 
@@ -337,11 +350,15 @@ export class OtEngine {
         // mark it as "reverted" and not apply it.
         if (!found) {
             this.pendingUndos.push(contentVersion);
-            return;
+            return null;
         }
 
         // Now undo all the commands we found
-        commandsToUndo.forEach(cmd => cmd.command.undo(this.document));
+        commandsToUndo.forEach(cmd => {
+            if (!cmd.reverted) {
+                cmd.command.undo(this.document)
+            }
+        });
 
         // Mark the found command as reverted
         foundCmd.reverted = true;
@@ -349,14 +366,14 @@ export class OtEngine {
         // Re-apply all previously undone commands (auto-skipping the one we just marked as reverted)
         commandsToUndo.reverse().forEach(cmd => cmd.execute(this.document));
 
-        // Profit!
+        return foundCmd;
     }
 
     /**
      * Called to redo a specific command by its contentVersion identifier.
      * @param contentVersion
      */
-    public redo(contentVersion: number): void {
+    public redo(contentVersion: number): OtCommand {
         let idx: number;
         let commandsToUndo: OtCommand[] = [];
 
@@ -390,17 +407,23 @@ export class OtEngine {
             if (idx !== -1) {
                 this.pendingUndos.splice(idx, 1);
             }
-            return;
+            return null;
         }
 
         // Now undo all the commands we found
-        commandsToUndo.forEach(cmd => cmd.command.undo(this.document));
+        commandsToUndo.forEach(cmd => {
+            if (!cmd.reverted) {
+                cmd.command.undo(this.document)
+            }
+        });
 
         // Mark the found command as reverted
         foundCmd.reverted = false;
 
         // Re-apply all previously undone commands (auto-skipping the one we just marked as reverted)
         commandsToUndo.reverse().forEach(cmd => cmd.execute(this.document));
+
+        return foundCmd;
     }
 
 }

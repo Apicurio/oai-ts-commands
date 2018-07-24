@@ -33,10 +33,35 @@ export class OtCommand {
      */
     public execute(document: OasDocument): void {
         if (!this.reverted) {
-            // console.info("Executing CV: ", this.contentVersion);
             this.command.execute(document);
+        }
+    }
+
+    /**
+     * Invokes 'undo' on the underlying ICommand but only if it hasn't already been reverted.
+     * Any command already reverted will simply be skipped.
+     * @param document
+     */
+    public undo(document: OasDocument): void {
+        if (this.reverted) {
+            //console.info("Skipped undo of CV: ", this);
         } else {
-            // console.info("Skipped execute on CV: ", this.contentVersion);
+            this.command.undo(document);
+            this.reverted = true;
+        }
+    }
+
+    /**
+     * Invokes 'redo' on the underlying ICommand but only if it hasn't already been reverted.
+     * Any command already reverted will simply be skipped.
+     * @param document
+     */
+    public redo(document: OasDocument): void {
+        if (!this.reverted) {
+            //console.info("Skipped redo of CV: ", this);
+        } else {
+            this.command.execute(document);
+            this.reverted = false;
         }
     }
 

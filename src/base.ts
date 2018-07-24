@@ -57,7 +57,8 @@ export abstract class AbstractCommand {
         var obj: any = {
             __type: cmdType
         };
-        for (let propName in this) {
+        let propNames: string[] = Object.getOwnPropertyNames(this);
+        for (let propName of propNames) {
             obj[propName] = this[propName];
         }
         return obj;
@@ -68,7 +69,8 @@ export abstract class AbstractCommand {
      * @param obj
      */
     public unmarshall(obj: any): void {
-        for (let propName in obj) {
+        let propNames: string[] = Object.getOwnPropertyNames(obj);
+        for (let propName of propNames) {
             if (propName !== "__type") {
                 this[propName] = obj[propName];
             }
