@@ -102,7 +102,7 @@ import {AggregateCommand} from "../commands/aggregate.command";
 
 
 let commandFactory: any = {
-    "AggregateCommand": function() { return new AggregateCommand(null, null); },
+    "AggregateCommand": function() { return new AggregateCommand(null, null, null); },
     "AddExampleCommand_30": function() { return new AddExampleCommand_30(null, null, null, null, null) },
     "AddPathItemCommand_20": function() { return new AddPathItemCommand_20(null, null); },
     "AddPathItemCommand_30": function() { return new AddPathItemCommand_30(null, null); },

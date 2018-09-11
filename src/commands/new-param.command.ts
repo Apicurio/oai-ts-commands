@@ -22,8 +22,8 @@ import {
     Oas30Operation,
     Oas30PathItem,
     OasDocument,
-    OasNodePath,
-    OasParameterBase
+    OasNodePath, OasOperation,
+    OasParameterBase, OasPathItem
 } from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {MarshallUtils} from "../util/marshall.util";
@@ -32,12 +32,12 @@ import {MarshallUtils} from "../util/marshall.util";
  * Factory function.
  */
 export function createNewParamCommand(document: OasDocument,
-                                      operation: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem,
-                                      paramName: string, paramType: string): NewParamCommand {
+                                      parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem,
+                                      paramName: string, paramType: string, override: boolean = false): NewParamCommand {
     if (document.getSpecVersion() === "2.0") {
-        return new NewParamCommand_20(operation, paramName, paramType);
+        return new NewParamCommand_20(parent, paramName, paramType, override);
     } else {
-        return new NewParamCommand_30(operation, paramName, paramType);
+        return new NewParamCommand_30(parent, paramName, paramType, override);
     }
 }
 
@@ -49,26 +49,30 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     private _paramName: string;
     private _paramType: string;
     private _parentPath: OasNodePath;
+    private _override: boolean;
 
     private _created: boolean;
 
     /**
      * Constructor.
-     * @param operation
+     * @param parent
      * @param paramName
      * @param paramType
+     * @param override
      */
-    constructor(operation: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, paramName: string, paramType: string) {
+    constructor(parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, paramName: string,
+                paramType: string, override: boolean = false) {
         super();
-        if (operation) {
-            this._parentPath = this.oasLibrary().createNodePath(operation);
+        if (parent) {
+            this._parentPath = this.oasLibrary().createNodePath(parent);
         }
         this._paramName = paramName;
         this._paramType = paramType;
+        this._override = override;
     }
 
     /**
-     * Creates a request body parameter for the operation.
+     * Creates a parameter.
      * @param document
      */
     public execute(document: OasDocument): void {
@@ -93,10 +97,22 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
         }
 
         let param: OasParameterBase = parent.createParameter() as OasParameterBase;
-        param.in = this._paramType;
-        param.name = this._paramName;
-        if (param.in === "path") {
-            param.required = true;
+        let configured: boolean = false;
+        // If overriding a param from the path level, clone it!
+        if (this._override) {
+            let oparam: OasParameterBase = this.findOverridableParam(parent as OasOperation);
+            if (oparam) {
+                this.oasLibrary().readNode(this.oasLibrary().writeNode(oparam), param);
+                configured = true;
+            }
+        }
+        // If not overriding, then set the basics only.
+        if (!configured) {
+            param.in = this._paramType;
+            param.name = this._paramName;
+            if (param.in === "path") {
+                param.required = true;
+            }
         }
         parent.addParameter(param);
         console.info("[NewParamCommand] Param %s of type %s created successfully.", param.name, param.in);
@@ -167,6 +183,23 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     public unmarshall(obj: any): void {
         super.unmarshall(obj);
         this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+    }
+
+    /**
+     * Tries to find the parameter being overridden (if any).  Returns null if it can't
+     * find something.
+     */
+    public findOverridableParam(operation: OasOperation): OasParameterBase {
+        let rval: OasParameterBase = null;
+        let pathItem: OasPathItem = operation.parent() as OasPathItem;
+        if (pathItem && pathItem["_path"] && pathItem["parameters"] && pathItem.parameters.length > 0) {
+            pathItem.parameters.forEach( piParam => {
+                if (piParam.name === this._paramName && piParam.in === this._paramType) {
+                    rval = piParam;
+                }
+            });
+        }
+        return rval;
     }
 
 }

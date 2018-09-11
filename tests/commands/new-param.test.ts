@@ -44,7 +44,19 @@ describe("New Parameter (3.0)", () => {
             "tests/_fixtures/commands/new-param/3.0/new-param.before.json",
             "tests/_fixtures/commands/new-param/3.0/new-param.after.json",
             (document: Oas30Document) => {
-                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation, "newParameter", "query");
+                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
+                    "newParameter", "query");
+            }
+        );
+    });
+
+    it("New Parameter (Override)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-param/3.0/override-param.before.json",
+            "tests/_fixtures/commands/new-param/3.0/override-param.after.json",
+            (document: Oas30Document) => {
+                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
+                    "username", "path", true);
             }
         );
     });
