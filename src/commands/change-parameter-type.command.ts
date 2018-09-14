@@ -117,16 +117,24 @@ export abstract class ChangeParameterTypeCommand extends AbstractCommand impleme
 
         let oldParam: OasParameterBase = parent.createParameter();
         this.oasLibrary().readNode(this._oldParameter, oldParam);
-        let pindex: number = parent.parameters.indexOf(param);
-        parent.parameters.splice(pindex, 1, oldParam);
+        this.doRestoreParameter(param, oldParam);
+        //let pindex: number = parent.parameters.indexOf(param);
+        //parent.parameters.splice(pindex, 1, oldParam);
     }
-
+    
     /**
      * Changes the parameter.
      * @param {OasDocument} document
      * @param {OasParameterBase} parameter
      */
     protected abstract doChangeParameter(document: OasDocument, parameter: OasParameterBase): void;
+
+    /**
+     * Called to resotre the given parameter back to the old settings (provided in oldParameter).
+     * @param param
+     * @param oldParam
+     */
+    protected abstract doRestoreParameter(param: OasParameterBase, oldParam: OasParameterBase): void;
 
     /**
      * Marshall the command into a JS object.
@@ -220,6 +228,30 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
         }
     }
 
+    /**
+     * Restores the parameter.
+     * @param parameter
+     * @param oldParameter
+     */
+    protected doRestoreParameter(param: Oas20Parameter, oldParam: Oas20Parameter): void {
+        if (param.in === "body") {
+            param.schema = oldParam.schema;
+            if (param.schema) {
+                param.schema._parent = param;
+                param.schema._ownerDocument = param.ownerDocument();
+            }
+        } else {
+            param.type = oldParam.type;
+            param.format = oldParam.format;
+            param.items = oldParam.items;
+            if (param.items) {
+                param.items._parent = param;
+                param.items._ownerDocument = param.ownerDocument();
+            }
+        }
+        param.required = oldParam.required;
+    }
+
 }
 
 
@@ -243,26 +275,6 @@ export class ChangeParameterDefinitionTypeCommand_20 extends ChangeParameterType
      */
     protected type(): string {
         return "ChangeParameterDefinitionTypeCommand_20";
-    }
-
-    /**
-     * Resets the param type back to its previous state.
-     * @param document
-     */
-    public undo(document: Oas20Document): void {
-        console.info("[ChangeParameterDefinitionType] Reverting.");
-        let param: Oas20ParameterDefinition = this._paramPath.resolve(document) as Oas20ParameterDefinition;
-        if (!param) {
-            return;
-        }
-
-        // Remove the old/updated parameter.
-        document.parameters.removeParameter(param.parameterName());
-
-        // Restore the parameter from before the command executed.
-        let oldParam: Oas20ParameterDefinition = document.parameters.createParameter(param.parameterName());
-        this.oasLibrary().readNode(this._oldParameter, oldParam);
-        document.parameters.addParameter(param.parameterName(), oldParam);
     }
 
 }
@@ -313,6 +325,20 @@ export class ChangeParameterTypeCommand_30 extends ChangeParameterTypeCommand {
         if (!this.isNullOrUndefined(this._newType.required)) {
             parameter.required = required;
         }
+    }
+
+    /**
+     * Restores the parameter.
+     * @param parameter
+     * @param oldParameter
+     */
+    protected doRestoreParameter(param: Oas30ParameterBase, oldParam: Oas30ParameterBase): void {
+        param.schema = oldParam.schema;
+        if (param.schema) {
+            param.schema._parent = param;
+            param.schema._ownerDocument = param.ownerDocument();
+        }
+        param.required = oldParam.required;
     }
 
 }

@@ -74,7 +74,6 @@ describe("Change Parameter Type (2.0)", () => {
             (document: Oas20Document) => {
                 let param: Oas20Parameter = document.paths.pathItem("/pets").get.parameters[1] as Oas20Parameter;
                 let type: SimplifiedParameterType = SimplifiedParameterType.fromParameter(param);
-                console.info("SimplifiedParameterType: %s", JSON.stringify(type));
                 type.required = false;
                 return createChangeParameterTypeCommand(document, param, type);
             }

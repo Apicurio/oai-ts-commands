@@ -17,7 +17,7 @@
 
 import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasSchema} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
-import {SimplifiedPropertyType, SimplifiedType} from "../models/simplified-type.model";
+import {SimplifiedPropertyType} from "../models/simplified-type.model";
 import {MarshallUtils} from "../util/marshall.util";
 
 
@@ -140,9 +140,24 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
         let parentSchema: OasSchema = prop.parent() as OasSchema;
         let oldProp: OasSchema = parentSchema.createPropertySchema(this._propName);
         this.oasLibrary().readNode(this._oldProperty, oldProp);
-        parentSchema.removeProperty(this._propName);
-        parentSchema.addProperty(this._propName, oldProp);
 
+        // Restore the schema attributes
+        prop.$ref = null;
+        prop.type = null;
+        prop.format = null;
+        prop.items = null;
+        if (oldProp) {
+            prop.$ref = oldProp.$ref;
+            prop.type = oldProp.type;
+            prop.format = oldProp.format;
+            prop.items = oldProp.items;
+            if (prop.items) {
+                prop.items["_parent"] = prop;
+                prop.items["_ownerDocument"] = prop.ownerDocument();
+            }
+        }
+
+        // Restore the "required" flag
         if (!this.isNullOrUndefined(this._newType.required)) {
             if (this._nullRequired) {
                 prop.parent()["required"] = null;
