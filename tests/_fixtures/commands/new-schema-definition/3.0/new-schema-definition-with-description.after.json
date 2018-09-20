@@ -29,31 +29,7 @@
         "$ref": "#/other/Ref"
       },
       "NewType": {
-        "title": "Root Type for NewType",
-        "description": "The root of the NewType type's schema.",
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "age": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "email": {
-            "type": "string"
-          },
-          "dob": {
-            "type": "string",
-            "format": "date"
-          }
-        },
-        "example": {
-          "age": 46,
-          "dob": "1971-04-15",
-          "email": "jbourne@example.com",
-          "name": "Jason Bourne"
-        }
+        "description": "Just a description of a new type."
       }
     }
   }

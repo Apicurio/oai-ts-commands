@@ -34,6 +34,17 @@ describe("New Schema Definition (2.0)", () => {
         );
     });
 
+    it("New Schema Definition (Description)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-schema-definition/2.0/new-schema-definition-with-description.before.json",
+            "tests/_fixtures/commands/new-schema-definition/2.0/new-schema-definition-with-description.after.json",
+            (document: Oas20Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType",
+                    null, "Just a description of a new type.");
+            }
+        );
+    });
+
     it("New Schema Definition (Example)", () => {
         commandTest(
             "tests/_fixtures/commands/new-schema-definition/2.0/new-schema-definition-with-example.before.json",
@@ -59,6 +70,17 @@ describe("New Schema Definition (3.0)", () => {
             "tests/_fixtures/commands/new-schema-definition/3.0/new-schema-definition.after.json",
             (document: Oas30Document) => {
                 return createNewSchemaDefinitionCommand(document, "NewType");
+            }
+        );
+    });
+
+    it("New Schema Definition (Description)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-schema-definition/3.0/new-schema-definition-with-description.before.json",
+            "tests/_fixtures/commands/new-schema-definition/3.0/new-schema-definition-with-description.after.json",
+            (document: Oas20Document) => {
+                return createNewSchemaDefinitionCommand(document, "NewType",
+                    null, "Just a description of a new type.");
             }
         );
     });

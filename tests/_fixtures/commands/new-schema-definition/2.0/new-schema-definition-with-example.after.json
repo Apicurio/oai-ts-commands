@@ -39,6 +39,12 @@
           "type": "string",
           "format": "date"
         }
+      },
+      "example": {
+        "age": 46,
+        "dob": "1971-04-15",
+        "email": "jbourne@example.com",
+        "name": "Jason Bourne"
       }
     }
   }

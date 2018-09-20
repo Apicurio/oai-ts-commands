@@ -36,7 +36,7 @@ export function createAddPathItemCommand(document: OasDocument, pathItemName: st
  */
 export abstract class AddPathItemCommand extends AbstractCommand implements ICommand {
 
-    private _pathItemExits: boolean;
+    private _pathItemExists: boolean;
     private _newPathItemName: string;
     private _newPathItemObj: any;
     private _nullPathItems: boolean;
@@ -65,12 +65,12 @@ export abstract class AddPathItemCommand extends AbstractCommand implements ICom
 
         if (document.paths.pathItem(this._newPathItemName)) {
             console.info("[AddPathItemCommand] PathItem with name %s already exists.", this._newPathItemName);
-            this._pathItemExits = true;
+            this._pathItemExists = true;
         } else {
             let pathItem: OasPathItem = document.paths.createPathItem(this._newPathItemName);
             pathItem = this.oasLibrary().readNode(this._newPathItemObj, pathItem) as OasPathItem;
             document.paths.addPathItem(this._newPathItemName, pathItem);
-            this._pathItemExits = false;
+            this._pathItemExists = false;
         }
     }
 
@@ -80,7 +80,7 @@ export abstract class AddPathItemCommand extends AbstractCommand implements ICom
      */
     public undo(document: OasDocument): void {
         console.info("[AddPathItemCommand] Reverting.");
-        if (this._pathItemExits) {
+        if (this._pathItemExists) {
             return;
         }
         if (this._nullPathItems) {

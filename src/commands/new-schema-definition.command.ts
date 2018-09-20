@@ -29,11 +29,12 @@ import {
 /**
  * Factory function.
  */
-export function createNewSchemaDefinitionCommand(document: OasDocument, definitionName: string, example?: string | any): NewSchemaDefinitionCommand {
+export function createNewSchemaDefinitionCommand(document: OasDocument, definitionName: string, example?: string | any,
+                                                 description?: string): NewSchemaDefinitionCommand {
     if (document.getSpecVersion() === "2.0") {
-        return new NewSchemaDefinitionCommand_20(definitionName, example);
+        return new NewSchemaDefinitionCommand_20(definitionName, example, description);
     } else {
-        return new NewSchemaDefinitionCommand_30(definitionName, example);
+        return new NewSchemaDefinitionCommand_30(definitionName, example, description);
     }
 }
 
@@ -44,6 +45,7 @@ export abstract class NewSchemaDefinitionCommand extends AbstractCommand impleme
 
     protected _newDefinitionName: string;
     protected _newDefinitionExample: string | any;
+    protected _newDefinitionDescription: string;
 
     protected _defExisted: boolean;
 
@@ -52,10 +54,11 @@ export abstract class NewSchemaDefinitionCommand extends AbstractCommand impleme
      * @param {string} definitionName
      * @param {string} example
      */
-    constructor(definitionName: string, example?: string | any) {
+    constructor(definitionName: string, example?: string | any, description?: string) {
         super();
         this._newDefinitionName = definitionName;
         this._newDefinitionExample = example;
+        this._newDefinitionDescription = description;
     }
 
     public abstract execute(document: OasDocument): void;
@@ -90,8 +93,12 @@ export class NewSchemaDefinitionCommand_20 extends NewSchemaDefinitionCommand {
             let definition: Oas20SchemaDefinition;
             if (!this.isNullOrUndefined(this._newDefinitionExample)) {
                 definition = new OasSchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas20SchemaDefinition;
+                definition.example = this._newDefinitionExample;
             } else {
                 definition = document.definitions.createSchemaDefinition(this._newDefinitionName);
+            }
+            if (this._newDefinitionDescription) {
+                definition.description = this._newDefinitionDescription;
             }
             document.definitions.addDefinition(this._newDefinitionName, definition);
 
@@ -148,8 +155,12 @@ export class NewSchemaDefinitionCommand_30 extends NewSchemaDefinitionCommand {
             let definition: Oas30SchemaDefinition;
             if (!this.isNullOrUndefined(this._newDefinitionExample)) {
                 definition = new OasSchemaFactory().createSchemaDefinitionFromExample(document, this._newDefinitionName, this._newDefinitionExample) as Oas30SchemaDefinition;
+                definition.example = this._newDefinitionExample;
             } else {
                 definition = document.components.createSchemaDefinition(this._newDefinitionName);
+            }
+            if (this._newDefinitionDescription) {
+                definition.description = this._newDefinitionDescription;
             }
             document.components.addSchemaDefinition(this._newDefinitionName, definition);
 
