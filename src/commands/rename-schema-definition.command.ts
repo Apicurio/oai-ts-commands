@@ -52,8 +52,8 @@ export abstract class RenameSchemaDefinitionCommand extends AbstractCommand impl
 
     /**
      * C'tor.
-     * @param {string} pathItemName
-     * @param obj
+     * @param oldName
+     * @param newName
      */
     constructor(oldName: string, newName: any) {
         super();

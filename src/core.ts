@@ -73,6 +73,7 @@ export * from "./commands/new-security-scheme.command";
 export * from "./commands/new-server.command";
 export * from "./commands/new-tag.command";
 export * from "./commands/rename-schema-definition.command";
+export * from "./commands/rename-path-item.command";
 export * from "./commands/replace.command";
 export * from "./commands/replace-operation.command";
 export * from "./commands/replace-path-item.command";

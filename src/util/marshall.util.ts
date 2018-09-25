@@ -99,6 +99,7 @@ import {DeleteAllServersCommand} from "../commands/delete-all-servers.command";
 import {DeleteAllSecurityRequirementsCommand} from "../commands/delete-all-security-requirements.command";
 import {DeleteAllSecuritySchemesCommand} from "../commands/delete-all-security-schemes.command";
 import {AggregateCommand} from "../commands/aggregate.command";
+import {RenamePathItemCommand} from "../commands/rename-path-item.command";
 
 
 let commandFactory: any = {
@@ -189,6 +190,7 @@ let commandFactory: any = {
     "NewServerCommand": function() { return new NewServerCommand(null, null); },
     "NewTagCommand_20": function() { return new NewTagCommand_20(null); },
     "NewTagCommand_30": function() { return new NewTagCommand_30(null); },
+    "RenamePathItemCommand": function() { return new RenamePathItemCommand(null, null); },
     "RenameSchemaDefinitionCommand_20": function() { return new RenameSchemaDefinitionCommand_20(null, null); },
     "RenameSchemaDefinitionCommand_30": function() { return new RenameSchemaDefinitionCommand_30(null, null); },
     "ReplaceOperationCommand_20": function() { return new ReplaceOperationCommand_20(null, null); },
