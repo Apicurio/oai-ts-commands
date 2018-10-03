@@ -26,7 +26,7 @@ var library = new OasLibraryUtils();
 
 export function commandTest(beforeFile: string, afterFile: string, command: (document: OasDocument) => ICommand, debug?: boolean): void {
     if (debug) {
-        console.info("TEST:: Loading before/after files.")
+        console.info("TEST:: Loading before/after files.");
     }
 
     let before: any = readJSON(beforeFile);
@@ -38,20 +38,20 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     expect(after === null).toBeFalsy();
 
     if (debug) {
-        console.info("TEST:: Creating 'before' document.")
+        console.info("TEST:: Creating 'before' document.");
     }
 
     let document: OasDocument = library.createDocument(before);
 
     if (debug) {
-        console.info("TEST:: Creating the command to be tested.")
+        console.info("TEST:: Creating the command to be tested.");
     }
 
     // Create the command.
     let cmd: ICommand = command(document);
 
     if (debug) {
-        console.info("TEST:: Serializing/deserializing the command.")
+        console.info("TEST:: Serializing/deserializing the command.");
     }
 
     // Serialize/deserialize the command
@@ -59,14 +59,16 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
 
     if (debug) {
-        console.info("TEST:: Executing the command.")
+        console.info("TEST:: Executing the command.");
+        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Execute the command
     cmd.execute(document);
 
     if (debug) {
-        console.info("TEST:: Asserting the command worked.")
+        console.info("TEST:: Asserting the command worked.");
+        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Check the result.
@@ -90,7 +92,7 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     expect(actual).toEqual(expected, failureOutput);
 
     if (debug) {
-        console.info("TEST:: Serializing/deserializing the command (again).")
+        console.info("TEST:: Serializing/deserializing the command (again).");
     }
 
     // Serialize/deserialize the command (again)
@@ -98,14 +100,16 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
     cmd = MarshallUtils.unmarshallCommand(JSON.parse(serializedCmd));
 
     if (debug) {
-        console.info("TEST:: Undoing the command.")
+        console.info("TEST:: Undoing the command.");
+        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Undo the command
     cmd.undo(document);
 
     if (debug) {
-        console.info("TEST:: Asserting that the undo() worked.")
+        console.info("TEST:: Asserting that the undo() worked.");
+        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Check again

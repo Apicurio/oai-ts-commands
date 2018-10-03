@@ -96,6 +96,7 @@ export class DeleteAllSecuritySchemesCommand extends AbstractCommand implements 
             }
             this._oldSecuritySchemes.forEach( savedScheme => {
                 let name: string = savedScheme["__name"];
+                delete savedScheme["__name"];
                 let scheme: Oas20SecurityScheme = doc.securityDefinitions.createSecurityScheme(name);
                 this.oasLibrary().readNode(savedScheme, scheme);
                 doc.securityDefinitions.addSecurityScheme(name, scheme);
@@ -110,6 +111,7 @@ export class DeleteAllSecuritySchemesCommand extends AbstractCommand implements 
             }
             this._oldSecuritySchemes.forEach( savedScheme => {
                 let name: string = savedScheme["__name"];
+                delete savedScheme["__name"];
                 let scheme: Oas30SecurityScheme = doc.components.createSecurityScheme(name);
                 this.oasLibrary().readNode(savedScheme, scheme);
                 doc.components.addSecurityScheme(name, scheme);

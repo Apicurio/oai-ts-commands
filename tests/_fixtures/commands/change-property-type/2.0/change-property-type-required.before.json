@@ -13,7 +13,7 @@
         }
       },
       "required": [
-        "name", "id"
+        "id", "name"
       ],
       "example": {
         "name": "Puma",
