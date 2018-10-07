@@ -24,7 +24,7 @@ import {MarshallUtils} from "../util/marshall.util";
  */
 export function createDeleteExampleCommand(document: OasDocument, example: Oas30Example): DeleteExampleCommand_30 {
     if (document.getSpecVersion() === "2.0") {
-        throw new Error("Media Types are not supported in OpenAPI 2.0.");
+        throw new Error("Not supported in OpenAPI 2.0.");
     } else {
         return new DeleteExampleCommand_30(example);
     }

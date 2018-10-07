@@ -47,6 +47,7 @@ export * from "./commands/delete-all-security-schemes.command";
 export * from "./commands/delete-all-tags.command";
 export * from "./commands/delete-contact.command";
 export * from "./commands/delete-example.command";
+export * from "./commands/delete-extension.command";
 export * from "./commands/delete-license.command";
 export * from "./commands/delete-media-type.command";
 export * from "./commands/delete-node.command";
@@ -80,6 +81,7 @@ export * from "./commands/replace-path-item.command";
 export * from "./commands/replace-schema-definition.command";
 export * from "./commands/replace-security-requirement.command";
 export * from "./commands/set-example.command";
+export * from "./commands/set-extension.command";
 
 export * from "./ot/ot-command";
 export * from "./ot/ot-engine";

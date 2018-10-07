@@ -100,6 +100,8 @@ import {DeleteAllSecurityRequirementsCommand} from "../commands/delete-all-secur
 import {DeleteAllSecuritySchemesCommand} from "../commands/delete-all-security-schemes.command";
 import {AggregateCommand} from "../commands/aggregate.command";
 import {RenamePathItemCommand} from "../commands/rename-path-item.command";
+import {SetExtensionCommand} from "../commands/set-extension.command";
+import {DeleteExtensionCommand} from "../commands/delete-extension.command";
 
 
 let commandFactory: any = {
@@ -144,6 +146,7 @@ let commandFactory: any = {
     "DeleteAllSecuritySchemesCommand": function() { return new DeleteAllSecuritySchemesCommand(); },
     "DeleteExampleCommand_20": function() { return new DeleteExampleCommand_20(null, null); },
     "DeleteExampleCommand_30": function() { return new DeleteExampleCommand_30(null); },
+    "DeleteExtensionCommand": function() { return new DeleteExtensionCommand(null); },
     "DeleteMediaTypeCommand": function() { return new DeleteMediaTypeCommand(null); },
     "DeleteOperationCommand_20": function() { return new DeleteOperationCommand_20(null, null); },
     "DeleteOperationCommand_30": function() { return new DeleteOperationCommand_30(null, null); },
@@ -202,6 +205,7 @@ let commandFactory: any = {
     "ReplaceSecurityRequirementCommand": function() { return new ReplaceSecurityRequirementCommand(null, null); },
     "SetExampleCommand_20": function() { return new SetExampleCommand_20(null, null, null); },
     "SetExampleCommand_30": function() { return new SetExampleCommand_30(null, null); },
+    "SetExtensionCommand": function() { return new SetExtensionCommand(null, null, null); },
 };
 
 
