@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.2",
   "info": {
     "title": "Simple OAI 3.0.0 API",
     "description": "A simple API using OpenAPI 3.0.0.",

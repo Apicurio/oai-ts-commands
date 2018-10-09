@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.2",
   "info": {
     "title": "Single Command Test API",
     "description": "A simple API using OpenAPI 3.0.0.",
