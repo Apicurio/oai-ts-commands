@@ -60,7 +60,7 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
 
     if (debug) {
         console.info("TEST:: Executing the command.");
-        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
+        console.info("TEST:: Document before executing command: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Execute the command
@@ -68,7 +68,7 @@ export function commandTest(beforeFile: string, afterFile: string, command: (doc
 
     if (debug) {
         console.info("TEST:: Asserting the command worked.");
-        console.info("TEST:: Document: ", JSON.stringify(library.writeNode(document)));
+        console.info("TEST:: Document AFTER executing command: ", JSON.stringify(library.writeNode(document)));
     }
 
     // Check the result.

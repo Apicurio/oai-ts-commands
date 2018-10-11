@@ -102,6 +102,7 @@ import {AggregateCommand} from "../commands/aggregate.command";
 import {RenamePathItemCommand} from "../commands/rename-path-item.command";
 import {SetExtensionCommand} from "../commands/set-extension.command";
 import {DeleteExtensionCommand} from "../commands/delete-extension.command";
+import {ReplaceDocumentCommand} from "../commands/replace-document.command";
 
 
 let commandFactory: any = {
@@ -196,6 +197,7 @@ let commandFactory: any = {
     "RenamePathItemCommand": function() { return new RenamePathItemCommand(null, null); },
     "RenameSchemaDefinitionCommand_20": function() { return new RenameSchemaDefinitionCommand_20(null, null); },
     "RenameSchemaDefinitionCommand_30": function() { return new RenameSchemaDefinitionCommand_30(null, null); },
+    "ReplaceDocumentCommand": function() { return new ReplaceDocumentCommand(null, null); },
     "ReplaceOperationCommand_20": function() { return new ReplaceOperationCommand_20(null, null); },
     "ReplaceOperationCommand_30": function() { return new ReplaceOperationCommand_30(null, null); },
     "ReplacePathItemCommand_20": function() { return new ReplacePathItemCommand_20(null, null); },
