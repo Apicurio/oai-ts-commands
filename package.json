@@ -1,6 +1,6 @@
 {
   "name": "oai-ts-commands",
-  "version": "0.2.47",
+  "version": "0.2.48",
   "description": "Command layer for the OAI library - used to mutate the OAI data model.",
   "license": "Apache-2.0",
   "repository": {
