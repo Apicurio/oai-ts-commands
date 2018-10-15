@@ -35,6 +35,22 @@ describe("New Parameter (2.0)", () => {
         );
     });
 
+    it("New Parameter (With Both)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-param/2.0/new-param-both.before.json",
+            "tests/_fixtures/commands/new-param/2.0/new-param-both.after.json",
+            (document: Oas30Document) => {
+                let newType: SimplifiedParameterType = new SimplifiedParameterType();
+                newType.type = "array";
+                newType.of = new SimplifiedType();
+                newType.of.type = "string";
+                newType.required = true;
+                return createNewParamCommand(document, document.paths.pathItem("/pets").get as Oas20Operation,
+                    "newParameter", "query", "Hello World.", newType);
+            }
+        );
+    });
+
 });
 
 
