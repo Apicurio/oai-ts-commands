@@ -18,26 +18,36 @@
 import {
     IOasParameterParent,
     Oas20Operation,
+    Oas20Parameter,
     Oas20PathItem,
+    Oas20Schema,
     Oas30Operation,
+    Oas30Parameter,
+    Oas30ParameterBase,
     Oas30PathItem,
+    Oas30Schema,
     OasDocument,
-    OasNodePath, OasOperation,
-    OasParameterBase, OasPathItem
+    OasNodePath,
+    OasOperation,
+    OasParameterBase,
+    OasPathItem
 } from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {MarshallUtils} from "../util/marshall.util";
+import {SimplifiedParameterType} from "../models/simplified-type.model";
 
 /**
  * Factory function.
  */
 export function createNewParamCommand(document: OasDocument,
                                       parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem,
-                                      paramName: string, paramType: string, override: boolean = false): NewParamCommand {
+                                      paramName: string, paramType: string,
+                                      description: string = null, newType: SimplifiedParameterType = null,
+                                      override: boolean = false): NewParamCommand {
     if (document.getSpecVersion() === "2.0") {
-        return new NewParamCommand_20(parent, paramName, paramType, override);
+        return new NewParamCommand_20(parent, paramName, paramType, description, newType, override);
     } else {
-        return new NewParamCommand_30(parent, paramName, paramType, override);
+        return new NewParamCommand_30(parent, paramName, paramType, description, newType, override);
     }
 }
 
@@ -49,6 +59,8 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     private _paramName: string;
     private _paramType: string;
     private _parentPath: OasNodePath;
+    private _description: string;
+    private _newType: SimplifiedParameterType;
     private _override: boolean;
 
     private _created: boolean;
@@ -61,13 +73,15 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
      * @param override
      */
     constructor(parent: Oas20Operation | Oas20PathItem | Oas30Operation | Oas30PathItem, paramName: string,
-                paramType: string, override: boolean = false) {
+                paramType: string, description: string, newType: SimplifiedParameterType, override: boolean) {
         super();
         if (parent) {
             this._parentPath = this.oasLibrary().createNodePath(parent);
         }
         this._paramName = paramName;
         this._paramType = paramType;
+        this._description = description;
+        this._newType = newType;
         this._override = override;
     }
 
@@ -113,11 +127,50 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
             if (param.in === "path") {
                 param.required = true;
             }
+            if (this._description) {
+                param.description = this._description;
+            }
+            if (this._newType) {
+                this._setParameterType(param as Oas20Parameter | Oas30Parameter);
+            }
         }
         parent.addParameter(param);
         console.info("[NewParamCommand] Param %s of type %s created successfully.", param.name, param.in);
 
         this._created = true;
+    }
+
+    /**
+     * Sets the parameter type.
+     * @param parameter
+     */
+    protected _setParameterType(parameter: Oas30Parameter | Oas20Parameter): void {
+        let schema: Oas30Schema | Oas20Schema = parameter.createSchema();
+
+        if (this._newType.isRef()) {
+            schema.$ref = this._newType.type;
+        }
+        if (this._newType.isSimpleType()) {
+            schema.type = this._newType.type;
+            schema.format = this._newType.as;
+        }
+        if (this._newType.isArray()) {
+            schema.type = "array";
+            schema.items = schema.createItemsSchema();
+            if (this._newType.of) {
+                schema.items.type = this._newType.of.type;
+                schema.items.format = this._newType.of.as;
+            }
+        }
+
+        parameter.schema = schema;
+        let required: boolean = this._newType.required;
+        if (parameter.in === "path") {
+            required = true;
+        }
+        if (required || !this.isNullOrUndefined(this._newType.required)) {
+            parameter.required = required;
+        }
     }
 
     /**
@@ -173,6 +226,7 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     public marshall(): any {
         let obj: any = super.marshall();
         obj._parentPath = MarshallUtils.marshallNodePath(obj._parentPath);
+        obj._newType = MarshallUtils.marshallSimplifiedParameterType(obj._newType);
         return obj;
     }
 
@@ -183,6 +237,7 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     public unmarshall(obj: any): void {
         super.unmarshall(obj);
         this._parentPath = MarshallUtils.unmarshallNodePath(this._parentPath as any);
+        this._newType = MarshallUtils.unmarshallSimplifiedParameterType(this._newType);
     }
 
     /**

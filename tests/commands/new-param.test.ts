@@ -20,6 +20,7 @@
 import {commandTest} from "./_test-utils";
 import {Oas20Document, Oas20Operation, Oas30Document, Oas30Operation} from "oai-ts-core";
 import {createNewParamCommand} from "../../src/commands/new-param.command";
+import {SimplifiedParameterType, SimplifiedType} from "../../src/models/simplified-type.model";
 
 
 describe("New Parameter (2.0)", () => {
@@ -56,7 +57,49 @@ describe("New Parameter (3.0)", () => {
             "tests/_fixtures/commands/new-param/3.0/override-param.after.json",
             (document: Oas30Document) => {
                 return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
-                    "username", "path", true);
+                    "username", "path", null, null, true);
+            }
+        );
+    });
+
+    it("New Parameter (With Description)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-param/3.0/new-param-description.before.json",
+            "tests/_fixtures/commands/new-param/3.0/new-param-description.after.json",
+            (document: Oas30Document) => {
+                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
+                    "newParameter", "query", "An included description.");
+            }
+        );
+    });
+
+    it("New Parameter (With Type)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-param/3.0/new-param-type.before.json",
+            "tests/_fixtures/commands/new-param/3.0/new-param-type.after.json",
+            (document: Oas30Document) => {
+                let newType: SimplifiedParameterType = new SimplifiedParameterType();
+                newType.type = "array";
+                newType.of = new SimplifiedType();
+                newType.of.type = "string";
+                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
+                    "newParameter", "query", null, newType);
+            }
+        );
+    });
+
+    it("New Parameter (With Both)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-param/3.0/new-param-both.before.json",
+            "tests/_fixtures/commands/new-param/3.0/new-param-both.after.json",
+            (document: Oas30Document) => {
+                let newType: SimplifiedParameterType = new SimplifiedParameterType();
+                newType.type = "array";
+                newType.of = new SimplifiedType();
+                newType.of.type = "string";
+                newType.required = true;
+                return createNewParamCommand(document, document.paths.pathItem("/foo").get as Oas30Operation,
+                    "newParameter", "query", "Hello World.", newType);
             }
         );
     });
