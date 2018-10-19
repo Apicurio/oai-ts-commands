@@ -20,7 +20,6 @@ import {
     Oas20Operation,
     Oas20Parameter,
     Oas20PathItem,
-    Oas20Schema,
     Oas30Operation,
     Oas30Parameter,
     Oas30PathItem,

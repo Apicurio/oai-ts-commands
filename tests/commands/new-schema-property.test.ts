@@ -20,6 +20,7 @@
 import {commandTest} from "./_test-utils";
 import {createNewSchemaPropertyCommand} from "../../src/commands/new-schema-property.command";
 import {Oas20Document, Oas30Document} from "oai-ts-core";
+import {SimplifiedPropertyType, SimplifiedType} from "../../src/models/simplified-type.model";
 
 
 describe("New Schema Property (2.0)", () => {
@@ -30,6 +31,33 @@ describe("New Schema Property (2.0)", () => {
             "tests/_fixtures/commands/new-schema-property/2.0/new-schema-property.after.json",
             (document: Oas20Document) => {
                 return createNewSchemaPropertyCommand(document, document.definitions.definition("Person"), "newProperty");
+            }
+        );
+    });
+
+    it("New Schema Property (Description)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-schema-property/2.0/new-schema-property-description.before.json",
+            "tests/_fixtures/commands/new-schema-property/2.0/new-schema-property-description.after.json",
+            (document: Oas20Document) => {
+                return createNewSchemaPropertyCommand(document, document.definitions.definition("Person"),
+                    "newProperty", "Hello world.");
+            }
+        );
+    });
+
+    it("New Schema Property (Type)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-schema-property/2.0/new-schema-property-type.before.json",
+            "tests/_fixtures/commands/new-schema-property/2.0/new-schema-property-type.after.json",
+            (document: Oas20Document) => {
+                let newType: SimplifiedPropertyType = new SimplifiedPropertyType();
+                newType.type = "array";
+                newType.of = new SimplifiedType();
+                newType.of.type = "string";
+                newType.required = true;
+                return createNewSchemaPropertyCommand(document, document.definitions.definition("Person"),
+                    "newProperty", null, newType);
             }
         );
     });
@@ -45,6 +73,23 @@ describe("New Schema Property (3.0)", () => {
             "tests/_fixtures/commands/new-schema-property/3.0/new-schema-property.after.json",
             (document: Oas30Document) => {
                 return createNewSchemaPropertyCommand(document, document.components.getSchemaDefinition("MySchema1"), "newProperty");
+            }
+        );
+    });
+
+    it("New Schema Property (Both)", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-schema-property/3.0/new-schema-property-both.before.json",
+            "tests/_fixtures/commands/new-schema-property/3.0/new-schema-property-both.after.json",
+            (document: Oas30Document) => {
+                let newType: SimplifiedPropertyType = new SimplifiedPropertyType();
+                newType.type = "array";
+                newType.of = new SimplifiedType();
+                newType.of.type = "string";
+                newType.of.as = "date-time";
+                newType.required = true;
+                return createNewSchemaPropertyCommand(document, document.components.getSchemaDefinition("MySchema1"),
+                    "newProperty", "Hello 3.0 world.", newType);
             }
         );
     });
