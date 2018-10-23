@@ -42,7 +42,7 @@ export class SimplifiedType {
 
     public static fromItems(items: Oas20Items): SimplifiedType {
         let rval: SimplifiedType = new SimplifiedType();
-        if (items.enum && items.enum.length >= 0) {
+        if (items && items.enum && items.enum.length >= 0) {
             // Need to clone the enum values
             rval.enum = JSON.parse(JSON.stringify(items.enum));
         }
@@ -64,7 +64,7 @@ export class SimplifiedType {
         if (schema && schema.$ref) {
             rval.type = schema.$ref;
         }
-        if (schema.enum && schema.enum.length >= 0) {
+        if (schema && schema.enum && schema.enum.length >= 0) {
             // Need to clone the enum values
             rval.enum = JSON.parse(JSON.stringify(schema.enum));
         }
