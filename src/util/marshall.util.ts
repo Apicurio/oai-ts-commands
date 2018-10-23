@@ -274,6 +274,7 @@ export class MarshallUtils {
         }
         let obj: any = {
             type: sType.type,
+            enum: sType.enum,
             of: MarshallUtils.marshallSimplifiedType(sType.of),
             as: sType.as
         };
@@ -291,6 +292,7 @@ export class MarshallUtils {
         }
         let type: SimplifiedType = new SimplifiedType();
         type.type = object.type;
+        type.enum = object.enum;
         type.of = MarshallUtils.unmarshallSimplifiedType(object.of);
         type.as = object.as;
         return type;
@@ -307,6 +309,7 @@ export class MarshallUtils {
         }
         let obj: any = {
             type: sType.type,
+            enum: sType.enum,
             of: MarshallUtils.marshallSimplifiedType(sType.of),
             as: sType.as,
             required: sType.required
@@ -325,6 +328,7 @@ export class MarshallUtils {
         }
         let type: SimplifiedParameterType = new SimplifiedParameterType();
         type.type = object.type;
+        type.enum = object.enum;
         type.of = MarshallUtils.unmarshallSimplifiedType(object.of);
         type.as = object.as;
         type.required = object.required;
@@ -342,6 +346,7 @@ export class MarshallUtils {
         }
         let obj: any = {
             type: sType.type,
+            enum: sType.enum,
             of: MarshallUtils.marshallSimplifiedType(sType.of),
             as: sType.as,
             required: sType.required
@@ -360,6 +365,7 @@ export class MarshallUtils {
         }
         let type: SimplifiedPropertyType = new SimplifiedPropertyType();
         type.type = object.type;
+        type.enum = object.enum;
         type.of = MarshallUtils.unmarshallSimplifiedType(object.of);
         type.as = object.as;
         type.required = object.required;

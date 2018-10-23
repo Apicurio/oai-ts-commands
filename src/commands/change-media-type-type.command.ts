@@ -93,6 +93,9 @@ export class ChangeMediaTypeTypeCommand extends AbstractCommand implements IComm
             mediaType.schema.format = this._newType.as;
             mediaType.schema.items = null;
         }
+        if (this._newType.isEnum()) {
+            mediaType.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
+        }
         if (this._newType.isRef()) {
             mediaType.schema.$ref = this._newType.type;
             mediaType.schema.type = null;

@@ -94,6 +94,22 @@ describe("Change Parameter Type (2.0)", () => {
         );
     });
 
+    it("Change Parameter (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-parameter-type/2.0/change-parameter-type-enum.before.json",
+            "tests/_fixtures/commands/change-parameter-type/2.0/change-parameter-type-enum.after.json",
+            (document: Oas20Document) => {
+                let param: Oas20Parameter = document.paths.pathItem("/pets").get.parameters[1] as Oas20Parameter;
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
+                type.type = "string";
+                type.enum = [
+                    "option1", "option2", "option3"
+                ];
+                return createChangeParameterTypeCommand(document, param, type);
+            }
+        );
+    });
+
 });
 
 
@@ -147,6 +163,22 @@ describe("Change Parameter Type (3.0)", () => {
                 let type: SimplifiedParameterType = new SimplifiedParameterType();
                 type.type = "string";
                 return createChangeParameterDefinitionTypeCommand(document, param, type);
+            }
+        );
+    });
+
+    it("Change Parameter (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-parameter-type/3.0/change-parameter-type-enum.before.json",
+            "tests/_fixtures/commands/change-parameter-type/3.0/change-parameter-type-enum.after.json",
+            (document: Oas30Document) => {
+                let param: Oas30Parameter = document.paths.pathItem("/foo").get.parameters[1] as Oas30Parameter;
+                let type: SimplifiedParameterType = new SimplifiedParameterType();
+                type.type = "string";
+                type.enum = [
+                    "option1", "option2", "option3"
+                ];
+                return createChangeParameterTypeCommand(document, param, type);
             }
         );
     });

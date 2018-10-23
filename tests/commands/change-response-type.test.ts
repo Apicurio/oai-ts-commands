@@ -56,6 +56,20 @@ describe("Change Response Type (2.0)", () => {
         );
     });
 
+    it("Change Response Type (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-response-type/2.0/change-response-type-enum.before.json",
+            "tests/_fixtures/commands/change-response-type/2.0/change-response-type-enum.after.json",
+            (document: Oas20Document) => {
+                let response: Oas20Response = document.paths.pathItem("/pets").get.responses.response("200") as Oas20Response;
+                let type: SimplifiedType = new SimplifiedType();
+                type.type = "string";
+                type.enum = [ "option1", "option2" ];
+                return createChangeResponseTypeCommand(document, response, type);
+            }
+        );
+    });
+
 });
 
 

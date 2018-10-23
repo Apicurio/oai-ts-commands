@@ -39,5 +39,19 @@ describe("Change Media Type (3.0)", () => {
         );
     });
 
+    it("Change Media Type (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-media-type-type/3.0/change-media-type-type-enum.before.json",
+            "tests/_fixtures/commands/change-media-type-type/3.0/change-media-type-type-enum.after.json",
+            (document: Oas30Document) => {
+                let response: Oas30Response = document.paths.pathItem("/foo").get.responses.response("200") as Oas30Response;
+                let newType: SimplifiedType = new SimplifiedType();
+                newType.type = "string";
+                newType.enum = [ "option1", "option2", "option3" ];
+                return createChangeMediaTypeTypeCommand(document, response.getMediaType("application/json"), newType);
+            }
+        );
+    });
+
 });
 

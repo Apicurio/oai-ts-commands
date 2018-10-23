@@ -98,6 +98,9 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
             response.schema.type = this._newType.type;
             response.schema.format = this._newType.as;
         }
+        if (this._newType.isEnum()) {
+            response.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
+        }
         if (this._newType.isRef()) {
             response.schema.$ref = this._newType.type;
         }
@@ -108,6 +111,9 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
                 if (this._newType.of.isSimpleType()) {
                     response.schema.items.type = this._newType.of.type;
                     response.schema.items.format = this._newType.of.as;
+                }
+                if (this._newType.of.isEnum()) {
+                    response.schema.items.enum = JSON.parse(JSON.stringify(this._newType.of.enum));
                 }
                 if (this._newType.of.isRef()) {
                     response.schema.items.$ref = this._newType.of.type;

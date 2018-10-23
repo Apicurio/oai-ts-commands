@@ -115,6 +115,9 @@ export abstract class NewSchemaPropertyCommand extends AbstractCommand implement
             prop.format = this._newType.as;
             prop.items = null;
         }
+        if (this._newType.isEnum()) {
+            prop.enum = JSON.parse(JSON.stringify(this._newType.enum));
+        }
         if (this._newType.isRef()) {
             prop.$ref = this._newType.type;
             prop.type = null;

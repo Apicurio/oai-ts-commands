@@ -152,6 +152,9 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
                 param.type = this._newType.type;
                 param.format = this._newType.as;
             }
+            if (this._newType.isEnum()) {
+                param.enum = JSON.parse(JSON.stringify(this._newType.enum));
+            }
             if (this._newType.isArray()) {
                 param.type = "array";
                 param.items = param.createItems();
@@ -170,6 +173,9 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
             if (this._newType.isSimpleType()) {
                 schema.type = this._newType.type;
                 schema.format = this._newType.as;
+            }
+            if (this._newType.isEnum()) {
+                schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
             }
             if (this._newType.isArray()) {
                 schema.type = "array";

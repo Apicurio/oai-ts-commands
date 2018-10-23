@@ -42,6 +42,10 @@ export class SimplifiedType {
 
     public static fromItems(items: Oas20Items): SimplifiedType {
         let rval: SimplifiedType = new SimplifiedType();
+        if (items.enum && items.enum.length >= 0) {
+            // Need to clone the enum values
+            rval.enum = JSON.parse(JSON.stringify(items.enum));
+        }
         if (items && items.type && items.type !== "array" && items.type !== "object" && items.type !== "file") {
             rval.type = items.type;
             if (items.format) {
@@ -60,6 +64,10 @@ export class SimplifiedType {
         if (schema && schema.$ref) {
             rval.type = schema.$ref;
         }
+        if (schema.enum && schema.enum.length >= 0) {
+            // Need to clone the enum values
+            rval.enum = JSON.parse(JSON.stringify(schema.enum));
+        }
         if (schema && schema.type && schema.type !== "array" &&
             schema.type !== "object" && schema.type !== "file")
         {
@@ -76,11 +84,16 @@ export class SimplifiedType {
     }
 
     type: string;
+    enum: any[];
     of: SimplifiedType;
     as: string;
 
     public isSimpleType(): boolean {
         return ["string", "number", "integer", "boolean"].indexOf(this.type) !== -1;
+    }
+
+    public isEnum(): boolean {
+        return this.enum !== null && this.enum !== undefined && this.enum.length >= 0;
     }
 
     public isArray(): boolean {
@@ -113,6 +126,7 @@ export class SimplifiedParameterType extends SimplifiedType {
         }
 
         rval.type = st.type;
+        rval.enum = st.enum;
         rval.of = st.of;
         rval.as = st.as;
         rval.required = param.required;
@@ -135,6 +149,7 @@ export class SimplifiedPropertyType extends SimplifiedType {
 
         let st: SimplifiedType = SimplifiedType.fromSchema(schema);
         rval.type = st.type;
+        rval.enum = st.enum;
         rval.of = st.of;
         rval.as = st.as;
         rval.required = false;

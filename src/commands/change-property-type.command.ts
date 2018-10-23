@@ -85,6 +85,9 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
             prop.format = this._newType.as;
             prop.items = null;
         }
+        if (this._newType.isEnum()) {
+            prop.enum = JSON.parse(JSON.stringify(this._newType.enum));
+        }
         if (this._newType.isRef()) {
             prop.$ref = this._newType.type;
             prop.type = null;
@@ -144,11 +147,13 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
         // Restore the schema attributes
         prop.$ref = null;
         prop.type = null;
+        prop.enum = null;
         prop.format = null;
         prop.items = null;
         if (oldProp) {
             prop.$ref = oldProp.$ref;
             prop.type = oldProp.type;
+            prop.enum = oldProp.enum;
             prop.format = oldProp.format;
             prop.items = oldProp.items;
             if (prop.items) {

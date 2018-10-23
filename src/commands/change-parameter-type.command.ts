@@ -186,6 +186,9 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
                 param.schema.type = this._newType.type;
                 param.schema.format = this._newType.as;
             }
+            if (this._newType.isEnum()) {
+                param.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
+            }
             if (this._newType.isRef()) {
                 param.schema.$ref = this._newType.type;
             }
@@ -198,6 +201,9 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
                         param.schema.items.type = this._newType.of.type;
                         param.schema.items.format = this._newType.of.as;
                     }
+                    if (this._newType.of.isEnum()) {
+                        param.schema.items.enum = JSON.parse(JSON.stringify(this._newType.of.enum));
+                    }
                     if (this._newType.of.isRef()) {
                         param.schema.items.$ref = this._newType.of.type;
                     }
@@ -208,6 +214,9 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
                 param.type = this._newType.type;
                 param.format = this._newType.as;
                 param.items = null;
+            }
+            if (this._newType.isEnum()) {
+                param.enum = JSON.parse(JSON.stringify(this._newType.enum));
             }
             if (this._newType.isArray()) {
                 param.type = "array";
@@ -307,6 +316,9 @@ export class ChangeParameterTypeCommand_30 extends ChangeParameterTypeCommand {
         if (this._newType.isSimpleType()) {
             schema.type = this._newType.type;
             schema.format = this._newType.as;
+        }
+        if (this._newType.isEnum()) {
+            schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
         }
         if (this._newType.isArray()) {
             schema.type = "array";

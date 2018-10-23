@@ -54,6 +54,22 @@ describe("Change Property Type (2.0)", () => {
         );
     });
 
+    it("Change Property Type (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-property-type/2.0/change-property-type-enum.before.json",
+            "tests/_fixtures/commands/change-property-type/2.0/change-property-type-enum.after.json",
+            (document: Oas20Document) => {
+                let property: Oas20PropertySchema = document.definitions.definition("Person").property("name") as Oas20PropertySchema;
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
+                type.type = "string";
+                type.enum = [
+                    "option1", "option2", "option3", "option4"
+                ];
+                return createChangePropertyTypeCommand(document, property, type);
+            }
+        );
+    });
+
 });
 
 
@@ -83,6 +99,22 @@ describe("Change Property Type (3.0)", () => {
                 let type: SimplifiedPropertyType = new SimplifiedPropertyType();
                 type.type = "string";
                 type.required = false;
+                return createChangePropertyTypeCommand(document, property, type);
+            }
+        );
+    });
+
+    it("Change Property Type (Enum)", () => {
+        commandTest(
+            "tests/_fixtures/commands/change-property-type/3.0/change-property-type-enum.before.json",
+            "tests/_fixtures/commands/change-property-type/3.0/change-property-type-enum.after.json",
+            (document: Oas30Document) => {
+                let property: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("name") as Oas30PropertySchema;
+                let type: SimplifiedPropertyType = new SimplifiedPropertyType();
+                type.type = "string";
+                type.enum = [
+                    "option1", "option2", "option3", "option4"
+                ];
                 return createChangePropertyTypeCommand(document, property, type);
             }
         );
