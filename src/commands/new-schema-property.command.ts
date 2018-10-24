@@ -17,9 +17,9 @@
 
 import {AbstractCommand, ICommand} from "../base";
 import {
-    Oas20Parameter, Oas20PropertySchema,
+    Oas20PropertySchema,
     Oas20Schema,
-    Oas30Parameter, Oas30PropertySchema,
+    Oas30PropertySchema,
     Oas30Schema,
     OasDocument,
     OasNodePath,
@@ -27,6 +27,7 @@ import {
 } from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
 import {SimplifiedParameterType, SimplifiedPropertyType} from "../models/simplified-type.model";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 /**
  * Factory function.
@@ -109,36 +110,7 @@ export abstract class NewSchemaPropertyCommand extends AbstractCommand implement
      */
     protected _setPropertyType(prop: Oas20PropertySchema | Oas30PropertySchema): void {
         // Update the schema's type
-        if (this._newType.isSimpleType()) {
-            prop.$ref = null;
-            prop.type = this._newType.type;
-            prop.format = this._newType.as;
-            prop.items = null;
-        }
-        if (this._newType.isEnum()) {
-            prop.enum = JSON.parse(JSON.stringify(this._newType.enum));
-        }
-        if (this._newType.isRef()) {
-            prop.$ref = this._newType.type;
-            prop.type = null;
-            prop.format = null;
-            prop.items = null;
-        }
-        if (this._newType.isArray()) {
-            prop.$ref = null;
-            prop.type = "array";
-            prop.format = null;
-            prop.items = prop.createItemsSchema();
-            if (this._newType.of) {
-                if (this._newType.of.isRef()) {
-                    prop.items.$ref = this._newType.of.type;
-                } else {
-                    prop.items.type = this._newType.of.type;
-                    prop.items.format = this._newType.of.as;
-                }
-            }
-        }
-
+        SimplifiedTypeUtil.setSimplifiedType(prop, this._newType);
         if (this._newType && this._newType.required) {
             let required: string[] = prop.parent()["required"];
             if (this.isNullOrUndefined(required)) {

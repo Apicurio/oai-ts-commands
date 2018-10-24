@@ -19,6 +19,7 @@ import {AbstractCommand, ICommand} from "../base";
 import {Oas20Response, Oas20ResponseBase, Oas20ResponseDefinition, OasDocument, OasNodePath} from "oai-ts-core";
 import {SimplifiedType} from "../models/simplified-type.model";
 import {MarshallUtils} from "../util/marshall.util";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 
 /**
@@ -93,33 +94,7 @@ export class ChangeResponseTypeCommand_20 extends AbstractCommand implements ICo
         }
 
         response.schema = response.createSchema();
-
-        if (this._newType.isSimpleType()) {
-            response.schema.type = this._newType.type;
-            response.schema.format = this._newType.as;
-        }
-        if (this._newType.isEnum()) {
-            response.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
-        }
-        if (this._newType.isRef()) {
-            response.schema.$ref = this._newType.type;
-        }
-        if (this._newType.isArray()) {
-            response.schema.type = "array";
-            response.schema.items = response.schema.createItemsSchema();
-            if (this._newType.of) {
-                if (this._newType.of.isSimpleType()) {
-                    response.schema.items.type = this._newType.of.type;
-                    response.schema.items.format = this._newType.of.as;
-                }
-                if (this._newType.of.isEnum()) {
-                    response.schema.items.enum = JSON.parse(JSON.stringify(this._newType.of.enum));
-                }
-                if (this._newType.of.isRef()) {
-                    response.schema.items.$ref = this._newType.of.type;
-                }
-            }
-        }
+        SimplifiedTypeUtil.setSimplifiedType(response.schema, this._newType);
     }
 
     /**

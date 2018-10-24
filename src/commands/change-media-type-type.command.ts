@@ -19,6 +19,7 @@ import {Oas30MediaType, OasDocument, OasNodePath} from "oai-ts-core";
 import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedType} from "../models/simplified-type.model";
 import {MarshallUtils} from "../util/marshall.util";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 /**
  * Factory function.
@@ -87,35 +88,7 @@ export class ChangeMediaTypeTypeCommand extends AbstractCommand implements IComm
         }
 
         // Update the media type schema's type
-        if (this._newType.isSimpleType()) {
-            mediaType.schema.$ref = null;
-            mediaType.schema.type = this._newType.type;
-            mediaType.schema.format = this._newType.as;
-            mediaType.schema.items = null;
-        }
-        if (this._newType.isEnum()) {
-            mediaType.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
-        }
-        if (this._newType.isRef()) {
-            mediaType.schema.$ref = this._newType.type;
-            mediaType.schema.type = null;
-            mediaType.schema.format = null;
-            mediaType.schema.items = null;
-        }
-        if (this._newType.isArray()) {
-            mediaType.schema.$ref = null;
-            mediaType.schema.type = "array";
-            mediaType.schema.format = null;
-            mediaType.schema.items = mediaType.schema.createItemsSchema();
-            if (this._newType.of) {
-                if (this._newType.of.isRef()) {
-                    mediaType.schema.items.$ref = this._newType.of.type;
-                } else {
-                    mediaType.schema.items.type = this._newType.of.type;
-                    mediaType.schema.items.format = this._newType.of.as;
-                }
-            }
-        }
+        SimplifiedTypeUtil.setSimplifiedType(mediaType.schema, this._newType);
 
         this._changed = true;
     }

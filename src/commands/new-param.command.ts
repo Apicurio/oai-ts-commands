@@ -33,6 +33,7 @@ import {
 import {AbstractCommand, ICommand} from "../base";
 import {MarshallUtils} from "../util/marshall.util";
 import {SimplifiedParameterType} from "../models/simplified-type.model";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 /**
  * Factory function.
@@ -145,47 +146,10 @@ export abstract class NewParamCommand extends AbstractCommand implements IComman
     protected _setParameterType(parameter: Oas30Parameter | Oas20Parameter): void {
         if (parameter.ownerDocument().is2xDocument()) {
             let param: Oas20Parameter = parameter as Oas20Parameter;
-            if (this._newType.isRef()) {
-                param.$ref = this._newType.type;
-            }
-            if (this._newType.isSimpleType()) {
-                param.type = this._newType.type;
-                param.format = this._newType.as;
-            }
-            if (this._newType.isEnum()) {
-                param.enum = JSON.parse(JSON.stringify(this._newType.enum));
-            }
-            if (this._newType.isArray()) {
-                param.type = "array";
-                param.items = param.createItems();
-                if (this._newType.of) {
-                    param.items.type = this._newType.of.type;
-                    param.items.format = this._newType.of.as;
-                }
-            }
-
+            SimplifiedTypeUtil.setSimplifiedType(param, this._newType);
         } else {
             let schema: Oas30Schema = parameter.createSchema() as Oas30Schema;
-
-            if (this._newType.isRef()) {
-                schema.$ref = this._newType.type;
-            }
-            if (this._newType.isSimpleType()) {
-                schema.type = this._newType.type;
-                schema.format = this._newType.as;
-            }
-            if (this._newType.isEnum()) {
-                schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
-            }
-            if (this._newType.isArray()) {
-                schema.type = "array";
-                schema.items = schema.createItemsSchema();
-                if (this._newType.of) {
-                    schema.items.type = this._newType.of.type;
-                    schema.items.format = this._newType.of.as;
-                }
-            }
-
+            SimplifiedTypeUtil.setSimplifiedType(schema, this._newType);
             parameter.schema = schema;
         }
 

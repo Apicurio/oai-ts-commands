@@ -19,6 +19,7 @@ import {Oas20PropertySchema, Oas30PropertySchema, OasDocument, OasNodePath, OasS
 import {AbstractCommand, ICommand} from "../base";
 import {SimplifiedPropertyType} from "../models/simplified-type.model";
 import {MarshallUtils} from "../util/marshall.util";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 
 /**
@@ -79,35 +80,7 @@ export abstract class ChangePropertyTypeCommand extends AbstractCommand implemen
         this._oldRequired = required && required.length > 0 && required.indexOf(prop.propertyName()) != -1;
 
         // Update the schema's type
-        if (this._newType.isSimpleType()) {
-            prop.$ref = null;
-            prop.type = this._newType.type;
-            prop.format = this._newType.as;
-            prop.items = null;
-        }
-        if (this._newType.isEnum()) {
-            prop.enum = JSON.parse(JSON.stringify(this._newType.enum));
-        }
-        if (this._newType.isRef()) {
-            prop.$ref = this._newType.type;
-            prop.type = null;
-            prop.format = null;
-            prop.items = null;
-        }
-        if (this._newType.isArray()) {
-            prop.$ref = null;
-            prop.type = "array";
-            prop.format = null;
-            prop.items = prop.createItemsSchema();
-            if (this._newType.of) {
-                if (this._newType.of.isRef()) {
-                    prop.items.$ref = this._newType.of.type;
-                } else {
-                    prop.items.type = this._newType.of.type;
-                    prop.items.format = this._newType.of.as;
-                }
-            }
-        }
+        SimplifiedTypeUtil.setSimplifiedType(prop, this._newType);
 
         if (!this.isNullOrUndefined(this._newType.required)) {
             // Going from optional to required

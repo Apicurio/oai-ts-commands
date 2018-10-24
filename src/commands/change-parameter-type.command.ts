@@ -18,7 +18,6 @@
 import {AbstractCommand, ICommand} from "../base";
 import {
     IOasParameterParent,
-    Oas20Document,
     Oas20Parameter,
     Oas20ParameterDefinition,
     Oas30Document,
@@ -32,6 +31,7 @@ import {
 } from "oai-ts-core";
 import {SimplifiedParameterType} from "../models/simplified-type.model";
 import {MarshallUtils} from "../util/marshall.util";
+import {SimplifiedTypeUtil} from "../util/model.util";
 
 
 /**
@@ -181,51 +181,9 @@ export class ChangeParameterTypeCommand_20 extends ChangeParameterTypeCommand {
         // If it's a body param, change the schema child.  Otherwise change the param itself.
         if (param.in === "body") {
             param.schema = param.createSchema();
-
-            if (this._newType.isSimpleType()) {
-                param.schema.type = this._newType.type;
-                param.schema.format = this._newType.as;
-            }
-            if (this._newType.isEnum()) {
-                param.schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
-            }
-            if (this._newType.isRef()) {
-                param.schema.$ref = this._newType.type;
-            }
-            if (this._newType.isArray()) {
-                param.schema.type = "array";
-                param.schema.format = null;
-                param.schema.items = param.schema.createItemsSchema();
-                if (this._newType.of) {
-                    if (this._newType.of.isSimpleType()) {
-                        param.schema.items.type = this._newType.of.type;
-                        param.schema.items.format = this._newType.of.as;
-                    }
-                    if (this._newType.of.isEnum()) {
-                        param.schema.items.enum = JSON.parse(JSON.stringify(this._newType.of.enum));
-                    }
-                    if (this._newType.of.isRef()) {
-                        param.schema.items.$ref = this._newType.of.type;
-                    }
-                }
-            }
+            SimplifiedTypeUtil.setSimplifiedType(param.schema, this._newType);
         } else {
-            if (this._newType.isSimpleType()) {
-                param.type = this._newType.type;
-                param.format = this._newType.as;
-                param.items = null;
-            }
-            if (this._newType.isEnum()) {
-                param.enum = JSON.parse(JSON.stringify(this._newType.enum));
-            }
-            if (this._newType.isArray()) {
-                param.type = "array";
-                param.items = param.createItems();
-                if (this._newType.of) {
-                    param.items.type = this._newType.of.type;
-                    param.items.format = this._newType.of.as;
-                }
-            }
+            SimplifiedTypeUtil.setSimplifiedType(param, this._newType);
         }
 
         let required: boolean = this._newType.required;
@@ -309,26 +267,7 @@ export class ChangeParameterTypeCommand_30 extends ChangeParameterTypeCommand {
      */
     protected doChangeParameter(document: OasDocument, parameter: Oas30ParameterBase): void {
         let schema: Oas30Schema = parameter.createSchema();
-
-        if (this._newType.isRef()) {
-            schema.$ref = this._newType.type;
-        }
-        if (this._newType.isSimpleType()) {
-            schema.type = this._newType.type;
-            schema.format = this._newType.as;
-        }
-        if (this._newType.isEnum()) {
-            schema.enum = JSON.parse(JSON.stringify(this._newType.enum));
-        }
-        if (this._newType.isArray()) {
-            schema.type = "array";
-            schema.items = schema.createItemsSchema();
-            if (this._newType.of) {
-                schema.items.type = this._newType.of.type;
-                schema.items.format = this._newType.of.as;
-            }
-        }
-
+        SimplifiedTypeUtil.setSimplifiedType(schema, this._newType);
         parameter.schema = schema;
         let required: boolean = this._newType.required;
         if (parameter.in === "path") {
