@@ -124,6 +124,6 @@ export class SetItemsTypeVisitor extends OasCombinedVisitorAdapter {
     visitAllOfSchema(node: Oas20AllOfSchema | Oas30AllOfSchema): void { this.visitSchema(node); }
     visitItemsSchema(node: Oas20ItemsSchema | Oas30ItemsSchema): void { this.visitSchema(node); }
     visitParameter(node: Oas20Parameter | Oas30Parameter): void { this.visitParameterBase(node); }
-    visitParameterDefinition(node: Oas20ParameterDefinition | Oas30ParameterDefinition): void { this.visitParameter(node); }
+    visitParameterDefinition(node: Oas20ParameterDefinition | Oas30ParameterDefinition): void { this.visitParameterBase(node); }
 
 }
