@@ -35,6 +35,17 @@ describe("Delete Property (2.0)", () => {
         );
     });
 
+    it("Delete Property (Required)", () => {
+        commandTest(
+            "tests/_fixtures/commands/delete-property/2.0/delete-property-required.before.json",
+            "tests/_fixtures/commands/delete-property/2.0/delete-property-required.after.json",
+            (document: Oas20Document) => {
+                let schema: Oas20PropertySchema = document.definitions.definition("Order").property("petId") as Oas20PropertySchema;
+                return createDeletePropertyCommand(document, schema);
+            }
+        );
+    });
+
 });
 
 
@@ -44,6 +55,17 @@ describe("Delete Property (3.0)", () => {
         commandTest(
             "tests/_fixtures/commands/delete-property/3.0/delete-property.before.json",
             "tests/_fixtures/commands/delete-property/3.0/delete-property.after.json",
+            (document: Oas30Document) => {
+                let schema: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("address") as Oas30PropertySchema;
+                return createDeletePropertyCommand(document, schema);
+            }
+        );
+    });
+
+    it("Delete Property (Required)", () => {
+        commandTest(
+            "tests/_fixtures/commands/delete-property/3.0/delete-property-required.before.json",
+            "tests/_fixtures/commands/delete-property/3.0/delete-property-required.after.json",
             (document: Oas30Document) => {
                 let schema: Oas30PropertySchema = document.components.getSchemaDefinition("MySchema1").property("address") as Oas30PropertySchema;
                 return createDeletePropertyCommand(document, schema);

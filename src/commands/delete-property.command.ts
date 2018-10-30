@@ -40,6 +40,7 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
     private _schemaPath: OasNodePath;
 
     private _oldProperty: any;
+    private _oldRequired: boolean;
 
     /**
      * C'tor.
@@ -69,6 +70,10 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
 
         let schema: OasSchema = property.parent() as OasSchema;
         this._oldProperty = this.oasLibrary().writeNode(schema.removeProperty(this._propertyName));
+        this._oldRequired = schema.required && schema.required.indexOf(this._propertyName) !== -1;
+        if (this._oldRequired) {
+            schema.required.splice(schema.required.indexOf(this._propertyName), 1);
+        }
     }
 
     /**
@@ -89,6 +94,12 @@ export abstract class DeletePropertyCommand extends AbstractCommand implements I
         let propSchema: OasSchema = schema.createPropertySchema(this._propertyName);
         this.oasLibrary().readNode(this._oldProperty, propSchema);
         schema.addProperty(this._propertyName, propSchema);
+        if (this._oldRequired) {
+            if (!schema.required) {
+                schema.required = [];
+            }
+            schema.required.push(this._propertyName);
+        }
     }
 
     /**

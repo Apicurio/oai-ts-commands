@@ -3,10 +3,7 @@
   "components": {
     "schemas": {
       "MySchema1" : {
-        "type": "object",
-        "required": [
-          "name"
-        ]
+        "type": "object"
       },
       "MySchema2": {
         "type": "string",

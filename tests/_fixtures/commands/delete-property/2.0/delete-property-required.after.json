@@ -869,15 +869,11 @@
             "in":"header"
         }
     },
-    "definitions": {
-        "Order": {
-            "required": [ "id", "petId" ],
+    "definitions":{
+        "Order":{
+            "required": [ "id", "shipDate" ],
             "properties":{
                 "id":{
-                    "type":"integer",
-                    "format":"int64"
-                },
-                "petId":{
                     "type":"integer",
                     "format":"int64"
                 },

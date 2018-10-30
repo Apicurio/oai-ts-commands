@@ -869,9 +869,9 @@
             "in":"header"
         }
     },
-    "definitions": {
-        "Order": {
-            "required": [ "id", "petId" ],
+    "definitions":{
+        "Order":{
+            "required": [ "id", "shipDate", "petId" ],
             "properties":{
                 "id":{
                     "type":"integer",

@@ -30,6 +30,7 @@ import {MarshallUtils} from "../util/marshall.util";
 export interface OldPropertySchema {
     name: string;
     schema: any;
+    required: boolean;
 }
 
 /**
@@ -81,9 +82,11 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
         schema.propertyNames().forEach( pname => {
             this._oldProperties.push({
                 name: pname,
-                schema: this.oasLibrary().writeNode(schema.removeProperty(pname))
+                schema: this.oasLibrary().writeNode(schema.removeProperty(pname)),
+                required: this.isPropertyRequired(schema, pname)
             });
         });
+        schema.required = null;
     }
 
     /**
@@ -101,10 +104,17 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
             return;
         }
 
+        if (!schema.required) {
+            schema.required = [];
+        }
+
         this._oldProperties.forEach( oldProp => {
             let prop: OasSchema = schema.createPropertySchema(oldProp.name)
             this.oasLibrary().readNode(oldProp.schema, prop);
             schema.addProperty(oldProp.name, prop);
+            if (oldProp.required) {
+                schema.required.push(oldProp.name);
+            }
         });
     }
 
@@ -125,6 +135,15 @@ export abstract class DeleteAllPropertiesCommand extends AbstractCommand impleme
     public unmarshall(obj: any): void {
         super.unmarshall(obj);
         this._schemaPath = MarshallUtils.unmarshallNodePath(this._schemaPath as any);
+    }
+
+    /**
+     * Returns true if the property is required.
+     * @param schema
+     * @param propertyName
+     */
+    private isPropertyRequired(schema: OasSchema, propertyName: string): boolean {
+        return schema.required && schema.required.indexOf(propertyName) !== -1;
     }
 
 }
