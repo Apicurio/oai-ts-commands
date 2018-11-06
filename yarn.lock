@@ -2830,10 +2830,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-oai-ts-core@0.2.27:
-  version "0.2.27"
-  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.27.tgz#9bbdda53022b3ba047c772751e42066997bd8957"
-  integrity sha512-Pem5EpP73erkZIGBWHXcIZhOFkggok/sU/6eMb8qabtjlorhThTChYFGtZ0ZILoMeM9In1dr33/qetvOxqPt9w==
+oai-ts-core@0.2.28:
+  version "0.2.28"
+  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.28.tgz#1c0e0a5e96ca22db648734cf7d76b740aba9cb2a"
+  integrity sha512-prhVmOMG+il+11pvxyyzGXcyed2CREyJIa7Z5Wqv/oOFBD2Kvati0DDMGQ8RCMPPv7/xtmYAR53B1+ZOzO4l4w==
   dependencies:
     core-js "2.4.1"
 
