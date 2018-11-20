@@ -96,6 +96,7 @@ export class NewSchemaDefinitionCommand_20 extends NewSchemaDefinitionCommand {
                 definition.example = this._newDefinitionExample;
             } else {
                 definition = document.definitions.createSchemaDefinition(this._newDefinitionName);
+                definition.type = "object";
             }
             if (this._newDefinitionDescription) {
                 definition.description = this._newDefinitionDescription;
