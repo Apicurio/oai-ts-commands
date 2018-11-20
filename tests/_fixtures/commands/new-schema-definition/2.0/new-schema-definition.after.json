@@ -20,6 +20,8 @@
         "id": 1
       }
     },
-    "NewType": {}
+    "NewType": {
+      "type": "object"
+    }
   }
 }

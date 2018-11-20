@@ -28,7 +28,9 @@
       "RefSchema":{
         "$ref": "#/other/Ref"
       },
-      "NewType": {}
+      "NewType": {
+        "type": "object"
+      }
     }
   }
 }

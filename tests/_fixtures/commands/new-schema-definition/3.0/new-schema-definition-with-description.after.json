@@ -29,6 +29,7 @@
         "$ref": "#/other/Ref"
       },
       "NewType": {
+        "type": "object",
         "description": "Just a description of a new type."
       }
     }
