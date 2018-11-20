@@ -103,6 +103,7 @@ import {RenamePathItemCommand} from "../commands/rename-path-item.command";
 import {SetExtensionCommand} from "../commands/set-extension.command";
 import {DeleteExtensionCommand} from "../commands/delete-extension.command";
 import {ReplaceDocumentCommand} from "../commands/replace-document.command";
+import {DeleteAllOperationsCommand} from "../commands/delete-all-operations.command";
 
 
 let commandFactory: any = {
@@ -137,6 +138,7 @@ let commandFactory: any = {
     "ChangeTitleCommand_30": function() { return new ChangeTitleCommand_30(null); },
     "ChangeVersionCommand_20": function() { return new ChangeVersionCommand_20(null); },
     "ChangeVersionCommand_30": function() { return new ChangeVersionCommand_30(null); },
+    "DeleteAllOperationsCommand": function() { return new DeleteAllOperationsCommand(null); },
     "DeleteAllParametersCommand_20": function() { return new DeleteAllParametersCommand_20(null, null); },
     "DeleteAllParametersCommand_30": function() { return new DeleteAllParametersCommand_30(null, null); },
     "DeleteAllPropertiesCommand_20": function() { return new DeleteAllPropertiesCommand_20(null); },
