@@ -51,15 +51,12 @@ export class ModelUtils {
      * @return
      */
     public static detectPathParamNames(path: string): string[] {
-        let segments: string[] = path.split("/");
-        let pnames: string[] = segments.filter(segment => {
-            let startsWithOB: boolean = segment.charAt(0) === '{';
-            let endsWithCB: boolean = segment.charAt(segment.length - 1) === '}';
-            return startsWithOB && endsWithCB;
-        }).map(segment => {
-            return segment.substring(1, segment.length - 1);
+        let segments: string[] = path.split("{");
+        return segments.filter( (segment, idx) => {
+            return idx > 0 && segment.indexOf("}") != -1;
+        }).map( segment => {
+            return segment.substring(0, segment.indexOf("}")).trim();
         });
-        return pnames;
     }
 
 }
