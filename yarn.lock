@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@types/diff@3.2.2":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-3.2.2.tgz#4d6f45537322a7a420d353a0939513c7e96d14a6"
-  integrity sha512-q3zfJvaTroV5BjAAR+peTHEGAAhGrPX0z2EzCzpt2mwFA+qzUn2nigJLqSekXRtdULKmT8am7zjvTMZSapIgHw==
+"@types/diff@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@types/diff/-/diff-3.5.2.tgz#bd92300d32675bbe9f7853480730250aa859a90a"
+  integrity sha512-T1y8ed2DipuUGqgzWzBDUMlJM1bD1CG73ETOi08VURsGArjRfC4nqfeC5owrV7SFvgbeKDbonI/Es4vQgJ2IKA==
 
 "@types/jasmine@2.5.47":
   version "2.5.47"
@@ -2830,10 +2830,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-oai-ts-core@0.2.32:
-  version "0.2.32"
-  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.32.tgz#e841ad6a38bd8941be7672b1a2a56bf8b56ecb35"
-  integrity sha512-FnCm51dB/FgvV5EZbybyLaJlPMCueBHhQwDM/AYpkpZlpx7zcLE4n4/0V2DRZdaTxYKjhKvxxUfRIAcczbdXjA==
+oai-ts-core@0.2.33:
+  version "0.2.33"
+  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.33.tgz#274b1219d5222a61150f91fff9ea0bf4ede4b7d8"
+  integrity sha512-B4BHb2dJWJxwT/Hi8hLsRy4xTis4MgfkwqEpoLqr5ilra8Zo+PYF34RTrlTnR54RSMHU4lql35hkgFt+IgbBdg==
   dependencies:
     core-js "2.4.1"
 
