@@ -1090,10 +1090,10 @@ core-js@2.4.1:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
   integrity sha1-TekR5mew6ukSTjQlS1OupvxhjT4=
 
-core-js@^2.2.0, core-js@^2.4.0, core-js@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.0.tgz#569c050918be6486b3837552028ae0466b717086"
-  integrity sha1-VpwFCRi+ZIazg3VSAorgRmtxcIY=
+core-js@2.6.1, core-js@^2.2.0, core-js@^2.4.0, core-js@^2.5.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.1.tgz#87416ae817de957a3f249b3b5ca475d4aaed6042"
+  integrity sha512-L72mmmEayPJBejKIWe2pYtGis5r0tQ5NaJekdhyXgeMQTpJoBsH0NL4ElY2LfSoV15xeQWKQ+XTTOZdyero5Xg==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -2830,10 +2830,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-oai-ts-core@0.2.32:
-  version "0.2.32"
-  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.32.tgz#e841ad6a38bd8941be7672b1a2a56bf8b56ecb35"
-  integrity sha512-FnCm51dB/FgvV5EZbybyLaJlPMCueBHhQwDM/AYpkpZlpx7zcLE4n4/0V2DRZdaTxYKjhKvxxUfRIAcczbdXjA==
+oai-ts-core@0.2.33:
+  version "0.2.33"
+  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.33.tgz#274b1219d5222a61150f91fff9ea0bf4ede4b7d8"
+  integrity sha512-B4BHb2dJWJxwT/Hi8hLsRy4xTis4MgfkwqEpoLqr5ilra8Zo+PYF34RTrlTnR54RSMHU4lql35hkgFt+IgbBdg==
   dependencies:
     core-js "2.4.1"
 
