@@ -44,6 +44,6 @@
     "rollup": "0.41.6",
     "rollup-plugin-commonjs": "8.0.2",
     "@types/diff": "3.5.2",
-    "diff": "3.5.0"
+    "diff": "4.0.1"
   }
 }
