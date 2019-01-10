@@ -31,7 +31,7 @@
     "mkdirp": "0.5.1",
     "@types/jasmine": "2.5.47",
     "jasmine-core": "2.6.1",
-    "karma": "1.7.0",
+    "karma": "1.7.1",
     "karma-chrome-launcher": "2.1.1",
     "karma-cli": "1.0.1",
     "karma-jasmine": "1.1.0",

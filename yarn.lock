@@ -2344,10 +2344,10 @@ karma-typescript@3.0.13:
     util "^0.10.3"
     vm-browserify "0.0.4"
 
-karma@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/karma/-/karma-1.7.0.tgz#6f7a1a406446fa2e187ec95398698f4cee476269"
-  integrity sha1-b3oaQGRG+i4YfslTmGmPTO5HYmk=
+karma@1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/karma/-/karma-1.7.1.tgz#85cc08e9e0a22d7ce9cca37c4a1be824f6a2b1ae"
+  integrity sha512-k5pBjHDhmkdaUccnC7gE3mBzZjcxyxYsYVaqiL2G5AqlfLyBO5nw2VdNK+O16cveEPd/gIOWULH7gkiYYwVNHg==
   dependencies:
     bluebird "^3.3.0"
     body-parser "^1.16.1"
