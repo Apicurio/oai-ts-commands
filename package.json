@@ -41,7 +41,7 @@
     "karma-read-json": "1.1.0",
     "karma-summary-reporter": "1.5.2",
     "karma-typescript": "3.0.13",
-    "karma-typescript-es6-transform": "1.0.2",
+    "karma-typescript-es6-transform": "1.0.4",
     "rollup": "0.41.6",
     "rollup-plugin-commonjs": "8.4.1",
     "typescript": "2.9.2"
