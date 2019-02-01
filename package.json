@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "core-js": "2.6.3",
-    "oai-ts-core": "0.2.33"
+    "oai-ts-core": "0.2.34"
   },
   "devDependencies": {
     "@types/diff": "4.0.0",
