@@ -104,6 +104,10 @@ import {SetExtensionCommand} from "../commands/set-extension.command";
 import {DeleteExtensionCommand} from "../commands/delete-extension.command";
 import {ReplaceDocumentCommand} from "../commands/replace-document.command";
 import {DeleteAllOperationsCommand} from "../commands/delete-all-operations.command";
+import {RenameTagDefinitionCommand} from "../commands/rename-tag-definition.command";
+import {RenameParameterCommand} from "../commands/rename-parameter.command";
+import {RenamePropertyCommand} from "../commands/rename-property.command";
+import {RenameSecuritySchemeCommand} from "../commands/rename-security-scheme.command";
 
 
 let commandFactory: any = {
@@ -197,8 +201,12 @@ let commandFactory: any = {
     "NewTagCommand_20": function() { return new NewTagCommand_20(null); },
     "NewTagCommand_30": function() { return new NewTagCommand_30(null); },
     "RenamePathItemCommand": function() { return new RenamePathItemCommand(null, null); },
+    "RenameParameterCommand": function() { return new RenameParameterCommand(null, null, null, null); },
+    "RenamePropertyCommand": function() { return new RenamePropertyCommand(null, null, null); },
+    "RenameSecuritySchemeCommand": function() { return new RenameSecuritySchemeCommand(null, null); },
     "RenameSchemaDefinitionCommand_20": function() { return new RenameSchemaDefinitionCommand_20(null, null); },
     "RenameSchemaDefinitionCommand_30": function() { return new RenameSchemaDefinitionCommand_30(null, null); },
+    "RenameTagDefinitionCommand": function() { return new RenameTagDefinitionCommand(null, null); },
     "ReplaceDocumentCommand": function() { return new ReplaceDocumentCommand(null, null); },
     "ReplaceOperationCommand_20": function() { return new ReplaceOperationCommand_20(null, null); },
     "ReplaceOperationCommand_30": function() { return new ReplaceOperationCommand_30(null, null); },
