@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EricWittmann/oai-ts-commands"
+    "url": "https://github.com/Apicurio/oai-ts-commands"
   },
   "main": "bundles/OAI-commands.umd.min.js",
   "module": "index.js",
