@@ -38,6 +38,7 @@ export * from "./commands/change-security-scheme.command";
 export * from "./commands/change-server.command";
 export * from "./commands/change-title.command";
 export * from "./commands/change-version.command";
+export * from "./commands/delete-all-examples.command"
 export * from "./commands/delete-all-operations.command";
 export * from "./commands/delete-all-parameters.command";
 export * from "./commands/delete-all-properties.command";
