@@ -79,11 +79,9 @@ export class DeleteAllExamplesCommand_30 extends AbstractCommand implements ICom
             return;
         }
 
-        for (let k in mediaType.examples) {
-            // Can't use getExamples(), because we need to know the example name ('k') for unmarshalling,
-            // @see DeleteAllExamplesCommand_30#undo(OasDocument)
-            this._oldExamples[k] = this.oasLibrary().writeNode(mediaType.examples[k]);
-        }
+        mediaType.getExamples().forEach(e => {
+            this._oldExamples[e.name()] = this.oasLibrary().writeNode(e);
+        });
         mediaType.examples = null;
     }
 
