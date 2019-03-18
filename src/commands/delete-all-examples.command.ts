@@ -45,7 +45,7 @@ export class DeleteAllExamplesCommand_30 extends AbstractCommand implements ICom
      */
     constructor(mediaType: Oas30MediaType) {
         super();
-        // We must allow for null in the constructor when unmashalling the command.
+        // We must allow for null in the constructor when unmarshalling the command.
         if (!this.isNullOrUndefined(mediaType)) {
             this._mediaTypePath = this.oasLibrary().createNodePath(mediaType);
         }
@@ -68,21 +68,23 @@ export class DeleteAllExamplesCommand_30 extends AbstractCommand implements ICom
         }
 
         if (this.isNullOrUndefined(this._mediaTypePath)) {
-            console.debug("[DeleteAllExamplesCommand] Could not execute the command, problem when unmashalling.");
+            console.debug("[DeleteAllExamplesCommand] Could not execute the command, problem when unmarshalling.");
             return;
         }
 
         let mediaType: Oas30MediaType = this._mediaTypePath.resolve(document) as Oas30MediaType;
 
-        if (this.isNullOrUndefined(mediaType) || this.isNullOrUndefined(mediaType.examples)) {
-            console.debug("[DeleteAllExamplesCommand] No Examples.");
+        if (this.isNullOrUndefined(mediaType)) {
+            console.debug("[DeleteAllExamplesCommand] Media type not found.");
             return;
         }
 
         for (let k in mediaType.examples) {
+            // Can't use getExamples(), because we need to know the example name ('k') for unmarshalling,
+            // @see DeleteAllExamplesCommand_30#undo(OasDocument)
             this._oldExamples[k] = this.oasLibrary().writeNode(mediaType.examples[k]);
         }
-        mediaType.examples = new Oas30ExampleItems()
+        mediaType.examples = null;
     }
 
     /**
@@ -97,7 +99,7 @@ export class DeleteAllExamplesCommand_30 extends AbstractCommand implements ICom
         }
 
         if (this.isNullOrUndefined(this._mediaTypePath)) {
-            console.debug("[DeleteAllExamplesCommand] Could not revert the command, problem when unmashalling.");
+            console.debug("[DeleteAllExamplesCommand] Could not revert the command, problem when unmarshalling.");
             return;
         }
 
