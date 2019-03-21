@@ -46,7 +46,7 @@ export class SimplifiedType {
             // Need to clone the enum values
             rval.enum = JSON.parse(JSON.stringify(items.enum));
         }
-        if (items && items.type && items.type !== "array" && items.type !== "object" && items.type !== "file") {
+        if (items && items.type && items.type !== "array" && items.type !== "object") {
             rval.type = items.type;
             if (items.format) {
                 rval.as = items.format;
@@ -69,7 +69,7 @@ export class SimplifiedType {
             rval.enum = JSON.parse(JSON.stringify(schema.enum));
         }
         if (schema && schema.type && schema.type !== "array" &&
-            schema.type !== "object" && schema.type !== "file")
+            schema.type !== "object")
         {
             rval.type = schema.type;
             if (schema.format) {
@@ -90,6 +90,10 @@ export class SimplifiedType {
 
     public isSimpleType(): boolean {
         return ["string", "number", "integer", "boolean"].indexOf(this.type) !== -1;
+    }
+
+    public isFileType(): boolean {
+        return this.type === "file";
     }
 
     public isEnum(): boolean {

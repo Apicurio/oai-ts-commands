@@ -75,6 +75,9 @@ export class SimplifiedTypeUtil {
             node.type = type.type;
             node.format = type.as;
         }
+        if (type.isFileType()) {
+            node.type = type.type;
+        }
         if (type.isEnum()) {
             node.enum = JSON.parse(JSON.stringify(type.enum));
         }
