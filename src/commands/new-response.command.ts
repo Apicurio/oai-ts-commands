@@ -16,17 +16,18 @@
  */
 
 import {AbstractCommand, ICommand} from "../base";
-import {Oas20Operation, Oas30Operation, OasDocument, OasNodePath, OasOperation, OasResponse} from "oai-ts-core";
+import {Oas20Operation, Oas30Operation, OasDocument, OasNodePath, OasOperation, OasResponse, Oas20Response, Oas30Response} from "oai-ts-core";
 import {MarshallUtils} from "../util/marshall.util";
 
 /**
  * Factory function.
  */
-export function createNewResponseCommand(document: OasDocument, operation: Oas20Operation | Oas30Operation, statusCode: string): NewResponseCommand {
+export function createNewResponseCommand(document: OasDocument, operation: Oas20Operation | Oas30Operation,
+        statusCode: string, sourceResponse?: OasResponse): NewResponseCommand {
     if (document.getSpecVersion() === "2.0") {
-        return new NewResponseCommand_20(operation, statusCode);
+        return new NewResponseCommand_20(operation, statusCode, sourceResponse);
     } else {
-        return new NewResponseCommand_30(operation, statusCode);
+        return new NewResponseCommand_30(operation, statusCode, sourceResponse);
     }
 }
 
@@ -41,18 +42,22 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
     private _created: boolean;
     private _nullResponses: boolean;
 
+    private sourceResponse: any;
 
     /**
      * C'tor.
      * @param {Oas20Operation | Oas30Operation} operation
      * @param {string} statusCode
      */
-    constructor(operation: Oas20Operation | Oas30Operation, statusCode: string) {
+    constructor(operation: Oas20Operation | Oas30Operation, statusCode: string, sourceResponse?: OasResponse) {
         super();
         if (operation) {
             this._operationPath = this.oasLibrary().createNodePath(operation);
         }
         this._statusCode = statusCode;
+        if (sourceResponse) {
+            this.sourceResponse = this.oasLibrary().writeNode(sourceResponse);
+        }
     }
 
     /**
@@ -78,6 +83,9 @@ export abstract class NewResponseCommand extends AbstractCommand implements ICom
         let response: OasResponse = operation.responses.response(this._statusCode) as OasResponse;
         if (this.isNullOrUndefined(response)) {
             response = operation.responses.createResponse(this._statusCode) as OasResponse;
+            if (this.sourceResponse) {
+                response = this.oasLibrary().readNode(this.sourceResponse, response) as OasResponse;
+            }
             operation.responses.addResponse(this._statusCode, response);
             this._created = true;
         }
