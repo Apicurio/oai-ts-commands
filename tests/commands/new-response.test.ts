@@ -18,7 +18,7 @@
  */
 
 import {commandTest} from "./_test-utils";
-import {Oas20Document, Oas20Operation, Oas30Document, Oas30Operation} from "oai-ts-core";
+import {Oas20Document, Oas20Operation, Oas20Response, Oas30Document, Oas30Operation, Oas30Response} from "oai-ts-core";
 import {createNewResponseCommand} from "../../src/commands/new-response.command";
 
 
@@ -51,3 +51,34 @@ describe("New Response (3.0)", () => {
 
 });
 
+
+describe("New Response, Clone (2.0)", () => {
+
+    it("should correctly update the OAS document", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-response/2.0/clone-response.before.json",
+            "tests/_fixtures/commands/new-response/2.0/clone-response.after.json",
+            (document: Oas20Document) => {
+                return createNewResponseCommand(document, document.paths.pathItem("/pets").get as Oas20Operation,
+                    "204", document.paths.pathItem("/pets").get.responses.getItem("200") as Oas20Response);
+            }
+        );
+    });
+
+});
+
+
+describe("New Response, Clone (3.0)", () => {
+
+    it("should correctly update the OAS document", () => {
+        commandTest(
+            "tests/_fixtures/commands/new-response/3.0/clone-response.before.json",
+            "tests/_fixtures/commands/new-response/3.0/clone-response.after.json",
+            (document: Oas30Document) => {
+                return createNewResponseCommand(document, document.paths.pathItem("/pets").get as Oas30Operation,
+                    "204", document.paths.pathItem("/pets").get.responses.getItem("200") as Oas30Response);
+            }
+        );
+    });
+
+});
