@@ -3226,10 +3226,10 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
-oai-ts-core@0.2.36:
-  version "0.2.36"
-  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.36.tgz#16904e4ecec91a931d3f3b9dcfe3b2e6f9cc8f40"
-  integrity sha512-QIEfhP8WUMNGgWlbO6qzQ1vO8ArMJ04wFQg7ra8I2osnf5VuCCOhrFvxL747j2tXD40cOf8qG6JEN5A+JeKPjg==
+oai-ts-core@0.2.37:
+  version "0.2.37"
+  resolved "https://registry.yarnpkg.com/oai-ts-core/-/oai-ts-core-0.2.37.tgz#9e7c0cdd804fd4177efb9c5009e8fb6c8680846d"
+  integrity sha512-tNIJxdOkImDP3Dv7pc06hfsP80ZxpnOtZdSsbQoht9+jbqcRIzfeyuwnnYimkn7rqWgDevZmygCgGi89Ih1p/w==
   dependencies:
     core-js "2.6.5"
 
