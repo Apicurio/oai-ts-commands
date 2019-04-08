@@ -91,6 +91,7 @@ import {
 } from "../commands/rename-schema-definition.command";
 import {AddExampleCommand_30} from "../commands/add-example.command";
 import {DeleteExampleCommand_20, DeleteExampleCommand_30} from "../commands/delete-example.command";
+import {DeleteAllExamplesCommand_30} from "../commands/delete-all-examples.command"
 import {AddSecurityRequirementCommand} from "../commands/add-security-requirement.command";
 import {DeleteSecurityRequirementCommand} from "../commands/delete-security-requirement.command";
 import {ReplaceSecurityRequirementCommand} from "../commands/replace-security-requirement.command";
@@ -142,6 +143,7 @@ let commandFactory: any = {
     "ChangeTitleCommand_30": function() { return new ChangeTitleCommand_30(null); },
     "ChangeVersionCommand_20": function() { return new ChangeVersionCommand_20(null); },
     "ChangeVersionCommand_30": function() { return new ChangeVersionCommand_30(null); },
+    "DeleteAllExamplesCommand_30": function() { return new DeleteAllExamplesCommand_30(null); },
     "DeleteAllOperationsCommand": function() { return new DeleteAllOperationsCommand(null); },
     "DeleteAllParametersCommand_20": function() { return new DeleteAllParametersCommand_20(null, null); },
     "DeleteAllParametersCommand_30": function() { return new DeleteAllParametersCommand_30(null, null); },
